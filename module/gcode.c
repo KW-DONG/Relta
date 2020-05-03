@@ -1,4 +1,6 @@
 #include "gcode.h"
+#include "type.h"
+#include "config.h"
 
 /**
  * @param cha key char such as 'X', 'Y', 'Z'
