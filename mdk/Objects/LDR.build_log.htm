@@ -1,0 +1,227 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.14.0.0
+Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: a a, a, LIC=UB401-CHZGK-59WGZ-JX8TG-WLZ2N-JSCAA
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Professional  Version: 5.14.0.0
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.05 update 1 (build 106)
+Assembler:       Armasm.exe V5.05 update 1 (build 106)
+Linker/Locator:  ArmLink.exe V5.05 update 1 (build 106)
+Library Manager: ArmAr.exe V5.05 update 1 (build 106)
+Hex Converter:   FromElf.exe V5.05 update 1 (build 106)
+CPU DLL:         SARMCM3.DLL V5.14.0.0
+Dialog DLL:      DCM.DLL V1.13.1.0
+Target DLL:      UL2CM3.DLL V1.155.0.0
+Dialog DLL:      TCM.DLL V1.14.4.0
+ 
+<h2>Project:</h2>
+D:\Workspace\FYP\Linear Delta\EBD\mdk\LDR.uvprojx
+Project File Date:  02/06/2020
+
+<h2>Output:</h2>
+Rebuild target 'LDR'
+assembling startup_stm32f40_41xxx.s...
+compiling Driver_BSP.c...
+..\driver\inc\Driver_BSP.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motion.h(83): warning:  #1295-D: Deprecated declaration Motion_Home - give arg types
+  void Motion_Home();
+..\driver\inc\Driver_Motion.h(93): warning:  #1295-D: Deprecated declaration Position_Update - give arg types
+  void Position_Update();
+..\driver\inc\Driver_Motion.h(107): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_BSP.h(34): warning:  #1295-D: Deprecated declaration BSP_LED_Init - give arg types
+  void BSP_LED_Init();
+..\driver\inc\Driver_BSP.h(38): warning:  #1295-D: Deprecated declaration BSP_Switch_Init - give arg types
+  void BSP_Switch_Init();
+..\driver\inc\Driver_BSP.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\src\Driver_BSP.c(61): warning:  #223-D: function "KEY_Init" declared implicitly
+        KEY_Init(); 
+..\driver\src\Driver_BSP.c(152): error:  #53: expected a ":"
+          case 1;
+..\driver\src\Driver_BSP.c(162): warning:  #12-D: parsing restarts here after previous syntax error
+      }
+..\driver\src\Driver_BSP.c(162): warning:  #127-D: expected a statement
+      }
+..\driver\src\Driver_BSP.c(257): warning:  #223-D: function "GPIO_GPIO_SetBits" declared implicitly
+          case 0: GPIO_GPIO_SetBits(GPIOF,GPIO_Pin_9);
+..\driver\src\Driver_BSP.c(288): warning:  #1-D: last line of file ends without a newline
+  }
+..\driver\src\Driver_BSP.c: 14 warnings, 1 error
+compiling Driver_Gcode.c...
+..\driver\inc\led.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_BSP.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motion.h(83): warning:  #1295-D: Deprecated declaration Motion_Home - give arg types
+  void Motion_Home();
+..\driver\inc\Driver_Motion.h(93): warning:  #1295-D: Deprecated declaration Position_Update - give arg types
+  void Position_Update();
+..\driver\inc\Driver_Motion.h(107): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_BSP.h(34): warning:  #1295-D: Deprecated declaration BSP_LED_Init - give arg types
+  void BSP_LED_Init();
+..\driver\inc\Driver_BSP.h(38): warning:  #1295-D: Deprecated declaration BSP_Switch_Init - give arg types
+  void BSP_Switch_Init();
+..\driver\inc\Driver_BSP.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Gcode.h(9): warning:  #1295-D: Deprecated declaration Decoder - give arg types
+  void Decoder();
+..\driver\inc\Driver_Gcode.h(10): warning:  #1295-D: Deprecated declaration Send_Feedback - give arg types
+  void Send_Feedback();
+..\driver\inc\Driver_Gcode.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\src\Driver_Gcode.c(16): warning:  #223-D: function "printf" declared implicitly
+                                                 printf("\r\nThis is G\r\n");
+..\driver\src\Driver_Gcode.c(27): warning:  #223-D: function "printf" declared implicitly
+                                                        printf("\r\nThis is not G\r\n");
+..\driver\src\Driver_Gcode.c(31): warning:  #223-D: function "printf" declared implicitly
+                                        printf("\r\n\r\n");
+..\driver\src\Driver_Gcode.c(39): warning:  #1-D: last line of file ends without a newline
+  }
+..\driver\src\Driver_Gcode.c: 17 warnings, 0 errors
+compiling Driver_IRQHandler.c...
+..\driver\inc\Driver_BSP.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motion.h(83): warning:  #1295-D: Deprecated declaration Motion_Home - give arg types
+  void Motion_Home();
+..\driver\inc\Driver_Motion.h(93): warning:  #1295-D: Deprecated declaration Position_Update - give arg types
+  void Position_Update();
+..\driver\inc\Driver_Motion.h(107): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_BSP.h(34): warning:  #1295-D: Deprecated declaration BSP_LED_Init - give arg types
+  void BSP_LED_Init();
+..\driver\inc\Driver_BSP.h(38): warning:  #1295-D: Deprecated declaration BSP_Switch_Init - give arg types
+  void BSP_Switch_Init();
+..\driver\inc\Driver_BSP.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_IRQHandler.h(8): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\src\Driver_IRQHandler.c(6): error:  #20: identifier "KEY_X" is undefined
+        if(KEY_X == 0)   
+..\driver\src\Driver_IRQHandler.c(8): error:  #20: identifier "LED0" is undefined
+                LED0 = 0;
+..\driver\src\Driver_IRQHandler.c(19): error:  #20: identifier "KEY_Y" is undefined
+        while(KEY_Y==0)  
+..\driver\src\Driver_IRQHandler.c(22): error:  #20: identifier "LED0" is undefined
+                LED0 = 0;       
+..\driver\src\Driver_IRQHandler.c(33): error:  #20: identifier "KEY_Z" is undefined
+        if(KEY_Z==0)     
+..\driver\src\Driver_IRQHandler.c(36): error:  #20: identifier "LED0" is undefined
+                LED0 = 0;       
+..\driver\src\Driver_IRQHandler.c(69): warning:  #1-D: last line of file ends without a newline
+  } 
+..\driver\src\Driver_IRQHandler.c: 11 warnings, 6 errors
+compiling Driver_LED.c...
+..\driver\inc\LED.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\src\Driver_LED.c(25): warning:  #223-D: function "delay_ms" declared implicitly
+      delay_ms(delay);
+..\driver\src\Driver_LED.c(33): warning:  #223-D: function "delay_ms" declared implicitly
+      delay_ms(delay);
+..\driver\src\Driver_LED.c(41): warning:  #223-D: function "delay_ms" declared implicitly
+      delay_ms(delay);
+..\driver\src\Driver_LED.c: 4 warnings, 0 errors
+compiling Driver_Motion.c...
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_BSP.h(34): warning:  #1295-D: Deprecated declaration BSP_LED_Init - give arg types
+  void BSP_LED_Init();
+..\driver\inc\Driver_BSP.h(38): warning:  #1295-D: Deprecated declaration BSP_Switch_Init - give arg types
+  void BSP_Switch_Init();
+..\driver\inc\Driver_BSP.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motion.h(107): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motor.h(28): error:  #20: identifier "Position_Slider" is undefined
+  uint32_t Motor_Control(double time, Position_Slider *slider);
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motion.h(83): warning:  #1295-D: Deprecated declaration Motion_Home - give arg types
+  void Motion_Home();
+..\driver\inc\Driver_Motion.h(93): warning:  #1295-D: Deprecated declaration Position_Update - give arg types
+  void Position_Update();
+..\driver\inc\Driver_Motion.h(107): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\led.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Gcode.h(9): warning:  #1295-D: Deprecated declaration Decoder - give arg types
+  void Decoder();
+..\driver\inc\Driver_Gcode.h(10): warning:  #1295-D: Deprecated declaration Send_Feedback - give arg types
+  void Send_Feedback();
+..\driver\inc\Driver_Gcode.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\src\Driver_Motion.c: 13 warnings, 1 error
+compiling Driver_Motor.c...
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_BSP.h(34): warning:  #1295-D: Deprecated declaration BSP_LED_Init - give arg types
+  void BSP_LED_Init();
+..\driver\inc\Driver_BSP.h(38): warning:  #1295-D: Deprecated declaration BSP_Switch_Init - give arg types
+  void BSP_Switch_Init();
+..\driver\inc\Driver_BSP.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motion.h(83): warning:  #1295-D: Deprecated declaration Motion_Home - give arg types
+  void Motion_Home();
+..\driver\inc\Driver_Motion.h(93): warning:  #1295-D: Deprecated declaration Position_Update - give arg types
+  void Position_Update();
+..\driver\inc\Driver_Motion.h(107): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\inc\Driver_Motor.h(31): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\driver\src\Driver_Motor.c(34): warning:  #940-D: missing return statement at end of non-void function "Motor_Control"
+  }
+..\driver\src\Driver_Motor.c(11): warning:  #550-D: variable "moves1" was set but never used
+      int32_t moves1;
+..\driver\src\Driver_Motor.c(12): warning:  #550-D: variable "moves2" was set but never used
+      int32_t moves2;
+..\driver\src\Driver_Motor.c(13): warning:  #550-D: variable "moves3" was set but never used
+      int32_t moves3;
+..\driver\src\Driver_Motor.c: 12 warnings, 0 errors
+compiling misc.c...
+compiling stm32f4xx_exti.c...
+compiling stm32f4xx_gpio.c...
+compiling stm32f4xx_rcc.c...
+compiling stm32f4xx_syscfg.c...
+compiling stm32f4xx_usart.c...
+compiling delay.c...
+compiling sys.c...
+compiling usart.c...
+compiling main.c...
+..\driver\inc\led.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\user\LDR\main.c(5): error:  #5: cannot open source input file "controller.h": No such file or directory
+  #include "controller.h"
+..\user\LDR\main.c: 1 warning, 1 error
+compiling stm32f4xx_it.c...
+compiling system_stm32f4xx.c...
+".\Objects\LDR.axf" - 9 Error(s), 72 Warning(s).
+
+<h2>Collection of Component include folders:</h2>
+  D:\Workspace\FYP\Linear Delta\EBD\mdk\RTE
+  C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include
+
+<h2>Collection of Component Files used:</h2>
+Target not created.
+</pre>
+</body>
+</html>

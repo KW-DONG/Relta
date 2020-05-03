@@ -1,0 +1,22 @@
+--cpu Cortex-M4.fp
+".\objects\main.o"
+".\objects\stm32f4xx_it.o"
+".\objects\system_stm32f4xx.o"
+".\objects\key.o"
+".\objects\exti.o"
+".\objects\led.o"
+".\objects\startup_stm32f40_41xxx.o"
+".\objects\misc.o"
+".\objects\stm32f4xx_exti.o"
+".\objects\stm32f4xx_gpio.o"
+".\objects\stm32f4xx_rcc.o"
+".\objects\stm32f4xx_usart.o"
+".\objects\stm32f4xx_syscfg.o"
+".\objects\delay.o"
+".\objects\sys.o"
+".\objects\usart.o"
+".\objects\controller.o"
+--strict --scatter ".\Objects\LTD_v0.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\LTD_v0.map" -o .\Objects\LTD_v0.1
