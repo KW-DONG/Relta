@@ -88,7 +88,7 @@
 
 #if EXECUTE_MACHINE
 #define USE_PRELOAD_PATH YES
-#define USE_LOW_VELOCITY_MODE NO
+#define USE_PLANNER NO
 #endif
 
 

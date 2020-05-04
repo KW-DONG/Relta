@@ -56,7 +56,13 @@ void TIM5_IRQHandler()
                 if(block_state==TRUE)
                 {
                     //always maximum acceleration
+                    #if USE_PLANNER
                     Acc_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc_step, dcc_step);
+                    #else
+                    stepperA.freq = block_c.freq[0];
+                    stepperB.freq = block_c.freq[1];
+                    stepperC.freq = block_c.freq[2];
+                    #endif
 
                     stepperA.state = START;
                     stepperB.state = START;
@@ -118,6 +124,9 @@ uint8_t Block_Check(stepper_exe_t* blockX, ring_buff_t* list)
 //use when a new block is read
 //find the frequency difference
 //workout the amount of freq need to be added in each term 
+//if dir is not same, use acc1 to decelerate
+//acc2 accelerate to the operation speed
+//if operation speed is higher than jerk speed use acc3 to do the deceleration
 void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1[3], int32_t* acc2[3])
 {
     int32_t f_d_a[3];//acc freq difference
@@ -161,9 +170,9 @@ void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ,
     //dcc at t_a + t_n
     int32_t t[3] = {t_a[0]+t_n[0],t_a[1]+t_n[1],t_a[2]+t_n[2]};
 
-    dcc[0] = t[0]*MONITOR_FREQ;
-    dcc[1] = t[1]*MONITOR_FREQ;
-    dcc[2] = t[2]*MONITOR_FREQ;
+    acc2[0] = t[0]*MONITOR_FREQ;
+    acc2[1] = t[1]*MONITOR_FREQ;
+    acc2[2] = t[2]*MONITOR_FREQ;
 }
 
 void ADcc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block)
