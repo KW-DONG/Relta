@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "D:\\CodeStorage\\Relta\\core",
+                "D:\\CodeStorage\\Relta\\driver",
+                "D:\\CodeStorage\\Relta\\module",
+                "D:\\CodeStorage\\Relta\\library\\std\\inc",
+                "D:\\CodeStorage\\Relta\\user\\LDR_v0.2",
+                "D:\\CodeStorage\\Relta\\library\\atom\\delay",
+                "D:\\CodeStorage\\Relta\\library\\atom\\sys",
+                "${workspaceFolder}/core"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:\\mingw64\\bin\\gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
