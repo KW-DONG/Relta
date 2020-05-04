@@ -50,6 +50,10 @@
 #define CARRIAGE_LOW    250.0f
 #define CARRIAGE_HIGH   300.0f
 
+#define CARRIAGE_A_RESET    360.0f
+#define CARRIAGE_B_RESET    360.0f
+#define CARRIAGE_C_RESET    360.0f
+
 #define SWITCH_HIGHT    360.0f
 
 #define WORKSPACE_X 180.0f

@@ -86,6 +86,12 @@ void Stepper_Direction();
 
 uint8_t Block_Check(stepper_exe_t* stepper_abc, ring_buff_t* list);
 
+void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block);
+
+void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2);
+
+void Stepper_Cnt(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
+
 //BSP
 void Stepper_Init(stepper_t* stepperX);
 
@@ -93,7 +99,6 @@ void TIM5_Init(uint16_t arr, uint16_t psc);
 
 void Stepper_Upgrade(stepper_t*stepperX);
 
-void Stepper_Cnt(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
 
 
 #endif

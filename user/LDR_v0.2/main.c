@@ -176,10 +176,6 @@ int main()
             XYZ_C[2] = XYZ_T[2];
         }
         #endif
-
-
-
-
         #endif
     }
     

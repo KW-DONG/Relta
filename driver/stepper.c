@@ -18,10 +18,10 @@ void TIM5_IRQHandler()
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
         static uint8_t block_state;
-        static int32_t acc_step[3];
-        static int32_t dcc_step[3];
+        #if USE_PLANNER
         static int32_t acc1_step[3];//head
         static int32_t acc2_step[3];//tail
+        #endif
 
         //if the switch is touched the motor stop
         Switch_Read_State(&switchA);
@@ -30,17 +30,17 @@ void TIM5_IRQHandler()
         if (switchA.state == 0)
         {
             block_c.step[0] = 0;
-            machine.abc[0] = 0.0f;//tower A reset point
+            machine.abc[0] = CARRIAGE_A_RESET;//tower A reset point
         }
         if (switchB.state == 0)
         {
             block_c.step[1] = 0;
-            machine.abc[1] = 0.0f;
+            machine.abc[1] = CARRIAGE_B_RESET;
         }
         if (switchC.state == 0)
         {
             block_c.step[2] = 0;
-            machine.abc[2] = 0.0f;
+            machine.abc[2] = CARRIAGE_C_RESET;
         }
 
         if (block_c.step[0]==0) stepperA.state==STOP;
@@ -57,7 +57,7 @@ void TIM5_IRQHandler()
                 {
                     //always maximum acceleration
                     #if USE_PLANNER
-                    Acc_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc_step, dcc_step);
+                    Acc_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc1_step, acc2_step);
                     #else
                     stepperA.freq = block_c.freq[0];
                     stepperB.freq = block_c.freq[1];
@@ -77,6 +77,10 @@ void TIM5_IRQHandler()
                 {
                     Stepper_Cnt(&block_c, &stepperA, &stepperB, &stepperC);
                     //Psc_Update(&block_c, &stepperA, &stepperB, &stepperC);
+                    
+                    #if USE_PLANNER
+                    Acc_Cnt(&stepperA, &stepperB, &stepperC, acc1_step, acc2_step, &block_c);
+                    #endif
                     Forward_Kinematics(machine.abc,machine.xyz);
                 }
             }
@@ -195,7 +199,7 @@ void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ,
     acc2[2] = t[2]*MONITOR_FREQ;
 }
 
-void ADcc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block)
+void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block)
 {
     //if acc
     if (acc_step[0]!=0)
