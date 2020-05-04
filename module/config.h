@@ -70,6 +70,7 @@
 #define STEPPER_RES         EIGH
 
 //the speed change that does not require acceleration
+//the acceleration or deceleration can be accomplished with in one step
 #define XYZJERK 200
 
 #define ARR 8400

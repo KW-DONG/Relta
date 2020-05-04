@@ -127,48 +127,68 @@ uint8_t Block_Check(stepper_exe_t* blockX, ring_buff_t* list)
 //if dir is not same, use acc1 to decelerate
 //acc2 accelerate to the operation speed
 //if operation speed is higher than jerk speed use acc3 to do the deceleration
-void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1[3], int32_t* acc2[3])
+void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
 {
-    int32_t f_d_a[3];//acc freq difference
+    int32_t t_acc1[3];
+    int32_t t_acc2[3];
+    int32_t v_entr[3];
+    int32_t v_out[3];
 
-    if (block->dir==stepperI->dir)  f_d_a[0] = abs(stepperI->freq-block->freq[0]);
-    else                            f_d_a[0] = abs(stepperI->freq+block->freq[0]);
+    if (block->dir[0]==stepperI->dir)   v_entr[0]==stepperI->freq;
+    else                                v_entr[0]==0;
 
-    if (block->dir==stepperI->dir)  f_d_a[1] = abs(stepperJ->freq-block->freq[1]);
-    else                            f_d_a[1] = abs(stepperJ->freq+block->freq[1]);
+    if (block->dir[1]==stepperJ->dir)   v_entr[1]==stepperJ->freq;
+    else                                v_entr[1]==0;
 
-    if (block->dir==stepperI->dir)  f_d_a[0] = abs(stepperK->freq-block->freq[2]);
-    else                            f_d_a[0] = abs(stepperK->freq+block->freq[2]);
-    
+    if (block->dir[2]==stepperK->dir)   v_entr[2]==stepperK->freq;
+    else                                v_entr[2]==0;
+
+    if (block->freq[0]>JERK_FREQ)       v_out[0]==JERK_FREQ;
+    else                                v_out[0]==block->freq[0];
+
+    if (block->freq[1]>JERK_FREQ)       v_out[1]==JERK_FREQ;
+    else                                v_out[1]==block->freq[1];
+
+    if (block->freq[2]>JERK_FREQ)       v_out[2]==JERK_FREQ;
+    else                                v_out[2]==block->freq[2];
+
     //calculate distance -> s
     int32_t s[3] = {block->step[0],block->step[1],block->step[2]};
 
-    //dcc time -> t_d
-    int32_t t_d[3] = {abs(JERK_FREQ-block->freq[0])*STEPPER_RES/SQ(MAX_FREQ),
-                    abs(JERK_FREQ-block->freq[0])*STEPPER_RES/SQ(MAX_FREQ),
-                    abs(JERK_FREQ-block->freq[0])*STEPPER_RES/SQ(MAX_FREQ)};
+    //positive -> accelerate
+    //negative -> decelerate
+    int32_t t_acc2[3] = {v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
+                        v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
+                        v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ)};
 
-    //dcc distance -> s_d
-    int32_t s_d[3] = {(block->freq[0]+20)*t_d[0]/2,(block->freq[1]+20)*t_d[1]/2,(block->freq[2]+20)*t_d[2]/2};
+    //dcc distance -> s_acc2
+    int32_t s_acc2[3] = {(block->freq[0]+v_out[0])*abs(t_acc2[0])/2,
+                        (block->freq[1]+v_out[1])*abs(t_acc2[1])/2,
+                        (block->freq[2]+v_out[2])*abs(t_acc2[2])/2};
 
-    //accc time -> t_a
-    int32_t t_a[3] = {f_d_a[0]*STEPPER_RES/SQ(MAX_FREQ),f_d_a[1]*STEPPER_RES/SQ(MAX_FREQ),f_d_a[2]*STEPPER_RES/SQ(MAX_FREQ)};
+    //positive -> accelerate
+    //negative -> decelerate
+    int32_t t_acc1[3] = {(block->freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
+                        (block->freq[1]-v_entr[1])*STEPPER_RES/SQ(MAX_FREQ),
+                        (block->freq[2]-v_entr[2])*STEPPER_RES/SQ(MAX_FREQ)};
 
-    acc1[0] = t_a[0]*MONITOR_FREQ;
-    acc1[1] = t_a[1]*MONITOR_FREQ;
-    acc1[2] = t_a[2]*MONITOR_FREQ;
+    acc1[0] = t_acc1[0]*MONITOR_FREQ;
+    acc1[1] = t_acc1[1]*MONITOR_FREQ;
+    acc1[2] = t_acc1[2]*MONITOR_FREQ;
 
     //acc distance -> s_a
-    int32_t s_a[3] = {(block->freq[0]+stepperI->freq)*t_d[0]/2,(block->freq[1]+stepperJ->freq)*t_d[1]/2,(block->freq[2]+stepperK->freq)*t_d[2]/2};
+    int32_t s_acc1[3] = {(block->freq[0]+stepperI->freq)*abs(t_acc1[0])/2,
+                        (block->freq[1]+stepperJ->freq)*abs(t_acc1[1])/2,
+                        (block->freq[2]+stepperK->freq)*abs(t_acc1[2])/2};
 
     //n distance -> s_n
-    int32_t s_n[3] = {s[0]-s_a[0]-s_d[0],s[1]-s_a[1]-s_d[1],s[2]-s_a[2]-s_d[2]};
+    int32_t s_n[3] = {s[0]-s_acc1[0]-s_acc2[0],s[1]-s_acc1[1]-s_acc2[1],s[2]-s_acc1[2]-s_acc2[2]};
 
     //n time -> t_n
     int32_t t_n[3] = {s_n[0]/block->freq[0],s_n[1]/block->freq[1],s_n[2]/block->freq[2]};
 
     //dcc at t_a + t_n
-    int32_t t[3] = {t_a[0]+t_n[0],t_a[1]+t_n[1],t_a[2]+t_n[2]};
+    int32_t t[3] = {abs(t_acc1[0])+t_n[0],abs(t_acc1[1])+t_n[1],abs(t_acc1[2])+t_n[2]};
 
     acc2[0] = t[0]*MONITOR_FREQ;
     acc2[1] = t[1]*MONITOR_FREQ;
