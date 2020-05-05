@@ -121,22 +121,21 @@ void Sector_Convert(int32_t* xy_i, int32_t* xy_o, uint8_t s);
 
 /**
  * @brief convert the path from sector 1 to sector s
- * @param path  both input and output
+ * @param traj  both input and output
  * @param len   size of the path
- * @param  s    sector number
+ * @param s     sector number
  */
-void Path_Convert(int32_t* path[2], uint16_t len, uint8_t s);
+void Path_Convert(int32_t* traj[3][2], uint16_t len, uint8_t s);
 
 /**
  * @brief generate a path by cutting a full path
- * @param path_full
- * @param path_o    output
+ * @param traj_full
+ * @param traj_o    output
  * @param len_o     size of output path
  * @param x_i       start offset
  * @param x_o       finish offset
  */
-void Arc_Path_Oper(int32_t* path_full[2], int32_t* path_o[2],
-                uint16_t len_o, int32_t x_i, int32_t x_o);
+void Arc_Path_Oper(int32_t* traj_full[3][2], int32_t* traj_o[3][2], uint16_t len_o, int32_t x_i, int32_t x_o);
 
 /**
  * @brief generate full path in sector 1
@@ -144,16 +143,16 @@ void Arc_Path_Oper(int32_t* path_full[2], int32_t* path_o[2],
  * @param len   path length
  * @param r     radius
  */
-void Arc_Path_Full(int32_t* path[2], uint16_t len, uint16_t radius);
+void Arc_Path_Full(int32_t* traj[3][2], uint16_t len, uint16_t radius);
 
 /**
  * @brief generate a short path in sector 1
- * @param path
+ * @param traj
  * @param x_i   start offset
  * @param len   path length
  * @param r     radius
  */
-void Arc_Path_Part(int32_t* path[2], uint16_t x_i, uint16_t len, uint16_t radius);
+void Arc_Path_Part(int32_t* traj[3][2], uint16_t x_i, uint16_t len, uint16_t radius);
 
 /**
  * @brief add offset to the path
@@ -161,8 +160,9 @@ void Arc_Path_Part(int32_t* path[2], uint16_t x_i, uint16_t len, uint16_t radius
  * @param len   path length
  * @param x0    x offset
  * @param y0    y offset
+ * @param z0    z offset
  */
-void Path_Add_Offset(int32_t* path[2], uint16_t len ,int32_t x0, int32_t y0);
+void Path_Add_Offset(int32_t* traj[3][2], uint16_t len ,int32_t x0, int32_t y0, int32_t z0);
 
 void Auto_Home(float* xyz_c);
 
