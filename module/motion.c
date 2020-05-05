@@ -21,7 +21,6 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell)
 
     uint8_t case_path;
 
-    //xyz and xyz_v
     int32_t traj[len_traj][3][2];
 
     if (da==dx)
@@ -83,10 +82,7 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell)
     Trej_Apply(traj, len_traj, dwell,&block_list);
 }
 
-//input: dx dy dz
-//output: da db dc
-void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz,
-               int16_t* da, int16_t* db, int16_t* dc)
+void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz, int16_t* da, int16_t* db, int16_t* dc)
 {
     if (abs(dx)>=abs(dy))
     {
@@ -128,9 +124,6 @@ void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz,
     }
 }
 
-//path[0] should be first inited
-//abs(da)>abs(db)>abs(dc)
-//b->path_a, c->path_b
 void Linear_Path(int16_t* traj[3][2], int16_t da, int16_t db, int16_t dc)
 {
     uint16_t i;
@@ -685,18 +678,6 @@ void Kinematics_Planner(int32_t* traj[3][2], uint16_t len,float v_n)
     }
 }
 
-/**
- * T_out = ((arr+1)*(psc+1))/T_clk
- * T_clk = 84,000,000
- * freq = INV(T_out)
- * 0<=psc<=65535
- * 0<=arr<=65535
- * T_out_max = 50s
- * velocity in mm/s
- * velocity>0
- * 
- * psc = (T_clk*const)/(arr*v) not linear
- */
 void Velocity_Decouple(float* xyz_v, uint8_t* d_xyz, float v_n)
 {
     if (d_xyz[0]==1)
