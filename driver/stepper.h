@@ -46,7 +46,6 @@ typedef struct
     uint32_t        GPIO_Pin_X_Dir;
     GPIO_TypeDef*   GPIOX_Dir;
 
-    
     uint8_t         state;//compare
     uint8_t         pin_state;
     uint8_t         pin_state_last;

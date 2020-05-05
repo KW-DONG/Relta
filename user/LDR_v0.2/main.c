@@ -19,7 +19,10 @@ switch_t    switchB;
 switch_t    switchC;
 switch_t    stop_start_key;
 switch_t    reset_key;
+led_t       led_red;
+led_t       led_green;
 machine_t   machine;
+
 
 //buffer
 linked_list_t gcode_list;
@@ -114,12 +117,21 @@ int main()
     switchC.GPIO_PinX = GPIO_Pin_4;
     Switch_Init(&switchC);
 
+/*********************************LED*********************************/
+    led_red.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOF;
+    led_red.GPIOX = GPIOF;
+    led_red.GPIO_Pin_X = GPIO_Pin_9;
+    LED_Init(&led_red);
+
+    led_green.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOF;
+    led_green.GPIOX = GPIOF;
+    led_green.GPIO_Pin_X = GPIO_Pin_10;
+    LED_Init(&led_green);
 
     Gcode_Buff_Init(&gcode_list);
     Ring_Buff_Init(&stepper_list);
 
     //hardware init
-    LED_Init();
     Uart_Init(115200);
     
 
