@@ -10,7 +10,7 @@
 #include "gcode.h"
 #include "stepper.h"
 
-
+/******************************Hardware******************************/
 stepper_t   stepperA;
 stepper_t   stepperB;
 stepper_t   stepperC;
