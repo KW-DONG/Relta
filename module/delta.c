@@ -18,9 +18,7 @@ void Forward_Kinematics(float* abc, float* xyz)
 
     float vX[3] = {vz32[0]*INV(d),vz32[1]*INV(d),vz32[2]*INV(d)};//x axis in new coordinate
 
-    float vz31[3] = {LDR.xi[0] - LDR.xi[2],
-                LDR.yi[0] - LDR.yi[2],
-                abc[0] - abc[2]};
+    float vz31[3] = {x1 - x3,y1 - y3,abc[0] - abc[2]};
 
     float i = vz31[0]*vX[0] + vz31[1]*vX[1] + vz31[2]*vX[2];//dot product
 
@@ -57,13 +55,13 @@ void Forward_Kinematics(float* abc, float* xyz)
 void Jacobian_Matrix(float* xyz_v, float* xyz, 
                     float* abc, float* abc_v)
 {
-    abc_v[0] = ((xyz[0]-LDR.xi[0])*INV(xyz[2]-abc[0])
-             + (xyz[0]-LDR.xi[1])*INV(xyz[2]-abc[1])
-             + (xyz[0]-LDR.xi[2])*INV(xyz[2]-abc[2]))*xyz_v[0];
+    abc_v[0] = ((xyz[0]-x1)*INV(xyz[2]-abc[0])
+             + (xyz[0]-x2)*INV(xyz[2]-abc[1])
+             + (xyz[0]-x3)*INV(xyz[2]-abc[2]))*xyz_v[0];
     
-    abc_v[1] = ((xyz[1]-LDR.yi[0])*INV(xyz[2]-abc[0])
-             + (xyz[1]-LDR.yi[1])*INV(xyz[2]-abc[1])
-             + (xyz[1]-LDR.yi[2])*INV(xyz[2]-abc[2]))*xyz_v[1];
+    abc_v[1] = ((xyz[1]-y1)*INV(xyz[2]-abc[0])
+             + (xyz[1]-y2)*INV(xyz[2]-abc[1])
+             + (xyz[1]-y3)*INV(xyz[2]-abc[2]))*xyz_v[1];
 
     abc_v[2] = 3.0*xyz_v[2];
 }

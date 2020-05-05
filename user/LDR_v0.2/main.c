@@ -29,21 +29,22 @@ linked_list_t gcode_list;
 ring_buff_t block_list;
 
 //block
-stepper_exe_t block_current;
+stepper_exe_t block_c;
 
-float XYZ_C[3];
-float XYZ_T[3];
-float XYZ_Arc[3];
-float XYZ_Home[3];
-float ABC_C[3];
-float ABC_N[3];
-float DWELL;
+
 
 int main()
 {
+    static float XYZ_C[3];
+    static float XYZ_T[3];
+    static float XYZ_Arc[3];
+    static float XYZ_Home[3];
+    static float ABC_C[3];
+    static float ABC_N[3];
+    static float DWELL;
+
     delay_init(168);
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-    Delta_Init();
 
 /****************************STEPPER_MOTOR*******************************/
     //stepper_A init
