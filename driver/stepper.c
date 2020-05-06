@@ -270,8 +270,19 @@ void Stepper_Init(stepper_t* stepperX)
 	GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType 	= GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd 	= GPIO_PuPd_UP;
-	
 	GPIO_Init(stepperX->GPIOX,&GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_Dir;
+    GPIO_Init(stepperX->GPIOX_Dir,&GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_MS1;
+    GPIO_Init(stepperX->GPIOX_MS1,&GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_MS2;
+    GPIO_Init(stepperX->GPIOX_MS2,&GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_MS3;
+    GPIO_Init(stepperX->GPIOX_MS3,&GPIO_InitStructure);
 
 	//Enables the Low Speed APB (APB1) peripheral clock.
 	RCC_APB1PeriphClockCmd(stepperX->RCC_APB1Periph_TIMX, ENABLE);

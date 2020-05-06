@@ -46,6 +46,21 @@ typedef struct
     uint32_t        GPIO_Pin_X_Dir;
     GPIO_TypeDef*   GPIOX_Dir;
 
+    //A4988 MS1
+    uint32_t        RCC_AHB1Periph_GPIOX_MS1;
+    uint32_t        GPIO_Pin_X_MS1;
+    GPIO_TypeDef*   GPIOX_MS1;
+    
+    //A4988 MS2
+    uint32_t        RCC_AHB1Periph_GPIOX_MS2;
+    uint32_t        GPIO_Pin_X_MS2;
+    GPIO_TypeDef*   GPIOX_MS2;
+
+    //A4988 MS3
+    uint32_t        RCC_AHB1Periph_GPIOX_MS3;
+    uint32_t        GPIO_Pin_X_MS3;
+    GPIO_TypeDef*   GPIOX_MS3;
+
     uint8_t         state;//compare
     uint8_t         pin_state;
     uint8_t         pin_state_last;
