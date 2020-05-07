@@ -175,7 +175,7 @@ int main()
                     Arc_Motion(XYZ_T,XYZ_Arc,temp_node.radius_dwell,temp_node.feedrate,0.0);
                 }else
                 {
-                    Arc_Motion(XYZ_T,XYZ_C,temp_node.radius_dwell,temp_node.feedrate,DWELL);
+              +      Arc_Motion(XYZ_T,XYZ_C,temp_node.radius_dwell,temp_node.feedrate,DWELL);
                 }
                 
             }

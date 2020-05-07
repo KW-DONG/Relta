@@ -4,19 +4,31 @@
 #include "sys.h"
 #include "type.h"
 
+//
 
 
 /**
+ * IO Table
  * 				Set 	Dir
  * Stepper_A: 	PB11	PB3
  * Stepper_B:	PC6		PC7
  * Stepper_C:	PB6		PB5
  * 
- * Switch_A:    PC6
- * Switch_B:    PC7
+ * MS1:         PB10
+ * MS2:         PD0
+ * MS3:         PD3
+ * 
+ * Switch_A:    PC10
+ * Switch_B:    PD7
  * Switch_C:    PD6
+ * Switch_R:    PG15
+ * Switch_S:    PD2
  * 
+ * LED_G:       PF9
+ * LED_R:       PF10
  * 
+ * UART_TX:     PA9
+ * UART_RX:     PA10
  * 
  */
 

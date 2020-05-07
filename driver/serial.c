@@ -86,25 +86,21 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 			}
 		}	 
   } 
-  Gcode_Interpret();
+  Gcode_Interpret(USART_RX_BUF);
   Buff_Init();
   USART_RX_STA = 0;
   
 } 
 
 //status can be success or fail
-void Send_Feedback(uint8_t status)
+void Send_Feedback(uint8_t* data_char, uint8_t len_char)
 {
-	USART_SendData(USART1, status);         //向串口1发送数据
-	while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);//等待发送结束
-
-}
-
-//automatically report fk coordinate
-void Report_Coordinate()
-{
-	//USART_SendData(USART1, USART_RX_BUF[t]);         //向串口1发送数据
-	while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);//等待发送结束
+    uint8_t i;
+    for (i=0;i=len_char;i++)
+    {
+        USART_SendData(USART1, data_char[i]);         //向串口1发送数据
+	    while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);//等待发送结束
+    }
 }
 
 void Buff_Init()

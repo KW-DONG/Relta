@@ -1,53 +1,51 @@
 #include "gcode.h"
 #include "type.h"
 #include "config.h"
+#include <string.h>
 
 /**
  * @param cha key char such as 'X', 'Y', 'Z'
  * @brief search the specific character from serial buff and return the value
  * 
  */
-float Get_Value(uint8_t cha)
+float Get_Value(uint8_t head, uint8_t* buffer, uint8_t len)
 {
     uint8_t t;
     uint8_t i;
     uint8_t res;
-    uint8_t temp[5] = {'0','0','0','0','0'};
+    uint8_t value_char[] = "000.0";
+    uint8_t len_char = strlen(value_char);
     float result;
 
-    for (t = 0; t = USART_LEN; t++)
+    for (t = 0; t = len; t++)
     {
-        res = USART_RX_BUF[t];
-        if (res == cha)
+        if (buffer[t]==head)
         {
-            for (i = t; USART_RX_BUF[t] == 0x20; i++)
+            for (i = 0; i = len_char; i++)
             {
-                if ((i-t)<=5) temp[i-t] = USART_RX_BUF[t];
-
-                if (i == USART_LEN) return 1.0;
+                value_char[i] = buffer[t+i+1];
             }
-            result = Char_to_Float(temp, 5);
+            result = Char_to_Float(value_char, len_char);
             return result;
         }
     }
-    return 0.0;
 }
 
 //input char return float
-float Char_to_Float(uint8_t temp[], uint8_t len)
+float Char_to_Float(uint8_t* value_char, uint8_t len_char)
 {
     uint8_t i = 0;
     uint8_t t;
     float result = 0.0;
-    for (i = 0; temp[i] == '0' || i ==5; i++)
+    for (i = 0; value_char[i] == ' ' || i ==len_char; i++)
     {
-        if (temp[i] == 0x2E)
+        if (value_char[i] == '.')
         {
-            result = Ascii(temp[i+1])*INV(10);
+            result = Ascii(value_char[i+1])*INV(10);
             t = i - 1;
             do
             {
-                result = result + Ascii(temp[t])*E((float)(i-t));
+                result = result + Ascii(value_char[t])*E((float)(i-t));
                 t--;
             } while (t != 0);
             return result;
@@ -56,7 +54,7 @@ float Char_to_Float(uint8_t temp[], uint8_t len)
     t = i;
     do
     {
-        result = result + Ascii(temp[t])*E((float)(i-t));
+        result = result + Ascii(value_char[t])*E((float)(i-t));
         t--;
     } while (t != 0);
     return result;
@@ -66,26 +64,26 @@ float Ascii(uint8_t value)
 {
     switch (value)
     {
-        case 0x30: return 0.0;
-        case 0x31: return 1.0;
-        case 0x32: return 2.0;
-        case 0x33: return 3.0;
-        case 0x34: return 4.0;
-        case 0x35: return 5.0;
-        case 0x36: return 6.0;
-        case 0x37: return 7.0;
-        case 0x38: return 8.0;
-        case 0x39: return 9.0;
+        case 0x30: return 0.0f;
+        case 0x31: return 1.0f;
+        case 0x32: return 2.0f;
+        case 0x33: return 3.0f;
+        case 0x34: return 4.0f;
+        case 0x35: return 5.0f;
+        case 0x36: return 6.0f;
+        case 0x37: return 7.0f;
+        case 0x38: return 8.0f;
+        case 0x39: return 9.0f;
     }
 }
+
 
 uint8_t coor_sys = 0;
 
 //main function of gcode
-void Gcode_Interpret()
+void Gcode_Interpret(uint8_t* buffer, uint8_t len)
 {
     uint8_t t;
-	uint8_t len;
     uint8_t type = 0;
     uint8_t res;
     gcode_node_t gcode_node;
@@ -104,16 +102,12 @@ void Gcode_Interpret()
         if (t1 == 0x32 && t2 == 0x38) type = G28;
         if (t1 == 0x33 && t2 == 0x20) type = G3;
         if (t1 == 0x34 && t2 == 0x20) type = G4;
-        if (t1 == 0x35 && t2 == 0x34) type = G54;
-        if (t1 == 0x35 && t2 == 0x35) type = G55;
 	}
 	if (type == 0) Send_Feedback(FAIL);
     else
     {
         Send_Feedback(SUCCESS);
-        if (type == G54) coor_sys = 0;
-        else if (type == G55) coor_sys = 1;
-        else if (type == G4)
+        if (type == G4)
         {
             float dwell = Get_Value('P');
             if (dwell != 0.0) gcode_node.radius_dwell = dwell;
@@ -126,14 +120,14 @@ void Gcode_Interpret()
 
         }
         else{
-            gcode_node.x = Get_Value('X');
-            gcode_node.y = Get_Value('Y');
-            gcode_node.z = Get_Value('Z');
+            gcode_node.x = Get_Value('X', buffer, len);
+            gcode_node.y = Get_Value('Y', buffer, len);
+            gcode_node.z = Get_Value('Z', buffer, len);
             if (type == G2)
-            gcode_node.radius_dwell = Get_Value('R');
+            gcode_node.radius_dwell = Get_Value('R', buffer, len);
             if (type == G3)
-            gcode_node.radius_dwell = -Get_Value('R');
-            gcode_node.feedrate = Get_Value('F');
+            gcode_node.radius_dwell = -Get_Value('R', buffer, len);
+            gcode_node.feedrate = Get_Value('F', buffer, len);
         }
     }
     Gcode_Buff_Write(&GCODE_BUFF,&gcode_node);
