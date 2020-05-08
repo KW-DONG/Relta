@@ -52,7 +52,7 @@ void TIM5_IRQHandler()
             //check whether the current block is executing
             if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0&&block_c.step_dwell==0)
             {
-                block_state = Ring_Buff_Read(&block_c, &block_list);
+                block_state = Block_Buff_Read(&block_c, &block_list);
                 if(block_state==TRUE)
                 {
                     //always maximum acceleration
@@ -115,12 +115,12 @@ void Block_To_Stepper(stepper_exe_t* blockX, stepper_t* stepperI,
 }
 
 //if returns 0, the input empty block will be replaced by a new one 
-uint8_t Block_Check(stepper_exe_t* blockX, ring_buff_t* list)
+uint8_t Block_Check(stepper_exe_t* blockX, block_buff_t* list)
 {
     uint8_t block_state;
     //whether current block is compeleted
     if (blockX->step[0]==0&&blockX->step[1]==0&&blockX->step[2]==0)
-    block_state = Ring_Buff_Read(blockX, list);
+    block_state = Block_Buff_Read(blockX, list);
     if (block_state == TRUE) return 0;
     else return 1;
 }

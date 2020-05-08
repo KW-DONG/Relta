@@ -6,11 +6,11 @@
 
 extern machine_t machine;
 
-extern linked_list_t gcode_list;
+extern gcode_list_t gcode_list;
 
-extern ring_buff_t block_list;
+extern block_buff_t block_list;
 
-extern ring_buff_t;
+extern block_buff_t;
 
 typedef struct 
 {

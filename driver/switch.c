@@ -94,8 +94,8 @@ void EXTI4_IRQHandler(void)
         Gcode_Buff_Clear(&gcode_list);
         Gcode_Buff_Init(&gcode_list);
 
-        Ring_Buff_Clear(&block_list);
-        Ring_Buff_Init(&block_list);
+        Block_Buff_Clear(&block_list);
+        Block_Buff_Init(&block_list);
         
 		delay_ms(100);
 	}		 

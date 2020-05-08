@@ -31,7 +31,7 @@ enum motion_type
     home_t
 };
 
-extern linked_list_t GCODE_BUFF;
+extern gcode_list_t GCODE_BUFF;
 
 void Gcode_Interpret();
 

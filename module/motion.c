@@ -741,7 +741,7 @@ int32_t Velocity_To_Freq(float v)
 
 /**********************************Motion_Update*********************************/
 
-void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, ring_buff_t* ring_buff)
+void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, block_buff_t* ring_buff)
 {
     stepper_exe_t   block;
     int32_t d_abc[3];
@@ -779,6 +779,6 @@ void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, ring_buff_t* rin
         block.step[1] = (uint16_t)abs(d_abc[1]*STEPS_PER_UNIT);
         block.step[2] = (uint16_t)abs(d_abc[2]*STEPS_PER_UNIT);
 
-        Ring_Buff_Write(&block, ring_buff);
+        Block_Buff_Write(&block, ring_buff);
     }
 }

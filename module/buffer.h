@@ -3,22 +3,29 @@
 
 #include "config.h"
 
-void Gcode_Buff_Init(linked_list_t* GCODE_BUFFER);
+void Gcode_Buff_Init(gcode_list_t* GCODE_BUFFER);
 
-void Gcode_Buff_Write(linked_list_t* GCODE_BUFFER, gcode_node_t* gcode_node);
+void Gcode_Buff_Write(gcode_list_t* GCODE_BUFFER, gcode_node_t* gcode_node);
 
-void Gcode_Buff_Read(linked_list_t* GCODE_BUFFER, gcode_node_t* temp_node);
+void Gcode_Buff_Read(gcode_list_t* GCODE_BUFFER, gcode_node_t* temp_node);
 
-void Gcode_Buff_Remove(linked_list_t* GCODE_BUFFER);
+void Gcode_Buff_Remove(gcode_list_t* GCODE_BUFFER);
 
-void Gcode_Buff_Clear(linked_list_t* GCODE_BUFFER);
+void Gcode_Buff_Clear(gcode_list_t* GCODE_BUFFER);
 
-void Ring_Buff_Init(ring_buff_t* block);
+void Block_Buff_Init(block_buff_t* block);
 
-uint8_t Ring_Buff_Write(stepper_exe_t block, ring_buff_t* ring_buff);
+uint8_t Block_Buff_Write(stepper_exe_t block, block_buff_t* ring_buff);
 
-uint8_t Ring_Buff_Read(stepper_exe_t* block, ring_buff_t* ring_buff);
+uint8_t Block_Buff_Read(stepper_exe_t* block, block_buff_t* ring_buff);
 
-void Ring_Buff_Clear(ring_buff_t* ring_buff);
+void Block_Buff_Clear(block_buff_t* ring_buff);
 
+void Uart_Buff_Init(uart_buff_t* uart_buff);
+
+uint8_t Uart_Buff_Write(uart_buff_t* uart_buff, uint8_t content);
+
+uint8_t Uart_Buff_Read(uart_buff_t* uart_buff);
+
+void Uart_Buff_Clear(uart_buff_t* uart_buff);
 #endif

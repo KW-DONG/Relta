@@ -46,15 +46,24 @@ typedef struct
     gcode_node_t*       head;
     gcode_node_t*       tail;
     uint32_t            length;
-}linked_list_t;
+}gcode_list_t;
 
 typedef struct
 {
     uint16_t head;
     uint16_t tail;
     uint16_t length;
-    stepper_exe_t Ring_Buff[RINGBUFF_LEN];
-}ring_buff_t;
+    stepper_exe_t Block_Buff[RINGBUFF_LEN];
+}block_buff_t;
+
+typedef struct 
+{
+    uint16_t    head;
+    uint16_t    tail;
+    uint16_t    length;
+    uint8_t     Uart_Buff[100];
+}uart_buff_t;
+
 
 typedef struct 
 {

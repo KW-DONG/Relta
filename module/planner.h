@@ -5,7 +5,7 @@
 #include "delta.h"
 #include "buffer.h"
 
-extern ring_buff_t stepper_list;
+extern block_buff_t stepper_list;
 
 extern float abc_v_l;//last carriage speed
 

@@ -3,14 +3,14 @@
 
 //gcode_linked_list GCODE_BUFFER;
 
-void Gcode_Buff_Init(linked_list_t* GCODE_BUFFER)
+void Gcode_Buff_Init(gcode_list_t* GCODE_BUFFER)
 {
     GCODE_BUFFER->head = NULL;
     GCODE_BUFFER->tail = GCODE_BUFFER->head;
     GCODE_BUFFER->length = 0;
 }
 
-void Gcode_Buff_Write(linked_list_t* GCODE_BUFFER, gcode_node_t* gcode_node)
+void Gcode_Buff_Write(gcode_list_t* GCODE_BUFFER, gcode_node_t* gcode_node)
 {
     gcode_node_t *p = (gcode_node_t*)malloc(sizeof(gcode_node_t));
 
@@ -32,7 +32,7 @@ void Gcode_Buff_Write(linked_list_t* GCODE_BUFFER, gcode_node_t* gcode_node)
     }
 }
 
-void Gcode_Buff_Read(linked_list_t* GCODE_BUFFER,
+void Gcode_Buff_Read(gcode_list_t* GCODE_BUFFER,
                         gcode_node_t* temp_node)
 {
     temp_node->x = GCODE_BUFFER->head->x;
@@ -44,7 +44,7 @@ void Gcode_Buff_Read(linked_list_t* GCODE_BUFFER,
     Gcode_Buffer_Remove(GCODE_BUFFER);
 }
 
-void Gcode_Buff_Remove(linked_list_t* GCODE_BUFFER)
+void Gcode_Buff_Remove(gcode_list_t* GCODE_BUFFER)
 {
     if(GCODE_BUFFER->length == 1) Gcode_Buffer_Init(GCODE_BUFFER);
     else
@@ -57,7 +57,7 @@ void Gcode_Buff_Remove(linked_list_t* GCODE_BUFFER)
     
 }
 
-void Gcode_Buff_Clear(linked_list_t* GCODE_BUFFER)
+void Gcode_Buff_Clear(gcode_list_t* GCODE_BUFFER)
 {
     uint32_t len = GCODE_BUFFER->length;
     for (uint32_t i=0;i=len;i++)
@@ -68,37 +68,37 @@ void Gcode_Buff_Clear(linked_list_t* GCODE_BUFFER)
 
 
 //ring buffer
-void Ring_Buff_Init(ring_buff_t* block)
+void Block_Buff_Init(block_buff_t* block)
 {
     block->head = NULL;
     block->tail = NULL;
     block->length = 0;
 }
 
-uint8_t Ring_Buff_Write(stepper_exe_t block, ring_buff_t* ring_buff)
+uint8_t Block_Buff_Write(stepper_exe_t block, block_buff_t* ring_buff)
 {
     if(ring_buff->length >= RINGBUFF_LEN) return FALSE;
 
-    ring_buff->Ring_Buff[ring_buff->tail] = block;
+    ring_buff->Block_Buff[ring_buff->tail] = block;
     ring_buff->tail = (ring_buff->tail+1)%RINGBUFF_LEN;
     ring_buff->length ++;
     return TRUE;
 }
 
-uint8_t Ring_Buff_Read(stepper_exe_t* block, ring_buff_t* ring_buff)
+uint8_t Block_Buff_Read(stepper_exe_t* block, block_buff_t* ring_buff)
 {
     if(ring_buff->length == 0) return FALSE;
 
-    *block = ring_buff->Ring_Buff[ring_buff->head];
+    *block = ring_buff->Block_Buff[ring_buff->head];
     ring_buff->head = (ring_buff->head+1)%RINGBUFF_LEN;
     ring_buff->length --;
 }
 
-void Ring_Buff_Clear(ring_buff_t* ring_buff)
+void Block_Buff_Clear(block_buff_t* ring_buff)
 {
     stepper_exe_t block;
     while (ring_buff->length!=0)
     {
-        Ring_Buff_Read(&block, ring_buff);
+        Block_Buff_Read(&block, ring_buff);
     }
 }
