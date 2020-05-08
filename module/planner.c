@@ -12,39 +12,6 @@
  *      Use v_n^2 - v_i^2 = 2*a*S
  */
 
-void Velocity_Planner(int16_t* traj[3][2], uint16_t len_traj,
-                    float v_i, float v_n, float v_o)
-{
-    //if can accelerate in one block
-
-    
-
-    //calculate acceleration
-    float v_c;
-
-    
-
-    //always use maximum acceleration
-
-    for (uint16_t i=0; i=len_traj; i++)
-    {
-        //calculate distance
-        float d = sqrtf((float)(SQ(traj[i][0][0])+SQ(traj[i][1][0])+SQ(traj[i][2][0])));
-        if (v_i<v_n)    v_c = sqrtf(2.0f*MAX_ACCELERATION*d-SQ(v_i));
-        else            v_c = sqrtf(SQ(v_i)-2.0f*MAX_ACCELERATION*d);
-        
-        traj[i][0][1]
-    }
-
-
-
-
-
-
-
-}
-
-
 
 void Linear_Planner(int32_t* path[3], uint16_t len,float v_n,
                     float v_l, float dwell, float* abc_c)
@@ -201,15 +168,14 @@ void Carriage_Oper(float* abc_c, float* abc_t, float* abc_v, float dwell)
 
     block.step_dwell = dwell*MONITOR_FREQ;
 
-
-    block.psc_n[0] = Velocity_To_Psc(abc_v[0]);
-    block.psc_n[1] = Velocity_To_Psc(abc_v[1]);
-    block.psc_n[2] = Velocity_To_Psc(abc_v[2]);
+    block.freq[0] = Velocity_To_Psc(abc_v[0]);
+    block.freq[1] = Velocity_To_Psc(abc_v[1]);
+    block.freq[2] = Velocity_To_Psc(abc_v[2]);
 
     block.step[0] = (uint16_t)abs((int32_t)(d_abc[0]*STEPS_PER_UNIT));
     block.step[1] = (uint16_t)abs((int32_t)(d_abc[1]*STEPS_PER_UNIT));
     block.step[2] = (uint16_t)abs((int32_t)(d_abc[2]*STEPS_PER_UNIT));
 
-    Ring_Buff_Write(block,&stepper_list);
+    Block_Buff_Write(block,&stepper_list);
 
 }

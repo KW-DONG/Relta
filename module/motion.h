@@ -8,7 +8,7 @@
 #define CLOCKWISE       0
 #define ANTICLOCKWISE   1
 
-extern ring_buff_t block_list;
+extern block_buff_t block_list;
 
 /**
  * The trajectory includes a path which is a set of points, and the velocity of each point.
@@ -198,6 +198,6 @@ uint16_t Velocity_To_Psc(int32_t mm_per_s);
  * @param len
  * @param ring_buff
  */
-void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, ring_buff_t* ring_buff);
+void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, block_buff_t* ring_buff);
 
 #endif

@@ -86,7 +86,7 @@ extern stepper_exe_t block_c;
 
 extern machine_t machine;
 
-extern ring_buff_t block_list;
+extern block_buff_t block_list;
 
 
 //用占空比关电机
@@ -98,7 +98,7 @@ void Block_To_Stepper(stepper_exe_t* blockX, stepper_t* stepperI,stepper_t* step
 
 void Stepper_Direction();
 
-uint8_t Block_Check(stepper_exe_t* stepper_abc, ring_buff_t* list);
+uint8_t Block_Check(stepper_exe_t* stepper_abc, block_buff_t* list);
 
 void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block);
 

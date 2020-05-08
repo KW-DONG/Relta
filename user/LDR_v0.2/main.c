@@ -25,8 +25,8 @@ machine_t   machine;
 
 
 //buffer
-linked_list_t gcode_list;
-ring_buff_t block_list;
+gcode_list_t gcode_list;
+block_buff_t block_list;
 
 //block
 stepper_exe_t block_c;
@@ -130,7 +130,7 @@ int main()
     LED_Init(&led_green);
 
     Gcode_Buff_Init(&gcode_list);
-    Ring_Buff_Init(&stepper_list);
+    Block_Buff_Init(&stepper_list);
 
     //hardware init
     Uart_Init(115200);

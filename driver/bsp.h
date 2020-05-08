@@ -6,6 +6,7 @@
 #include "stm32f4xx_usart.h"
 #include "stm32f4xx_tim.h"
 #include "misc.h"
+#include "buffer.h"
 #include "type.h"
 #include "sys.h"
 
