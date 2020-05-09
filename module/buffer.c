@@ -1,16 +1,16 @@
 #include "buffer.h"
 #include "type.h"
 
-//gcode_linked_list GCODE_BUFFER;
+//gcode_linked_list gcode_buff;
 
-void Gcode_Buff_Init(gcode_list_t* GCODE_BUFFER)
+void Gcode_Buff_Init(gcode_list_t* gcode_buff)
 {
-    GCODE_BUFFER->head = NULL;
-    GCODE_BUFFER->tail = GCODE_BUFFER->head;
-    GCODE_BUFFER->length = 0;
+    gcode_buff->head = NULL;
+    gcode_buff->tail = gcode_buff->head;
+    gcode_buff->length = 0;
 }
 
-void Gcode_Buff_Write(gcode_list_t* GCODE_BUFFER, gcode_node_t* gcode_node)
+void Gcode_Buff_Write(gcode_list_t* gcode_buff, gcode_node_t* gcode_node)
 {
     gcode_node_t *p = (gcode_node_t*)malloc(sizeof(gcode_node_t));
 
@@ -21,48 +21,47 @@ void Gcode_Buff_Write(gcode_list_t* GCODE_BUFFER, gcode_node_t* gcode_node)
     p->feedrate = gcode_node->feedrate;
     p->next = NULL;
 
-    if(GCODE_BUFFER->length != 0)
+    if(gcode_buff->length != 0)
     {
-        GCODE_BUFFER->tail->next = p;
-        GCODE_BUFFER->tail = p;
+        gcode_buff->tail->next = p;
+        gcode_buff->tail = p;
     }else
     {
-        GCODE_BUFFER->head = p;
-        GCODE_BUFFER->length ++;
+        gcode_buff->head = p;
+        gcode_buff->length ++;
     }
 }
 
-void Gcode_Buff_Read(gcode_list_t* GCODE_BUFFER,
-                        gcode_node_t* temp_node)
+void Gcode_Buff_Read(gcode_list_t* gcode_buff,gcode_node_t* temp_node)
 {
-    temp_node->x = GCODE_BUFFER->head->x;
-    temp_node->y = GCODE_BUFFER->head->y;
-    temp_node->z = GCODE_BUFFER->head->z;
-    temp_node->radius_dwell = GCODE_BUFFER->head->radius_dwell;
-    temp_node->feedrate = GCODE_BUFFER->head->feedrate;
+    temp_node->x = gcode_buff->head->x;
+    temp_node->y = gcode_buff->head->y;
+    temp_node->z = gcode_buff->head->z;
+    temp_node->radius_dwell = gcode_buff->head->radius_dwell;
+    temp_node->feedrate = gcode_buff->head->feedrate;
 
-    Gcode_Buffer_Remove(GCODE_BUFFER);
+    Gcode_Buffer_Remove(gcode_buff);
 }
 
-void Gcode_Buff_Remove(gcode_list_t* GCODE_BUFFER)
+void Gcode_Buff_Remove(gcode_list_t* gcode_buff)
 {
-    if(GCODE_BUFFER->length == 1) Gcode_Buffer_Init(GCODE_BUFFER);
+    if(gcode_buff->length == 1) Gcode_Buffer_Init(gcode_buff);
     else
     {
-        gcode_node_t* new_head = GCODE_BUFFER->head->next;
-        free(GCODE_BUFFER->head);
-        GCODE_BUFFER->head = new_head;
-        GCODE_BUFFER->length --;
+        gcode_node_t* new_head = gcode_buff->head->next;
+        free(gcode_buff->head);
+        gcode_buff->head = new_head;
+        gcode_buff->length --;
     }
     
 }
 
-void Gcode_Buff_Clear(gcode_list_t* GCODE_BUFFER)
+void Gcode_Buff_Clear(gcode_list_t* gcode_buff)
 {
-    uint32_t len = GCODE_BUFFER->length;
+    uint32_t len = gcode_buff->length;
     for (uint32_t i=0;i=len;i++)
     {
-        Gcode_Buff_Remove(GCODE_BUFFER);
+        Gcode_Buff_Remove(gcode_buff);
     }
 }
 
@@ -102,3 +101,31 @@ void Block_Buff_Clear(block_buff_t* ring_buff)
         Block_Buff_Read(&block, ring_buff);
     }
 }
+
+void Uart_Buff_Init(uart_buff_t* uart_buff)
+{
+    uart_buff->head = NULL;
+    uart_buff->tail = NULL;
+    uart_buff->length = 0;
+}
+
+uint8_t Uart_Buff_Write(uart_buff_t* uart_buff, uint8_t content)
+{
+    if(uart_buff->length >= RINGBUFF_LEN) return FALSE;
+
+    uart_buff->Uart_Buff[uart_buff->head] = content;
+    uart_buff->tail = (uart_buff->tail+1)%RINGBUFF_LEN;
+    uart_buff->length ++;
+    return TRUE;
+}
+
+uint8_t Uart_Buff_Read(uart_buff_t* uart_buff)
+{
+    if(uart_buff->length == 0) return FALSE;
+    else return uart_buff->Uart_Buff[uart_buff->head];
+    uart_buff->head
+
+    uart_buff->length --;
+}
+
+void Uart_Buff_Clear(uart_buff_t* uart_buff);
