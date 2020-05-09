@@ -1,6 +1,5 @@
 #include "buffer.h"
 
-
 void Gcode_Buff_Init(gcode_list_t* gcode_buff)
 {
     gcode_buff->head = NULL;
