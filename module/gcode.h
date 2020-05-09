@@ -2,6 +2,7 @@
 #define __GCODE_H
 
 #include "config.h"
+#include "bsp.h"
 
 #define FAIL    0
 
@@ -35,7 +36,7 @@ extern gcode_list_t GCODE_BUFF;
 
 void Gcode_Interpret();
 
-float Get_Value(uint8_t len, uint8_t ch);
+float Get_Key_Word(uint8_t head, uart_buff_t* buffer);
 
 float Char_to_Float(uint8_t temp[], uint8_t len);
 

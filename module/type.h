@@ -61,7 +61,7 @@ typedef struct
     uint16_t    head;
     uint16_t    tail;
     uint16_t    length;
-    uint8_t     Uart_Buff[100];
+    uint8_t     content[100];
 }uart_buff_t;
 
 

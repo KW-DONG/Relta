@@ -109,7 +109,7 @@ uint8_t Uart_Buff_Write(uart_buff_t* uart_buff, uint8_t content)
 {
     if(uart_buff->length >= RINGBUFF_LEN) return FALSE;
 
-    uart_buff->Uart_Buff[uart_buff->head] = content;
+    uart_buff->content[uart_buff->head] = content;
     uart_buff->tail = (uart_buff->tail+1)%RINGBUFF_LEN;
     uart_buff->length ++;
     return TRUE;
@@ -118,7 +118,7 @@ uint8_t Uart_Buff_Write(uart_buff_t* uart_buff, uint8_t content)
 uint8_t Uart_Buff_Read(uart_buff_t* uart_buff)
 {
     if(uart_buff->length == 0) return FALSE;
-    else return uart_buff->Uart_Buff[uart_buff->head];
+    else return uart_buff->content[uart_buff->head];
     uart_buff->head = (uart_buff->head+1)%RINGBUFF_LEN;
 
     uart_buff->length --;

@@ -8,7 +8,7 @@
  * @brief search the specific character from serial buff and return the value
  * 
  */
-float Get_Value(uint8_t head, uint8_t* buffer, uint8_t len)
+float Get_Key_Word(uint8_t head, uart_buff_t* buffer)
 {
     uint8_t t;
     uint8_t i;
@@ -81,20 +81,17 @@ float Ascii(uint8_t value)
 uint8_t coor_sys = 0;
 
 //main function of gcode
-void Gcode_Interpret(uint8_t* buffer, uint8_t len)
+void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff)
 {
-    uint8_t t;
-    uint8_t type = 0;
-    uint8_t res;
+
+    uint8_t type=0;
     gcode_node_t gcode_node;
 
-    len=USART_RX_STA&0x3fff;
-
-    if (USART_RX_BUF[t] == 0x47)//"G"
+    if (uart_buff->content[uart_buff->head] == 'G')
 	{
 		uint8_t t1, t2;
-        t1 = USART_RX_BUF[t+1];
-        t2 = USART_RX_BUF[t+2];
+        t1 = uart_buff->content[uart_buff->head+1];
+        t2 = uart_buff->content[uart_buff->head+2];
 
         if (t1 == 0x30 && t2 == 0x20) type = G0;
         if (t1 == 0x31 && t2 == 0x20) type = G1;
@@ -103,13 +100,12 @@ void Gcode_Interpret(uint8_t* buffer, uint8_t len)
         if (t1 == 0x33 && t2 == 0x20) type = G3;
         if (t1 == 0x34 && t2 == 0x20) type = G4;
 	}
-	if (type == 0) Send_Feedback(FAIL);
+	if (type == 0) Bsp_UART_Send("fail", 5);
     else
     {
-        Send_Feedback(SUCCESS);
         if (type == G4)
         {
-            float dwell = Get_Value('P');
+            float dwell = Get_Key_Word('P',uart_buff);
             if (dwell != 0.0) gcode_node.radius_dwell = dwell;
             else gcode_node.radius_dwell = -Get_Value('S');
             gcode_node.type = dwell_t;
