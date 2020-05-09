@@ -36,7 +36,7 @@ extern gcode_list_t GCODE_BUFF;
 
 void Gcode_Interpret();
 
-float Get_Key_Word(uint8_t head, uart_buff_t* buffer);
+float Get_Key_Word(uint8_t head, uint8_t* buffer, uint8_t len);
 
 float Char_to_Float(uint8_t temp[], uint8_t len);
 

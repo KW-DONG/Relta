@@ -8,7 +8,7 @@
  * @brief search the specific character from serial buff and return the value
  * 
  */
-float Get_Key_Word(uint8_t head, uart_buff_t* buffer)
+float Get_Key_Word(uint8_t head, uint8_t* buffer, uint8_t len)
 {
     uint8_t t;
     uint8_t i;
@@ -105,7 +105,7 @@ void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff)
     {
         if (type == G4)
         {
-            float dwell = Get_Key_Word('P',uart_buff);
+            float dwell = Get_Key_Word('P',uart_buff,);
             if (dwell != 0.0) gcode_node.radius_dwell = dwell;
             else gcode_node.radius_dwell = -Get_Value('S');
             gcode_node.type = dwell_t;
