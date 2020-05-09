@@ -29,4 +29,7 @@ uint8_t Uart_Buff_Write(uart_buff_t* uart_buff, uint8_t content);
 uint8_t Uart_Buff_Read(uart_buff_t* uart_buff);
 
 void Uart_Buff_Clear(uart_buff_t* uart_buff);
+
+float Uart_Buff_Read_Num(uart_buff_t* uart_buff);
+
 #endif

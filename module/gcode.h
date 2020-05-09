@@ -19,9 +19,7 @@ enum GCODE
     G2,
     G3,
     G4,
-    G28,
-    G54,
-    G55
+    G28
 };
 
 enum motion_type
