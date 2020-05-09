@@ -6,12 +6,6 @@
 
 #define FAIL    0
 
-extern uint8_t USART_LEN;
-
-extern uint8_t USART_RX_STA;
-
-extern uint8_t* USART_RX_BUF;
-
 enum GCODE
 {
     G0 = 1,
