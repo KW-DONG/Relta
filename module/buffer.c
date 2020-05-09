@@ -1,7 +1,5 @@
 #include "buffer.h"
-#include "type.h"
 
-//gcode_linked_list gcode_buff;
 
 void Gcode_Buff_Init(gcode_list_t* gcode_buff)
 {
@@ -65,8 +63,6 @@ void Gcode_Buff_Clear(gcode_list_t* gcode_buff)
     }
 }
 
-
-//ring buffer
 void Block_Buff_Init(block_buff_t* block)
 {
     block->head = NULL;
@@ -123,9 +119,15 @@ uint8_t Uart_Buff_Read(uart_buff_t* uart_buff)
 {
     if(uart_buff->length == 0) return FALSE;
     else return uart_buff->Uart_Buff[uart_buff->head];
-    uart_buff->head
+    uart_buff->head = (uart_buff->head+1)%RINGBUFF_LEN;
 
     uart_buff->length --;
 }
 
-void Uart_Buff_Clear(uart_buff_t* uart_buff);
+void Uart_Buff_Clear(uart_buff_t* uart_buff)
+{
+    while (uart_buff->length!=0)
+    {
+        Uart_Buff_Read(uart_buff);
+    }
+}

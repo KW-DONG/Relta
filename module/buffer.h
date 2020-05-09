@@ -2,6 +2,7 @@
 #define __BUFFER_H
 
 #include "config.h"
+#include "type.h"
 
 void Gcode_Buff_Init(gcode_list_t* gcode_buff);
 

@@ -247,19 +247,6 @@ void Bsp_UART_Send(uint8_t* content, uint8_t len)
     }
 }
 
-void Bsp_UART_Receive(uart_buff_t* buffer)
-{
-    Block_Buff_Write(buffer, )
-}
-
-
-
-
-
-void USART1_IRQHandler(void)                	//串口1中断服务程序
-{
-	
-} 
 
 
 
