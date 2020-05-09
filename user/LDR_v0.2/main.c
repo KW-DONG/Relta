@@ -1,8 +1,6 @@
 #include "sys.h"
 #include "delay.h"
-#include "led.h"
 #include "config.h"
-#include "planner.h"
 #include "switch.h"
 #include "motion.h"
 #include "type.h"
@@ -131,7 +129,7 @@ int main()
     LED_Init(&led_green);
 
     Gcode_Buff_Init(&gcode_list);
-    Block_Buff_Init(&stepper_list);
+    Block_Buff_Init(&block_list);
 
     //hardware init
     Uart_Init(115200);
