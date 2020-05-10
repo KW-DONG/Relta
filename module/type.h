@@ -1,6 +1,7 @@
 #ifndef __TYPE_H
 #define __TYPE_H
 #include <math.h>
+#include <stdint.h>
 
 #undef  SQ(x)
 #define SQ(x)   ((x)*(x))
