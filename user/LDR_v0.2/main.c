@@ -5,7 +5,7 @@
 #include "type.h"
 #include "buffer.h"
 #include "gcode.h"
-#include "stepper.h"
+#include "planner.h"
 #include "bsp.h"
 
 /******************************Hardware******************************/
@@ -227,7 +227,7 @@ void USART1_IRQHandler(void)
 
 }
 
-//monitor
+//monitor planner
 void TIM5_IRQHandler()
 {
         if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)

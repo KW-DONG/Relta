@@ -20,7 +20,6 @@ float Ascii(uint8_t value)
     }
 }
 
-//main function of gcode
 void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff)
 {
 
@@ -52,6 +51,5 @@ void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff)
     }
     if (type==G3)   gcode_node.radius_dwell = -gcode_node.radius_dwell;
     Gcode_Buff_Write(&gcode_list,&gcode_node);
-
 }
 

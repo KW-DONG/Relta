@@ -16,21 +16,17 @@ enum GCODE
     G28
 };
 
-enum motion_type
-{
-    linear_t = 0,
-    arc_t,
-    dwell_t,
-    home_t
-};
+/**
+ * @brief read uart buff and write gcode list
+ * @param gcode_list
+ * @param uart_buff
+ */
+void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff);
 
-extern gcode_list_t GCODE_BUFF;
-
-void Gcode_Interpret();
-
-float Get_Key_Word(uint8_t head, uint8_t* buffer, uint8_t len);
-
-float Char_to_Float(uint8_t temp[], uint8_t len);
-
+/**
+ * @brief char -> float
+ * @param value
+ * @return float
+ */
 float Ascii(uint8_t value);
 #endif
