@@ -4,7 +4,6 @@
             "name": "Win32",
             "includePath": [
                 "D:\\CodeStorage\\Relta\\core",
-                "D:\\CodeStorage\\Relta\\driver",
                 "D:\\CodeStorage\\Relta\\module",
                 "D:\\CodeStorage\\Relta\\library\\std\\inc",
                 "D:\\CodeStorage\\Relta\\user\\LDR_v0.2",

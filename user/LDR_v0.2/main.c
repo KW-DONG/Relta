@@ -25,6 +25,7 @@ machine_t   machine;
 //buffer
 gcode_list_t gcode_list;
 block_buff_t block_list;
+uart_buff_t  uart_buff;
 
 //block
 stepper_exe_t block_c;
@@ -224,7 +225,15 @@ int main()
 
 void USART1_IRQHandler(void)
 {
-
+    uint8_t res;
+    if (USART_GetITStatus(USART1, USART_IT_RXNE)!=RESET)
+    {
+        USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+        res = USART_ReceiveData(USART1);
+        Uart_Buff_Write(&uart_buff,res);
+        if (res==13)    Gcode_Interpret(&gcode_list,&uart_buff);
+        
+    }
 }
 
 //monitor planner
