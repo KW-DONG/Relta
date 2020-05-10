@@ -199,4 +199,6 @@ uint16_t Velocity_To_Psc(int32_t mm_per_s);
  */
 void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, block_buff_t* ring_buff);
 
+void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
+
 #endif

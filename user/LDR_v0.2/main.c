@@ -228,7 +228,7 @@ void TIM5_IRQHandler()
         static int32_t acc1_step[3];//head
         static int32_t acc2_step[3];//tail
         #endif
-        //motion_check(&machine, &stepperA, &stepperB, &stepperC);
+        Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
         if (block_c.step[0]==0) stepperA.state==STOP;
         if (block_c.step[1]==0) stepperB.state==STOP;
@@ -282,8 +282,11 @@ void EXTI0_IRQHandler(void)
 {
 	delay_ms(10);
     machine.abc[0] = CARRIAGE_A_RESET;
-    if (stepperA.dir==1)    block_c.step[0] = 0;
-    
+    if (stepperA.dir==1)
+    {
+        block_c.step[0] = 0;
+        stepperA.dir = 0;
+    }
     EXTI_ClearITPendingBit(EXTI_Line0);
 }
 
@@ -292,7 +295,11 @@ void EXTI1_IRQHandler(void)
 {
     delay_ms(10);
     machine.abc[1] = CARRIAGE_B_RESET;
-    if (stepperB.dir==1)    block_c.step[1] = 0;
+    if (stepperB.dir==1)
+    {
+        block_c.step[1] = 0;
+        stepperB.dir = 0;
+    }
     EXTI_ClearITPendingBit(EXTI_Line1);
 }
 
@@ -301,7 +308,11 @@ void EXTI2_IRQHandler(void)
 {
     delay_ms(10);
     machine.abc[2] = CARRIAGE_C_RESET;
-    if (stepperC.dir==1)    block_c.step[2] = 0;
+    if (stepperC.dir==1)
+    {
+        block_c.step[2] = 0;
+        stepperC.dir = 0;
+    }
     EXTI_ClearITPendingBit(EXTI_Line2);
 }
 
