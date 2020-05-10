@@ -780,34 +780,34 @@ void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, 
     if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==1)
     {
         stepperI->dir==0;
-        stepperI->state==STOP;
+        stepperI->state==stepper_OFF;
         Bsp_UART_Send("STEPPER_A_FAIL",15);
     }
     if (machine->abc[1]==CARRIAGE_B_RESET&&stepperJ->dir==1)
     {
         stepperJ->dir==0;
-        stepperJ->state==STOP;
+        stepperJ->state==stepper_OFF;
         Bsp_UART_Send("STEPPER_B_FAIL",15);
     }
     if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==1)
     {
         stepperK->dir==0;
-        stepperK->state==STOP;
+        stepperK->state==stepper_OFF;
         Bsp_UART_Send("STEPPER_C_FAIL",15);
     }
 
     //check boundary
     if (machine->xyz[0]>=90.0f||machine->xyz[0]<=-90.0f)
     {
-        machine->state = OFF;
+        machine->state = machine_OFF;
         Bsp_UART_Send("END_X_FAIL",11);
     }else if (machine->xyz[1]>=90.0f||machine->xyz[1]<=-90.0f)
     {
-        machine->state = OFF;
+        machine->state = machine_OFF;
         Bsp_UART_Send("END_Y_FAIL",11);
     }else if (machine->xyz[2]<=0.1f)
     {
-        machine->state = OFF;
+        machine->state = machine_OFF;
         Bsp_UART_Send("END_Z_FAIL",11);
     }
 

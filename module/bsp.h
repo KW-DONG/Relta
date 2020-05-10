@@ -13,8 +13,11 @@
 
 /******************************STEPPER***********************************/
 
-#define START   1
-#define STOP    0
+enum stepper_state
+{
+    stepper_ON,
+    stepper_OFF
+};
 
 typedef struct
 {

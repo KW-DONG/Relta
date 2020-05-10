@@ -85,10 +85,10 @@ typedef struct
 
 enum machine_state
 {
-    ON,
-    OFF,
-    RESET,
-    ERROR
+    machine_ON,
+    machine_OFF,
+    machine_RESET,
+    machine_ERROR
 };
 
 enum compile_mode

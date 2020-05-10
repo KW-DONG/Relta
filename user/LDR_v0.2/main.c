@@ -53,7 +53,7 @@ int main()
     stepperA.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOB;
     stepperA.GPIO_Pin_X_Dir = GPIO_Pin_3;
     stepperA.GPIOX_Dir = GPIOB;
-    Stepper_Init(&stepperA);
+    Bsp_Stepper_Init(&stepperA);
 
     //stepper_B init
     stepperB.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
@@ -66,7 +66,7 @@ int main()
     stepperB.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOC;
     stepperB.GPIO_Pin_X_Dir = GPIO_Pin_7;
     stepperB.GPIOX_Dir = GPIOC;
-    Stepper_Init(&stepperB);
+    Bsp_Stepper_Init(&stepperB);
 
     //stepper_C init
     stepperC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
@@ -79,7 +79,7 @@ int main()
     stepperC.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOC;
     stepperC.GPIO_Pin_X_Dir = GPIO_Pin_7;
     stepperC.GPIOX_Dir = GPIOC;
-    Stepper_Init(&stepperC);
+    Bsp_Stepper_Init(&stepperC);
 
 /*******************************SWITCH_KEY*******************************/
     //stop_start_key
@@ -234,7 +234,7 @@ void TIM5_IRQHandler()
         if (block_c.step[1]==0) stepperB.state==STOP;
         if (block_c.step[2]==0) stepperC.state==STOP;
 
-        if (machine.state==ON)
+        if (machine.state==machine_ON)
         {
             //check whether the current block is executing
             if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0&&block_c.step_dwell==0)
@@ -320,7 +320,7 @@ void EXTI2_IRQHandler(void)
 void EXTI3_IRQHandler(void)
 {
     delay_ms(10);
-	machine.state = OFF;
+	machine.state = machine_OFF;
     machine.xyz_v[0] = 0.0f;
     machine.xyz_v[1] = 0.0f;
     machine.xyz_v[2] = 0.0f;
@@ -343,8 +343,8 @@ void EXTI3_IRQHandler(void)
 void EXTI4_IRQHandler(void)
 {
     delay_ms(10);
-	if (machine.state != ON) machine.state = ON;
-    else machine.state = OFF;
+	if (machine.state != machine_ON) machine.state = machine_ON;
+    else machine.state = machine_OFF;
 	delay_ms(100);
 		 
 	EXTI_ClearITPendingBit(EXTI_Line4);
