@@ -20,11 +20,21 @@
 
 #define ACC     SQ(MAX_FREQ)/(STEPPER_RES*MONITOR_FREQ)
 
+/**
+ * @brief generate the acceleration and deceleration plan
+ * @param block
+ * @param stepperI
+ * @param stepperJ
+ * @param stepperK
+ * @param acc1  steps need to accelerate from init speed to operation speed
+ * @param acc2  steps need to decelerate from opeation speed to jerk speed
+ * @note if the operation speed is lower than the jerk speed, acc2 will not be planned
+ */
+void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2);
+
 void Dwell_Step_Update(stepper_exe_t* stepper_abc);
 
 uint8_t Block_Check(stepper_exe_t* stepper_abc, block_buff_t* list);
-
-void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2);
 
 void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block);
 
