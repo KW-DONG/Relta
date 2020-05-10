@@ -84,25 +84,25 @@ void Bsp_Stepper_Update(stepper_t* stepperX)
     //update stepper state
     if (stepperX->PWM_Ch==1)
     {
-        if (stepperX->state==START)
+        if (stepperX->state==stepper_ON)
         TIM_SetCompare1(stepperX->TIMX, stepperX->arr/2);
         else
         TIM_SetCompare1(stepperX->TIMX,0);
     }else if (stepperX->PWM_Ch==2)
     {
-        if (stepperX->state==START)
+        if (stepperX->state==stepper_ON)
         TIM_SetCompare2(stepperX->TIMX, stepperX->arr/2);
         else
         TIM_SetCompare2(stepperX->TIMX,0);
     }else if (stepperX->PWM_Ch==3)
     {
-        if (stepperX->state==START)
+        if (stepperX->state==stepper_ON)
         TIM_SetCompare3(stepperX->TIMX, stepperX->arr/2);
         else
         TIM_SetCompare3(stepperX->TIMX,0);
     }else
     {
-        if (stepperX->state==START)
+        if (stepperX->state==stepper_ON)
         TIM_SetCompare4(stepperX->TIMX, stepperX->arr/2);
         else
         TIM_SetCompare4(stepperX->TIMX,0);

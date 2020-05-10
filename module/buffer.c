@@ -1,4 +1,5 @@
 #include "buffer.h"
+#include "stdlib.h"
 
 void Gcode_Buff_Init(gcode_list_t* gcode_buff)
 {
