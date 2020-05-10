@@ -1,11 +1,6 @@
-#ifndef __STEPPER_H
-#define __STEPPER_H
+#ifndef __PLANNER_H
+#define __PLANNER_H
 
-#include "stm32f4xx_rcc.h"
-#include "stm32f4xx_gpio.h"
-#include "stm32f4xx_tim.h"
-#include "misc.h"
-#include "stm32f4xx.h"
 #include "type.h"
 #include "config.h"
 #include "bsp.h"
