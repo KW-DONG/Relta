@@ -3,33 +3,7 @@
 #include "delta.h"
 #include "motion.h"
 
-//main function of the stepper monitor
-//dwell before work
 
-void Dwell_Step_Update(stepper_exe_t* stepper_abc)
-{
-    if (stepper_abc->step_dwell!=0)
-    stepper_abc->step_dwell--;
-}
-
-
-//if returns 0, the input empty block will be replaced by a new one 
-uint8_t Block_Check(stepper_exe_t* blockX, block_buff_t* list)
-{
-    uint8_t block_state;
-    //whether current block is compeleted
-    if (blockX->step[0]==0&&blockX->step[1]==0&&blockX->step[2]==0)
-    block_state = Block_Buff_Read(blockX, list);
-    if (block_state == TRUE) return 0;
-    else return 1;
-}
-
-//use when a new block is read
-//find the frequency difference
-//workout the amount of freq need to be added in each term 
-//if dir is not same, use acc1 to decelerate
-//acc2 accelerate to the operation speed
-//if operation speed is higher than jerk speed use acc3 to do the deceleration
 void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
 {
     int32_t t_acc1[3];
@@ -96,6 +70,22 @@ void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ,
     acc2[0] = t[0]*MONITOR_FREQ;
     acc2[1] = t[1]*MONITOR_FREQ;
     acc2[2] = t[2]*MONITOR_FREQ;
+}
+
+void Dwell_Step_Update(stepper_exe_t* stepperX)
+{
+    if (stepperX->step_dwell!=0)
+    stepperX->step_dwell--;
+}
+
+uint8_t Block_Check(stepper_exe_t* blockX, block_buff_t* list)
+{
+    uint8_t block_state;
+    //whether current block is compeleted
+    if (blockX->step[0]==0&&blockX->step[1]==0&&blockX->step[2]==0)
+    block_state = Block_Buff_Read(blockX, list);
+    if (block_state == TRUE) return 0;
+    else return 1;
 }
 
 void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block)
