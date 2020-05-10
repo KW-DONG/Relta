@@ -49,14 +49,6 @@ typedef struct
     uint32_t            length;
 }gcode_list_t;
 
-typedef struct
-{
-    uint16_t head;
-    uint16_t tail;
-    uint16_t length;
-    block_t Block_Buff[RINGBUFF_LEN];
-}block_buff_t;
-
 typedef struct 
 {
     uint16_t    head;
@@ -73,6 +65,14 @@ typedef struct
     uint16_t    step[3];
     uint32_t    step_dwell;//calculated with monitor frequency
 }block_t;
+
+typedef struct
+{
+    uint16_t head;
+    uint16_t tail;
+    uint16_t length;
+    block_t Block_Buff[RINGBUFF_LEN];
+}block_buff_t;
 
 typedef struct 
 {
