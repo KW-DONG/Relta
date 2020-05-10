@@ -79,7 +79,7 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell)
 
     Kinematics_Planner(traj, len_traj, velocity);
 
-    Trej_Apply(traj, len_traj, dwell,&block_list);
+    Trej_Apply(traj, len_traj, dwell,&block_buff);
 }
 
 void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz, int16_t* da, int16_t* db, int16_t* dc)
@@ -263,7 +263,7 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
         Kinematics_Planner(traj_p, len_part, velocity);
 
         //write buffer
-        Trej_Apply(traj_p, len_part, dwell, &block_list);
+        Trej_Apply(traj_p, len_part, dwell, &block_buff);
 
     }else
     //case 2: have to calculate  head and tail individually
@@ -356,9 +356,9 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
             Kinematics_Planner(traj_body, len_body, velocity);
             Kinematics_Planner(traj_tail, len_tail, velocity);
 
-            Trej_Apply(traj_head, len_head, 0.0, &block_list);
-            Trej_Apply(traj_body, len_body, 0.0, &block_list);
-            Trej_Apply(traj_tail, len_tail, dwell, &block_list);
+            Trej_Apply(traj_head, len_head, 0.0, &block_buff);
+            Trej_Apply(traj_body, len_body, 0.0, &block_buff);
+            Trej_Apply(traj_tail, len_tail, dwell, &block_buff);
 
         }else//the path includes a head and a tail
         {
@@ -372,8 +372,8 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
             Kinematics_Planner(traj_head, len_head, velocity);
             Kinematics_Planner(traj_tail, len_tail, velocity);
 
-            Trej_Apply(traj_head, len_head, 0.0, &block_list);
-            Trej_Apply(traj_tail, len_tail, dwell, &block_list);
+            Trej_Apply(traj_head, len_head, 0.0, &block_buff);
+            Trej_Apply(traj_tail, len_tail, dwell, &block_buff);
         }
     }
 }
@@ -615,15 +615,6 @@ void Path_Add_Offset(int32_t* traj[3][2], uint16_t len ,int32_t x0, int32_t y0, 
     }
 }
 
-void Auto_Home(float* xyz_c)
-{
-    float xyz_t[3];
-    xyz_t[0] = 0.0;
-    xyz_t[1] = 0.0;
-    xyz_t[2] = 50.0;
-    Linear_Motion(xyz_t,xyz_c,10,0);
-}
-
 /*******************************Kinematics_Planning******************************/
 
 //traj must include the init point
@@ -743,7 +734,7 @@ int32_t Velocity_To_Freq(float v)
 
 void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, block_buff_t* ring_buff)
 {
-    stepper_exe_t   block;
+    block_t   block;
     int32_t d_abc[3];
     int32_t abc_l[3];
     int32_t abc_n[3];
@@ -782,3 +773,12 @@ void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, block_buff_t* ri
         Block_Buff_Write(&block, ring_buff);
     }
 }
+
+void Motion_Check(machine_t* machine, stepper_t* stepperI, block_t* stepperJ)
+{
+
+}
+
+
+
+

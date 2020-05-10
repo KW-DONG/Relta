@@ -54,7 +54,7 @@ typedef struct
     uint16_t head;
     uint16_t tail;
     uint16_t length;
-    stepper_exe_t Block_Buff[RINGBUFF_LEN];
+    block_t Block_Buff[RINGBUFF_LEN];
 }block_buff_t;
 
 typedef struct 
@@ -72,7 +72,7 @@ typedef struct
     int32_t    freq[3];//pps
     uint16_t    step[3];
     uint32_t    step_dwell;//calculated with monitor frequency
-}stepper_exe_t;
+}block_t;
 
 typedef struct 
 {

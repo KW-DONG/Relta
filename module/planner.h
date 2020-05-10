@@ -31,14 +31,14 @@
  * @note if the operation speed is lower than the jerk speed, acc2 will not be planned
  *      use this function when a new block is read
  */
-void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2);
+void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2);
 
 /**
  * @brief count dwell steps
  * @param stepperX
  * @note dwell before execute the stepper
  */
-void Dwell_Step_Update(stepper_exe_t* stepperX);
+void Dwell_Step_Update(block_t* stepperX);
 
 /**
  * @brief check whether the current block is executed
@@ -47,7 +47,7 @@ void Dwell_Step_Update(stepper_exe_t* stepperX);
  * @return 0 if the current block is executed
  *         1 if the current block is executing
  */
-uint8_t Block_Check(stepper_exe_t* stepperX, block_buff_t* list);
+uint8_t Block_Check(block_t* stepperX, block_buff_t* list);
 
 /**
  * @brief count the acceleration / deceleration steps
@@ -58,7 +58,7 @@ uint8_t Block_Check(stepper_exe_t* stepperX, block_buff_t* list);
  * @param dcc_step
  * @param block
  */
-void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block);
+void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, block_t* block);
 
 /**
  * @brief count the steps (distance) that each stepper has executed
@@ -68,6 +68,6 @@ void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int3
  * @param stepperK
  * @note by detecting rising edge
  */
-void Stepper_Cnt(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
+void Stepper_Cnt(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
 
 #endif

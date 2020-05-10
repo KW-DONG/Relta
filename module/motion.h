@@ -1,6 +1,7 @@
 #ifndef __MOTION_H
 #define __MOTION_H
 #include "config.h"
+#include "bsp.h"
 
 #define PLUS    0
 #define MINUS   1
@@ -8,7 +9,7 @@
 #define CLOCKWISE       0
 #define ANTICLOCKWISE   1
 
-extern block_buff_t block_list;
+extern block_buff_t block_buff;
 
 /**
  * The trajectory includes a path which is a set of points, and the velocity of each point.
@@ -163,8 +164,6 @@ void Arc_Path_Part(int32_t* traj[3][2], uint16_t x_i, uint16_t len, uint16_t rad
  * @param z0    z offset
  */
 void Path_Add_Offset(int32_t* traj[3][2], uint16_t len ,int32_t x0, int32_t y0, int32_t z0);
-
-void Auto_Home(float* xyz_c);
 
 /*******************************Kinematics_Planning******************************/
 

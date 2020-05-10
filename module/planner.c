@@ -3,7 +3,7 @@
 #include "delta.h"
 #include "motion.h"
 
-void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
+void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
 {
     int32_t t_acc1[3];
     int32_t t_acc2[3];
@@ -71,13 +71,13 @@ void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ,
     acc2[2] = t[2]*MONITOR_FREQ;
 }
 
-void Dwell_Step_Update(stepper_exe_t* stepperX)
+void Dwell_Step_Update(block_t* stepperX)
 {
     if (stepperX->step_dwell!=0)
     stepperX->step_dwell--;
 }
 
-uint8_t Block_Check(stepper_exe_t* blockX, block_buff_t* list)
+uint8_t Block_Check(block_t* blockX, block_buff_t* list)
 {
     uint8_t block_state;
     //whether current block is compeleted
@@ -87,7 +87,7 @@ uint8_t Block_Check(stepper_exe_t* blockX, block_buff_t* list)
     else return 1;
 }
 
-void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, stepper_exe_t* block)
+void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, block_t* block)
 {
     //if acc
     if (acc_step[0]!=0)
@@ -133,7 +133,7 @@ void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int3
     }
 }
 
-void Stepper_Cnt(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
+void Stepper_Cnt(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
 {
     if (stepperI->pin_state_last==0&&stepperI->pin_state==1)    block->step[0]--;
     if (stepperJ->pin_state_last==0&&stepperJ->pin_state==1)    block->step[1]--;

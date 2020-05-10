@@ -21,26 +21,22 @@ led_t       led_red;
 led_t       led_green;
 machine_t   machine;
 
-
 //buffer
 gcode_list_t gcode_list;
-block_buff_t block_list;
+block_buff_t block_buff;
 uart_buff_t  uart_buff;
 
 //block
-stepper_exe_t block_c;
-
-
+block_t block_c;
 
 int main()
 {
     static float XYZ_C[3];
     static float XYZ_T[3];
     static float XYZ_Arc[3];
-    static float XYZ_Home[3];
-    static float ABC_C[3];
-    static float ABC_N[3];
-    static float DWELL;
+    const float XYZ_Home[3] = {0.0f,0.0f,50.0f};
+    const float XYZ_R[3] = {0.0f,0.0f,300.0f};
+    static float dwell;
 
     delay_init(168);
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -159,24 +155,17 @@ int main()
     LED_Init(&led_green);
 
     Gcode_Buff_Init(&gcode_list);
-    Block_Buff_Init(&block_list);
+    Block_Buff_Init(&block_buff);
 
     //hardware init
     Uart_Init(115200);
-    
-
-    XYZ_Home[0] = 0.0f;
-    XYZ_Home[1] = 0.0f;
-    XYZ_Home[2] = 50.0f;
 
     gcode_node_t temp_node;
     uint32_t len;
 
     while (1)
     {
-        #if EXECUTE_MACHINE
-        #if USE_GCODE_COMMAND
-        while(gcode_list.length != 0&&block_list.length<100)
+        while(gcode_list.length != 0&&block_buff.length<100)
         {
             Gcode_Buff_Read(&gcode_list, &temp_node);
             XYZ_T[0] = temp_node.x;
@@ -186,13 +175,9 @@ int main()
             if (temp_node.type == home_t)
             {
                 Linear_Motion(XYZ_Home,XYZ_C,10.0,10.0);
-                Auto_Home();
-            }
-            if (temp_node.type == linear_t)
-            {
-                Linear_Motion(XYZ_T,XYZ_C,temp_node.feedrate,DWELL);
-            }
-            if (temp_node.type == arc_t)
+                Linear_Motion(XYZ_R,XYZ_Home,10.0,10.0);
+            }else if (temp_node.type == linear_t)   Linear_Motion(XYZ_T,XYZ_C,temp_node.feedrate,dwell);
+            else if (temp_node.type == arc_t)
             {
                 //arc
                 if (XYZ_T[2]!=XYZ_C[2])
@@ -200,25 +185,22 @@ int main()
                     XYZ_Arc[0] = XYZ_C[0];
                     XYZ_Arc[1] = XYZ_C[1];
                     XYZ_Arc[2] = XYZ_T[2];
-                    Linear_Motion(XYZ_Arc,XYZ_C,temp_node.feedrate,DWELL);
+                    Linear_Motion(XYZ_Arc,XYZ_C,temp_node.feedrate,dwell);
                     Arc_Motion(XYZ_T,XYZ_Arc,temp_node.radius_dwell,temp_node.feedrate,0.0);
                 }else
                 {
-              +      Arc_Motion(XYZ_T,XYZ_C,temp_node.radius_dwell,temp_node.feedrate,DWELL);
+                    Arc_Motion(XYZ_T,XYZ_C,temp_node.radius_dwell,temp_node.feedrate,dwell);
                 }
                 
             }
             if (temp_node.type == dwell_t)
             {
-                //dwell
-                DWELL = temp_node.radius_dwell;
+                dwell = temp_node.radius_dwell;
             }
             XYZ_C[0] = XYZ_T[0];
             XYZ_C[1] = XYZ_T[1];
             XYZ_C[2] = XYZ_T[2];
         }
-        #endif
-        #endif
     }
     
 }
@@ -232,40 +214,21 @@ void USART1_IRQHandler(void)
         res = USART_ReceiveData(USART1);
         Uart_Buff_Write(&uart_buff,res);
         if (res==13)    Gcode_Interpret(&gcode_list,&uart_buff);
-        
+
     }
 }
 
 //monitor planner
 void TIM5_IRQHandler()
 {
-        if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
+    if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
         static uint8_t block_state;
         #if USE_PLANNER
         static int32_t acc1_step[3];//head
         static int32_t acc2_step[3];//tail
         #endif
-
-        //if the switch is touched the motor stop
-        Switch_Read_State(&switchA);
-        Switch_Read_State(&switchB);
-        Switch_Read_State(&switchC);
-        if (switchA.state == 0)
-        {
-            block_c.step[0] = 0;
-            machine.abc[0] = CARRIAGE_A_RESET;//tower A reset point
-        }
-        if (switchB.state == 0)
-        {
-            block_c.step[1] = 0;
-            machine.abc[1] = CARRIAGE_B_RESET;
-        }
-        if (switchC.state == 0)
-        {
-            block_c.step[2] = 0;
-            machine.abc[2] = CARRIAGE_C_RESET;
-        }
+        //motion_check(&machine, &stepperA, &stepperB, &stepperC);
 
         if (block_c.step[0]==0) stepperA.state==STOP;
         if (block_c.step[1]==0) stepperB.state==STOP;
@@ -276,7 +239,7 @@ void TIM5_IRQHandler()
             //check whether the current block is executing
             if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0&&block_c.step_dwell==0)
             {
-                block_state = Block_Buff_Read(&block_c, &block_list);
+                block_state = Block_Buff_Read(&block_c, &block_buff);
                 if(block_state==TRUE)
                 {
                     //always maximum acceleration
@@ -300,8 +263,6 @@ void TIM5_IRQHandler()
                 else
                 {
                     Stepper_Cnt(&block_c, &stepperA, &stepperB, &stepperC);
-                    //Psc_Update(&block_c, &stepperA, &stepperB, &stepperC);
-                    
                     #if USE_PLANNER
                     Acc_Cnt(&stepperA, &stepperB, &stepperC, acc1_step, acc2_step, &block_c);
                     #endif
@@ -320,7 +281,9 @@ void TIM5_IRQHandler()
 void EXTI0_IRQHandler(void)
 {
 	delay_ms(10);
-    machine.xyz[0] = CARRIAGE_A_RESET;
+    machine.abc[0] = CARRIAGE_A_RESET;
+    if (stepperA.dir==1)    block_c.step[0] = 0;
+    
     EXTI_ClearITPendingBit(EXTI_Line0);
 }
 
@@ -328,7 +291,8 @@ void EXTI0_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
     delay_ms(10);
-    machine.xyz[1] = CARRIAGE_B_RESET;
+    machine.abc[1] = CARRIAGE_B_RESET;
+    if (stepperB.dir==1)    block_c.step[1] = 0;
     EXTI_ClearITPendingBit(EXTI_Line1);
 }
 
@@ -336,7 +300,8 @@ void EXTI1_IRQHandler(void)
 void EXTI2_IRQHandler(void)
 {
     delay_ms(10);
-    machine.xyz[2] = CARRIAGE_C_RESET;
+    machine.abc[2] = CARRIAGE_C_RESET;
+    if (stepperC.dir==1)    block_c.step[2] = 0;
     EXTI_ClearITPendingBit(EXTI_Line2);
 }
 
@@ -355,8 +320,8 @@ void EXTI3_IRQHandler(void)
     Gcode_Buff_Clear(&gcode_list);
     Gcode_Buff_Init(&gcode_list);
 
-    Block_Buff_Clear(&block_list);
-    Block_Buff_Init(&block_list);
+    Block_Buff_Clear(&block_buff);
+    Block_Buff_Init(&block_buff);
         
 	delay_ms(100);
 		 

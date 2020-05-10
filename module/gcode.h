@@ -16,6 +16,15 @@ enum GCODE
     G28
 };
 
+enum Motion_Type
+{
+    home_t = 0,
+    linear_t,
+    arc_t,
+    dwell_t
+};
+
+
 /**
  * @brief read uart buff and write gcode list
  * @param gcode_list
