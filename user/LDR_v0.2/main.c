@@ -290,6 +290,21 @@ void EXTI0_IRQHandler(void)
 	 EXTI_ClearITPendingBit(EXTI_Line0);
 }
 
+void EXTI1_IRQHandler(void)
+{
+
+}
+
+void EXTI2_IRQHandler(void)
+{
+
+}
+
+void EXTI3_IRQHandler(void)
+{
+    
+}
+
 void EXTI4_IRQHandler(void)
 {
 	delay_ms(10);

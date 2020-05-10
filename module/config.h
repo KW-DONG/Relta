@@ -18,11 +18,11 @@
  * MS2:         PD0
  * MS3:         PD3
  * 
- * Switch_A:    PC10
- * Switch_B:    PD7
- * Switch_C:    PD6
- * Switch_R:    PG15
- * Switch_S:    PD2
+ * Switch_A:    PE0
+ * Switch_B:    PE1
+ * Switch_C:    PE2
+ * Switch_R:    PE3
+ * Switch_S:    PD4
  * 
  * LED_G:       PF9
  * LED_R:       PF10
