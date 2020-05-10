@@ -3,7 +3,6 @@
 #include "delta.h"
 #include "motion.h"
 
-
 void Acc_Planner(stepper_exe_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
 {
     int32_t t_acc1[3];
