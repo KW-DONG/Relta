@@ -1,6 +1,5 @@
 #include "stepper.h"
 #include "buffer.h"
-#include "switch.h"
 #include "delta.h"
 #include "motion.h"
 

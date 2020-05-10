@@ -1,7 +1,6 @@
 #include "sys.h"
 #include "delay.h"
 #include "config.h"
-#include "switch.h"
 #include "motion.h"
 #include "type.h"
 #include "buffer.h"
@@ -87,35 +86,65 @@ int main()
 
 /*******************************SWITCH_KEY*******************************/
     //stop_start_key
-    stop_start_key.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOA;
-    stop_start_key.GPIOX = GPIOA;
-    stop_start_key.GPIO_PinX = GPIO_Pin_0;
-    Switch_Init(&stop_start_key);
-
-    //reset key
     stop_start_key.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOE;
     stop_start_key.GPIOX = GPIOE;
-    stop_start_key.GPIO_PinX = GPIO_Pin_4;
-    Switch_Init(&stop_start_key);
-    Switch_EXTI_Init();
+    stop_start_key.GPIO_PinX = GPIO_Pin_0;
+    stop_start_key.EXTI_LineX = EXTI_Line0;
+    stop_start_key.EXTI_PinSourceX = EXTI_PinSource0;
+    stop_start_key.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
+    stop_start_key.EXTIX_IRQn = EXTI0_IRQn;
+    stop_start_key.mode = NC;
+    stop_start_key.NVIC_PP = 1;
+    stop_start_key.NVIC_SP = 1;
+    Bsp_Switch_Init(&stop_start_key);
+
+    //reset key
+    reset_key.EXTI_LineX = EXTI_Line3;
+    reset_key.EXTI_PinSourceX = EXTI_PinSource3;
+    reset_key.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
+    reset_key.EXTIX_IRQn = EXTI3_IRQn;
+    reset_key.GPIO_PinX = GPIO_Pin_3;
+    reset_key.GPIOX = GPIOE;
+    reset_key.mode = NC;
+    reset_key.NVIC_PP = 1;
+    reset_key.NVIC_SP = 1;
+    Bsp_Switch_Init(&reset_key);
 
     //switch A
-    switchA.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOE;
+    switchA.EXTI_LineX = EXTI_Line0;
+    switchA.EXTI_PinSourceX = EXTI_PinSource0;
+    switchA.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
+    switchA.EXTIX_IRQn = EXTI0_IRQn;
+    switchA.GPIO_PinX = GPIO_Pin_0;
     switchA.GPIOX = GPIOE;
-    switchA.GPIO_PinX = GPIO_Pin_4;
-    Switch_Init(&switchA);
+    switchA.mode = NC;
+    switchA.NVIC_PP = 1;
+    switchA.NVIC_SP = 1;
+    Bsp_Switch_Init(&switchA);
 
     //switch B
-    switchB.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOE;
+    switchB.EXTI_LineX = EXTI_Line1;
+    switchB.EXTI_PinSourceX = EXTI_PinSource1;
+    switchB.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
+    switchB.EXTIX_IRQn = EXTI1_IRQn;
+    switchB.GPIO_PinX = GPIO_Pin_1;
     switchB.GPIOX = GPIOE;
-    switchB.GPIO_PinX = GPIO_Pin_4;
-    Switch_Init(&switchB);
+    switchB.mode = NC;
+    switchB.NVIC_PP = 1;
+    switchB.NVIC_SP = 1;
+    Bsp_Switch_Init(&switchB);
 
     //switch C
-    switchC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOE;
+    switchC.EXTI_LineX = EXTI_Line2;
+    switchC.EXTI_PinSourceX = EXTI_PinSource2;
+    switchC.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
+    switchC.EXTIX_IRQn = EXTI2_IRQn;
+    switchC.GPIO_PinX = GPIO_Pin_2;
     switchC.GPIOX = GPIOE;
-    switchC.GPIO_PinX = GPIO_Pin_4;
-    Switch_Init(&switchC);
+    switchC.mode = NC;
+    switchC.NVIC_PP = 1;
+    switchC.NVIC_SP = 1;
+    Bsp_Switch_Init(&switchC);
 
 /*********************************LED*********************************/
     led_red.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOF;
@@ -278,53 +307,61 @@ void TIM5_IRQHandler()
     TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
 }
 
-
+//switch A
 void EXTI0_IRQHandler(void)
 {
 	delay_ms(10);
-	{
-		if (machine.state != ON) machine.state = ON;
-        else machine.state = OFF;
-		delay_ms(100);
-	}		 
-	 EXTI_ClearITPendingBit(EXTI_Line0);
+    machine.xyz[0] = CARRIAGE_A_RESET;
+    EXTI_ClearITPendingBit(EXTI_Line0);
 }
 
+//switch B
 void EXTI1_IRQHandler(void)
 {
-
+    delay_ms(10);
+    machine.xyz[1] = CARRIAGE_B_RESET;
+    EXTI_ClearITPendingBit(EXTI_Line1);
 }
 
+//switch C
 void EXTI2_IRQHandler(void)
 {
-
+    delay_ms(10);
+    machine.xyz[2] = CARRIAGE_C_RESET;
+    EXTI_ClearITPendingBit(EXTI_Line2);
 }
 
+//switch R
 void EXTI3_IRQHandler(void)
 {
-    
+    delay_ms(10);
+	machine.state = OFF;
+    machine.xyz_v[0] = 0.0f;
+    machine.xyz_v[1] = 0.0f;
+    machine.xyz_v[2] = 0.0f;
+    stepperA.state = STOP;
+    stepperB.state = STOP;
+    stepperC.state = STOP;
+
+    Gcode_Buff_Clear(&gcode_list);
+    Gcode_Buff_Init(&gcode_list);
+
+    Block_Buff_Clear(&block_list);
+    Block_Buff_Init(&block_list);
+        
+	delay_ms(100);
+		 
+	EXTI_ClearITPendingBit(EXTI_Line3);
 }
 
+//switch S
 void EXTI4_IRQHandler(void)
 {
-	delay_ms(10);
-	{
-		machine.state = OFF;
-        machine.xyz_v[0] = 0.0f;
-        machine.xyz_v[1] = 0.0f;
-        machine.xyz_v[2] = 0.0f;
-        stepperA.state = STOP;
-        stepperB.state = STOP;
-        stepperC.state = STOP;
-
-        Gcode_Buff_Clear(&gcode_list);
-        Gcode_Buff_Init(&gcode_list);
-
-        Block_Buff_Clear(&block_list);
-        Block_Buff_Init(&block_list);
-        
-		delay_ms(100);
-	}		 
+    delay_ms(10);
+	if (machine.state != ON) machine.state = ON;
+    else machine.state = OFF;
+	delay_ms(100);
+		 
 	EXTI_ClearITPendingBit(EXTI_Line4);
 }
 
