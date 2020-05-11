@@ -1,5 +1,6 @@
 #include "buffer.h"
 #include "stdlib.h"
+#include "gcode.h"
 
 void Gcode_Buff_Init(gcode_list_t* gcode_buff)
 {
@@ -38,12 +39,12 @@ void Gcode_Buff_Read(gcode_list_t* gcode_buff,gcode_node_t* temp_node)
     temp_node->radius_dwell = gcode_buff->head->radius_dwell;
     temp_node->feedrate = gcode_buff->head->feedrate;
 
-    Gcode_Buffer_Remove(gcode_buff);
+    Gcode_Buff_Remove(gcode_buff);
 }
 
 void Gcode_Buff_Remove(gcode_list_t* gcode_buff)
 {
-    if(gcode_buff->length == 1) Gcode_Buffer_Init(gcode_buff);
+    if(gcode_buff->length == 1) Gcode_Buff_Init(gcode_buff);
     else
     {
         gcode_node_t* new_head = gcode_buff->head->next;

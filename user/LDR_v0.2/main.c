@@ -8,6 +8,7 @@
 #include "planner.h"
 #include "bsp.h"
 #include "stm32f4xx.h"
+#include "delta.h"
 
 /******************************Hardware******************************/
 stepper_t   stepperA;

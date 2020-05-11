@@ -3,6 +3,8 @@
 #include "stdint.h"
 #include "type.h"
 #include "config.h"
+#include "delta.h"
+#include "buffer.h"
 
 //target coordinate and current coordinate
 //unit 0.1mm

@@ -38,19 +38,11 @@ compiling sys.c...
 compiling misc.c...
 compiling bsp.c...
 compiling buffer.c...
-..\module\buffer.c(41): warning:  #223-D: function "Gcode_Buffer_Remove" declared implicitly
-      Gcode_Buffer_Remove(gcode_buff);
-..\module\buffer.c(46): warning:  #223-D: function "Gcode_Buffer_Init" declared implicitly
-      if(gcode_buff->length == 1) Gcode_Buffer_Init(gcode_buff);
-..\module\buffer.c(83): warning:  #550-D: parameter "block" was set but never used
+..\module\buffer.c(84): warning:  #550-D: parameter "block" was set but never used
   uint8_t Block_Buff_Read(block_t* block, block_buff_t* ring_buff)
-..\module\buffer.c(150): warning:  #174-D: expression has no effect
+..\module\buffer.c(151): warning:  #174-D: expression has no effect
       for (cha;cha<='0'||cha>='9';cha = Uart_Buff_Read(uart_buff))
-..\module\buffer.c(152): warning:  #223-D: function "Ascii" declared implicitly
-          result = result*10.0f+Ascii(cha);
-..\module\buffer.c(159): warning:  #223-D: function "Ascii" declared implicitly
-              result = result + Ascii(cha)*E(i);
-..\module\buffer.c: 6 warnings, 0 errors
+..\module\buffer.c: 2 warnings, 0 errors
 compiling delta.c...
 compiling gcode.c...
 ..\module\gcode.c(22): warning:  #940-D: missing return statement at end of non-void function "Ascii"
@@ -59,36 +51,22 @@ compiling gcode.c...
       for(key;key==0x0d||uart_buff->length==0;key=Uart_Buff_Read(uart_buff))
 ..\module\gcode.c: 2 warnings, 0 errors
 compiling motion.c...
-..\module\motion.c(638): warning:  #223-D: function "Inverse_Kinematics" declared implicitly
-      Inverse_Kinematics(xyz_l, abc_n);
-..\module\motion.c(657): warning:  #223-D: function "Jacobian_Matrix" declared implicitly
-          Jacobian_Matrix(xyz_v,xyz_n,abc_n,abc_v);
-..\module\motion.c(774): warning:  #223-D: function "Block_Buff_Write" declared implicitly
-          Block_Buff_Write(&block, ring_buff);
-..\module\motion.c: 3 warnings, 0 errors
 compiling planner.c...
 ..\module\planner.c(41): warning:  #223-D: function "abs" declared implicitly
       int32_t s_acc2[3] = {(block->freq[0]+v_out[0])*abs(t_acc2[0])/2,
 ..\module\planner.c: 1 warning, 0 errors
 compiling main.c...
-..\user\LDR_v0.2\main.c(276): warning:  #223-D: function "Forward_Kinematics" declared implicitly
-                      Forward_Kinematics(machine.abc,machine.xyz);
-..\user\LDR_v0.2\main.c: 1 warning, 0 errors
 compiling stm32f4xx_it.c...
 compiling system_stm32f4xx.c...
 linking...
-.\Objects\Relta.axf: Error: L6218E: Undefined symbol Gcode_Buffer_Init (referred from buffer.o).
-.\Objects\Relta.axf: Error: L6218E: Undefined symbol Gcode_Buffer_Remove (referred from buffer.o).
-Not enough information to list image symbols.
-Finished: 1 information, 0 warning and 2 error messages.
-".\Objects\Relta.axf" - 2 Error(s), 13 Warning(s).
+Program Size: Code=18232 RO-data=800 RW-data=28 ZI-data=3092  
+".\Objects\Relta.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   D:\CodeStorage\Relta\mdk\RTE
   C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Target not created.
 </pre>
 </body>
 </html>
