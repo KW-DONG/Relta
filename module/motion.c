@@ -1,6 +1,8 @@
 #include "motion.h"
 #include "stdlib.h"
 #include "stdint.h"
+#include "type.h"
+#include "config.h"
 
 //target coordinate and current coordinate
 //unit 0.1mm
