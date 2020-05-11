@@ -31,11 +31,11 @@ block_t block_c;
 
 int main()
 {
-    static float XYZ_C[3];
-    static float XYZ_T[3];
-    static float XYZ_Arc[3];
-    const float XYZ_Home[3] = {0.0f,0.0f,50.0f};
-    const float XYZ_R[3] = {0.0f,0.0f,300.0f};
+    float XYZ_C[3];
+    float XYZ_T[3];
+    float XYZ_Arc[3];
+    float XYZ_Home[3] = {0.0f,0.0f,50.0f};
+    float XYZ_R[3] = {0.0f,0.0f,300.0f};
     static float dwell;
 
     delay_init(168);

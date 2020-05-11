@@ -34,7 +34,7 @@ void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepp
 
     //positive -> accelerate
     //negative -> decelerate
-    int32_t t_acc2[3] = {v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
+    t_acc2[3] = {v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
                         v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
                         v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ)};
 
@@ -45,7 +45,7 @@ void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepp
 
     //positive -> accelerate
     //negative -> decelerate
-    int32_t t_acc1[3] = {(block->freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
+    t_acc1[3] = {(block->freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
                         (block->freq[1]-v_entr[1])*STEPPER_RES/SQ(MAX_FREQ),
                         (block->freq[2]-v_entr[2])*STEPPER_RES/SQ(MAX_FREQ)};
 
