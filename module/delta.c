@@ -26,7 +26,7 @@ void Forward_Kinematics(float* abc, float* xyz)
 
     float vj[3] = {vz31[0]-vi[0],vz31[1]-vi[1],vz31[2]-vi[2]};
 
-    float j = sqrtf(SQ(vj[0])+SQ(vj[1])+SQ(vj[3]));
+    float j = sqrtf(SQ(vj[0])+SQ(vj[1])+SQ(vj[2]));
 
     float vY[3] = {vj[0]*INV(j), vj[1]*INV(j), vj[2]*INV(j)};
 
@@ -34,8 +34,8 @@ void Forward_Kinematics(float* abc, float* xyz)
                 vX[2]*vY[0]-vX[0]*vY[2],
                 vX[0]*vY[1]-vX[1]*vY[0]};//cross product
     
-    float xe = d*0.5;
-    float ye = (SQ(xe))+SQ(xe-i)+SQ(j)*INV(2.0*j);
+    float xe = d*0.5f;
+    float ye = (SQ(xe))+SQ(xe-i)+SQ(j)*INV(2.0f*j);
     float ze = sqrtf(SQ(xe)+SQ(ye)+SQ(R));
 
     float vxe_N[3] = {xe*vX[0],xe*vX[1],xe*vX[2]};
@@ -63,5 +63,5 @@ void Jacobian_Matrix(float* xyz_v, float* xyz,
              + (xyz[1]-y2)*INV(xyz[2]-abc[1])
              + (xyz[1]-y3)*INV(xyz[2]-abc[2]))*xyz_v[1];
 
-    abc_v[2] = 3.0*xyz_v[2];
+    abc_v[2] = 3.0f*xyz_v[2];
 }

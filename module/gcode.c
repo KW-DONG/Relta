@@ -1,6 +1,7 @@
 #include "gcode.h"
 #include "type.h"
 #include "config.h"
+#include "buffer.h"
 #include <string.h>
 
 float Ascii(uint8_t value)
@@ -50,6 +51,6 @@ void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff)
         else if (key=='F')  gcode_node.feedrate = Uart_Buff_Read_Num(uart_buff);
     }
     if (type==G3)   gcode_node.radius_dwell = -gcode_node.radius_dwell;
-    Gcode_Buff_Write(&gcode_list,&gcode_node);
+    Gcode_Buff_Write(gcode_list,&gcode_node);
 }
 

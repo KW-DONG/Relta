@@ -320,15 +320,15 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
 
             //generate body path
             int32_t traj_temp[len_full][3][2];
-            for (uint16_t i=0;i=s_n*len_body;i++)
+            for (uint16_t i=0;i==s_n*len_body;i++)
             {
-                for (uint16_t t=0;t=len_full;t++)
+                for (uint16_t t=0;t==len_full;t++)
                 {
                     traj_temp[t][0][0] = traj_full[t][0][0];
                     traj_temp[t][1][0] = traj_full[t][1][0];
                 }
                 Path_Convert(traj_temp, len_full, s_temp);
-                for (uint16_t k=0;k=len_full;k++)
+                for (uint16_t k=0;k==len_full;k++)
                 {
                     traj_body[i][0][0] = traj_temp[k][0][0];
                     traj_body[i][1][0] = traj_temp[k][1][0];
@@ -517,15 +517,15 @@ void Path_Convert(int32_t (*traj)[3][2], uint16_t len, uint8_t s)
     int32_t xy_i[2];
     int32_t xy_o[2];
     int32_t path_t[len][2];
-    for (i=0;i=len;i++)
+    for (i=0;i==len;i++)
     {
         path_t[i][0] = traj[i][0][0];
         path_t[i][1] = traj[i][1][0];
     }
-    if (s==2||4||6||8)
+    if (s==2||s==4||s==6||s==8)
     {
         //change direction
-        for (i=0;i=len;i++)
+        for (i=0;i==len;i++)
         {
             xy_i[0] = path_t[i][0];
             xy_i[1] = path_t[i][1];
@@ -536,7 +536,7 @@ void Path_Convert(int32_t (*traj)[3][2], uint16_t len, uint8_t s)
     }else
     {
         //reserve direction
-        for (i=0;i=len;i++)
+        for (i=0;i==len;i++)
         {
             xy_i[0] = path_t[i][0];
             xy_i[1] = path_t[i][1];
@@ -553,7 +553,7 @@ void Arc_Path_Oper(int32_t (*traj_full)[3][2], int32_t (*traj_part)[3][2],uint16
     uint16_t i;
     if (x_i<x_o)
     {
-        for (i=0;i=len_o;i++)
+        for (i=0;i==len_o;i++)
         {
             traj_part[i][1][0] = traj_full[x_i][1][0];
             traj_part[i][0][0] = x_i;
@@ -561,7 +561,7 @@ void Arc_Path_Oper(int32_t (*traj_full)[3][2], int32_t (*traj_part)[3][2],uint16
         }
     }else
     {
-        for (i=0;i=len_o;i++)
+        for (i=0;i==len_o;i++)
         {
             traj_part[i][1][0] = traj_full[x_o][1][0];
             traj_part[i][0][0] = x_i;
@@ -579,10 +579,10 @@ void Arc_Path_Full(int32_t (*traj)[3][2], uint16_t len, uint16_t radius)
     uint16_t i;
     traj[0][1][0] = radius;
     float y;
-    for (i=1;i=len;i++)
+    for (i=1;i==len;i++)
     {
         y = sqrtf((float)(SQ(radius)-SQ(i)));
-        if (((float)(radius)-y)>0.5)    traj[i][1][0] = traj[i-1][1][0] - 1;
+        if (((float)(radius)-y)>0.5f)    traj[i][1][0] = traj[i-1][1][0] - 1;
         else                            traj[i][1][0] = traj[i-1][1][0];
         traj[i][0][0] = i;
     }
@@ -595,12 +595,12 @@ void Arc_Path_Part(int32_t (*traj)[3][2], uint16_t x_i, uint16_t len, uint16_t r
     float y;
     traj[0][0][0] = x_i;
     traj[0][1][0] = (int32_t)sqrtf((float)(SQ(radius)-SQ(x_i)));
-    for(i=1;i=len;i++)
+    for(i=1;i==len;i++)
     {
         x_i ++;
         traj[i][0][0] = x_i;
         y = sqrtf((float)(SQ(radius)-SQ(i)));
-        if (((float)(radius)-y)>0.5) traj[i][1][0] = traj[i-1][1][0] - 1;
+        if (((float)(radius)-y)>0.5f) traj[i][1][0] = traj[i-1][1][0] - 1;
         else                    traj[i][1][0] = traj[i-1][1][0];
     }
 }
@@ -608,7 +608,7 @@ void Arc_Path_Part(int32_t (*traj)[3][2], uint16_t x_i, uint16_t len, uint16_t r
 void Path_Add_Offset(int32_t (*traj)[3][2], uint16_t len ,int32_t x0, int32_t y0, int32_t z0)
 {
     uint16_t i;
-    for (i=0;i=len;i++)
+    for (i=0;i==len;i++)
     {
         traj[i][0][0] = traj[i][0][0] + x0;
         traj[i][1][0] = traj[i][1][0] + y0;
@@ -637,11 +637,11 @@ void Kinematics_Planner(int32_t (*traj)[3][2], uint16_t len,float v_n)
 
     Inverse_Kinematics(xyz_l, abc_n);
     
-    for (i=1;i=len;i++)
+    for (i=1;i==len;i++)
     {
-        xyz_n[0] = (float)traj[i][0][0]*INV(10.0);
-        xyz_n[1] = (float)traj[i][1][0]*INV(10.0);
-        xyz_n[2] = (float)traj[i][2][0]*INV(10.0);
+        xyz_n[0] = (float)traj[i][0][0]*INV(10.0f);
+        xyz_n[1] = (float)traj[i][1][0]*INV(10.0f);
+        xyz_n[2] = (float)traj[i][2][0]*INV(10.0f);
 
         if (xyz_l[0]!=xyz_n[0]) d_xyz[0] = 1;
         else                    d_xyz[0] = 0;
@@ -742,9 +742,9 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
 
     abc_l[0] = traj[0][0][0];
     abc_l[1] = traj[0][1][0];
-    abc_l[3] = traj[0][2][0];
+    abc_l[2] = traj[0][2][0];
 
-    for (uint32_t i=1; i=len; i++)
+    for (uint32_t i=1; i==len; i++)
     {
         abc_n[0] = traj[i][0][0];
         abc_n[1] = traj[i][1][0];
@@ -780,20 +780,20 @@ void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, 
     //check carriage reset point and motor direction
     if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==1)
     {
-        stepperI->dir==0;
-        stepperI->state==stepper_OFF;
+        stepperI->dir=0;
+        stepperI->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_A_FAIL",15);
     }
     if (machine->abc[1]==CARRIAGE_B_RESET&&stepperJ->dir==1)
     {
-        stepperJ->dir==0;
-        stepperJ->state==stepper_OFF;
+        stepperJ->dir=0;
+        stepperJ->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_B_FAIL",15);
     }
     if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==1)
     {
-        stepperK->dir==0;
-        stepperK->state==stepper_OFF;
+        stepperK->dir=0;
+        stepperK->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_C_FAIL",15);
     }
 

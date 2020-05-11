@@ -240,7 +240,7 @@ void Bsp_UART_Init(uint32_t bound)
 void Bsp_UART_Send(uint8_t* content, uint8_t len)
 {
     uint8_t i;
-    for (i=0;i=len;i++)
+    for (i=0;i==len;i++)
     {
         USART_SendData(USART1, content[i]);
         while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);

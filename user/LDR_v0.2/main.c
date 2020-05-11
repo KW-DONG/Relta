@@ -7,6 +7,7 @@
 #include "gcode.h"
 #include "planner.h"
 #include "bsp.h"
+#include "stm32f4xx.h"
 
 /******************************Hardware******************************/
 stepper_t   stepperA;
@@ -20,6 +21,7 @@ switch_t    reset_key;
 led_t       led_red;
 led_t       led_green;
 machine_t   machine;
+monitor_t   monitor;
 
 //buffer
 gcode_list_t gcode_list;
@@ -49,7 +51,7 @@ int main()
     stepperA.GPIO_PinSourceX = GPIO_PinSource11;
     stepperA.GPIOX = GPIOA;
     stepperA.TIMX = TIM5;
-
+    stepperA.arr = TIM_ARR;
     stepperA.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOB;
     stepperA.GPIO_Pin_X_Dir = GPIO_Pin_3;
     stepperA.GPIOX_Dir = GPIOB;
@@ -62,7 +64,7 @@ int main()
     stepperB.GPIO_PinSourceX = GPIO_PinSource11;
     stepperB.GPIOX = GPIOC;
     stepperB.TIMX = TIM6;
-
+    stepperB.arr = TIM_ARR;
     stepperB.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOC;
     stepperB.GPIO_Pin_X_Dir = GPIO_Pin_7;
     stepperB.GPIOX_Dir = GPIOC;
@@ -75,7 +77,7 @@ int main()
     stepperC.GPIO_PinSourceX = GPIO_PinSource11;
     stepperC.GPIOX = GPIOC;
     stepperC.TIMX = TIM6;
-
+    stepperC.arr = TIM_ARR;
     stepperC.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOC;
     stepperC.GPIO_Pin_X_Dir = GPIO_Pin_7;
     stepperC.GPIOX_Dir = GPIOC;
@@ -147,21 +149,28 @@ int main()
     led_red.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOF;
     led_red.GPIOX = GPIOF;
     led_red.GPIO_Pin_X = GPIO_Pin_9;
-    LED_Init(&led_red);
+    Bsp_LED_Init(&led_red);
 
     led_green.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOF;
     led_green.GPIOX = GPIOF;
     led_green.GPIO_Pin_X = GPIO_Pin_10;
-    LED_Init(&led_green);
+    Bsp_LED_Init(&led_green);
 
+/*********************************MONITOR*****************************/
+    monitor.arr = TIM_ARR;
+    monitor.psc = MONITOR_PSC;
+    monitor.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM5;
+    monitor.TIMX = TIM5;
+    monitor.TIMX_IRQn = TIM5_IRQn;
+    Bsp_Monitor_Init(&monitor);
+    
     Gcode_Buff_Init(&gcode_list);
     Block_Buff_Init(&block_buff);
 
     //hardware init
-    Uart_Init(115200);
+    Bsp_UART_Init(115200);
 
     gcode_node_t temp_node;
-    uint32_t len;
 
     while (1)
     {
@@ -230,9 +239,9 @@ void TIM5_IRQHandler()
         
         Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
-        if (block_c.step[0]==0) stepperA.state==STOP;
-        if (block_c.step[1]==0) stepperB.state==STOP;
-        if (block_c.step[2]==0) stepperC.state==STOP;
+        if (block_c.step[0]==0) stepperA.state=STOP;
+        if (block_c.step[1]==0) stepperB.state=STOP;
+        if (block_c.step[2]==0) stepperC.state=STOP;
 
         if (machine.state==machine_ON)
         {

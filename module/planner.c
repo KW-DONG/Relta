@@ -3,29 +3,30 @@
 #include "delta.h"
 #include "motion.h"
 #include "config.h"
+#include <math.h>
 
 void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
 {
     int32_t v_entr[3];
     int32_t v_out[3];
 
-    if (block->dir[0]==stepperI->dir)   v_entr[0]==stepperI->freq;
-    else                                v_entr[0]==0;
+    if (block->dir[0]==stepperI->dir)   v_entr[0]=stepperI->freq;
+    else                                v_entr[0]=0;
 
-    if (block->dir[1]==stepperJ->dir)   v_entr[1]==stepperJ->freq;
-    else                                v_entr[1]==0;
+    if (block->dir[1]==stepperJ->dir)   v_entr[1]=stepperJ->freq;
+    else                                v_entr[1]=0;
 
-    if (block->dir[2]==stepperK->dir)   v_entr[2]==stepperK->freq;
-    else                                v_entr[2]==0;
+    if (block->dir[2]==stepperK->dir)   v_entr[2]=stepperK->freq;
+    else                                v_entr[2]=0;
 
-    if (block->freq[0]>JERK_FREQ)       v_out[0]==JERK_FREQ;
-    else                                v_out[0]==block->freq[0];
+    if (block->freq[0]>JERK_FREQ)       v_out[0]=JERK_FREQ;
+    else                                v_out[0]=block->freq[0];
 
-    if (block->freq[1]>JERK_FREQ)       v_out[1]==JERK_FREQ;
-    else                                v_out[1]==block->freq[1];
+    if (block->freq[1]>JERK_FREQ)       v_out[1]=JERK_FREQ;
+    else                                v_out[1]=block->freq[1];
 
-    if (block->freq[2]>JERK_FREQ)       v_out[2]==JERK_FREQ;
-    else                                v_out[2]==block->freq[2];
+    if (block->freq[2]>JERK_FREQ)       v_out[2]=JERK_FREQ;
+    else                                v_out[2]=block->freq[2];
 
     //calculate distance -> s
     int32_t s[3] = {block->step[0],block->step[1],block->step[2]};

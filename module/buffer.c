@@ -57,7 +57,7 @@ void Gcode_Buff_Remove(gcode_list_t* gcode_buff)
 void Gcode_Buff_Clear(gcode_list_t* gcode_buff)
 {
     uint32_t len = gcode_buff->length;
-    for (uint32_t i=0;i=len;i++)
+    for (uint32_t i=0;i==len;i++)
     {
         Gcode_Buff_Remove(gcode_buff);
     }
@@ -87,6 +87,7 @@ uint8_t Block_Buff_Read(block_t* block, block_buff_t* ring_buff)
     block = ring_buff->Block_Buff[ring_buff->head];
     ring_buff->head = (ring_buff->head+1)%RINGBUFF_LEN;
     ring_buff->length --;
+	return TRUE;
 }
 
 void Block_Buff_Clear(block_buff_t* ring_buff)
@@ -118,10 +119,12 @@ uint8_t Uart_Buff_Write(uart_buff_t* uart_buff, uint8_t content)
 uint8_t Uart_Buff_Read(uart_buff_t* uart_buff)
 {
     if(uart_buff->length == 0) return FALSE;
-    else return uart_buff->content[uart_buff->head];
-    uart_buff->head = (uart_buff->head+1)%RINGBUFF_LEN;
-
-    uart_buff->length --;
+    else
+	{
+		uart_buff->head = (uart_buff->head+1)%RINGBUFF_LEN;
+		uart_buff->length --;
+		return uart_buff->content[uart_buff->head];
+	}
 }
 
 void Uart_Buff_Clear(uart_buff_t* uart_buff)
@@ -148,7 +151,7 @@ float Uart_Buff_Read_Num(uart_buff_t* uart_buff)
     {
         result = result*10.0f+Ascii(cha);
     }
-    if (cha = '.')
+    if (cha == '.')
     {
         cha = Uart_Buff_Read(uart_buff);
         for (float i = -1.0f;cha<='0'||cha>='9';cha = Uart_Buff_Read(uart_buff))

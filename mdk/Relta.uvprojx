@@ -478,6 +478,11 @@
               <FileType>1</FileType>
               <FilePath>..\library\atom\sys\sys.c</FilePath>
             </File>
+            <File>
+              <FileName>misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\library\std\src\misc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

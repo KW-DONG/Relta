@@ -84,7 +84,7 @@
 //the acceleration or deceleration can be accomplished with in one step
 #define XYZJERK 200
 
-#define ARR 8400
+#define TIM_ARR 8400
 
 #define MONITOR_FREQ 200
 
