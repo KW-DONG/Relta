@@ -2,6 +2,7 @@
 #include "buffer.h"
 #include "delta.h"
 #include "motion.h"
+#include "config.h"
 
 void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
 {

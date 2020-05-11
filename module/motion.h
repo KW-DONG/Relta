@@ -1,6 +1,6 @@
 #ifndef __MOTION_H
 #define __MOTION_H
-#include "config.h"
+#include "type.h"
 #include "bsp.h"
 
 #define PLUS    0
@@ -8,8 +8,6 @@
 
 #define CLOCKWISE       0
 #define ANTICLOCKWISE   1
-
-extern block_buff_t block_buff;
 
 /**
  * The trajectory includes a path which is a set of points, and the velocity of each point.

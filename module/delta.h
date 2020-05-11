@@ -1,6 +1,5 @@
 #ifndef __DELTA_H
 #define __DELTA_H
-#include "config.h"
 
 /**
  * @brief Inverse Kinematics Convert

@@ -25,7 +25,8 @@ D:\CodeStorage\Relta\mdk\Relta.uvprojx
 Project File Date:  05/11/2020
 
 <h2>Output:</h2>
-Build target 'RELTA'
+Rebuild target 'RELTA'
+assembling startup_stm32f40_41xxx.s...
 compiling delay.c...
 compiling stm32f4xx_exti.c...
 compiling stm32f4xx_gpio.c...
@@ -35,79 +36,49 @@ compiling stm32f4xx_tim.c...
 compiling stm32f4xx_usart.c...
 compiling sys.c...
 compiling bsp.c...
-..\module\type.h(6): warning:  #14-D: extra text after expected end of preprocessing directive
-  #undef  SQ(x)
-..\module\type.h(102): warning:  #1-D: last line of file ends without a newline
+..\module\bsp.h(145): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\config.h(127): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\buffer.h(35): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(147): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.c(87): error:  #20: identifier "START" is undefined
-          if (stepperX->state==START)
-..\module\bsp.c(93): error:  #20: identifier "START" is undefined
-          if (stepperX->state==START)
-..\module\bsp.c(99): error:  #20: identifier "START" is undefined
-          if (stepperX->state==START)
-..\module\bsp.c(105): error:  #20: identifier "START" is undefined
-          if (stepperX->state==START)
 ..\module\bsp.c(243): warning:  #1293-D: assignment in condition
       for (i=0;i=len;i++)
-..\module\bsp.c: 6 warnings, 4 errors
+..\module\bsp.c: 2 warnings, 0 errors
 compiling buffer.c...
 ..\module\type.h(6): warning:  #14-D: extra text after expected end of preprocessing directive
   #undef  SQ(x)
-..\module\type.h(102): warning:  #1-D: last line of file ends without a newline
+..\module\type.h(94): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\config.h(127): warning:  #1-D: last line of file ends without a newline
+..\module\buffer.h(34): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\buffer.h(35): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\buffer.c(5): error:  #20: identifier "NULL" is undefined
-      gcode_buff->head = NULL;
-..\module\buffer.c(12): warning:  #223-D: function "malloc" declared implicitly
-      gcode_node_t *p = (gcode_node_t*)malloc(sizeof(gcode_node_t));
-..\module\buffer.c(19): error:  #20: identifier "NULL" is undefined
-      p->next = NULL;
-..\module\buffer.c(40): warning:  #223-D: function "Gcode_Buffer_Remove" declared implicitly
+..\module\buffer.c(41): warning:  #223-D: function "Gcode_Buffer_Remove" declared implicitly
       Gcode_Buffer_Remove(gcode_buff);
-..\module\buffer.c(45): warning:  #223-D: function "Gcode_Buffer_Init" declared implicitly
+..\module\buffer.c(46): warning:  #223-D: function "Gcode_Buffer_Init" declared implicitly
       if(gcode_buff->length == 1) Gcode_Buffer_Init(gcode_buff);
-..\module\buffer.c(49): warning:  #223-D: function "free" declared implicitly
-          free(gcode_buff->head);
-..\module\buffer.c(59): warning:  #1293-D: assignment in condition
+..\module\buffer.c(60): warning:  #1293-D: assignment in condition
       for (uint32_t i=0;i=len;i++)
-..\module\buffer.c(67): error:  #20: identifier "NULL" is undefined
-      block->head = NULL;
-..\module\buffer.c(76): error:  #513: a value of type "block_t *" cannot be assigned to an entity of type "block_t"
-      ring_buff->Block_Buff[ring_buff->tail] = block;
-..\module\buffer.c(89): warning:  #940-D: missing return statement at end of non-void function "Block_Buff_Read"
+..\module\buffer.c(90): warning:  #940-D: missing return statement at end of non-void function "Block_Buff_Read"
   }
-..\module\buffer.c(102): error:  #20: identifier "NULL" is undefined
-      uart_buff->head = NULL;
-..\module\buffer.c(121): warning:  #111-D: statement is unreachable
+..\module\buffer.c(83): warning:  #550-D: parameter "block" was set but never used
+  uint8_t Block_Buff_Read(block_t* block, block_buff_t* ring_buff)
+..\module\buffer.c(122): warning:  #111-D: statement is unreachable
       uart_buff->head = (uart_buff->head+1)%RINGBUFF_LEN;
-..\module\buffer.c(146): warning:  #174-D: expression has no effect
+..\module\buffer.c(147): warning:  #174-D: expression has no effect
       for (cha;cha<='0'||cha>='9';cha = Uart_Buff_Read(uart_buff))
-..\module\buffer.c(148): warning:  #223-D: function "Ascii" declared implicitly
+..\module\buffer.c(149): warning:  #223-D: function "Ascii" declared implicitly
           result = result*10.0f+Ascii(cha);
-..\module\buffer.c(150): warning:  #187-D: use of "=" where "==" may have been intended
+..\module\buffer.c(151): warning:  #187-D: use of "=" where "==" may have been intended
       if (cha = '.')
-..\module\buffer.c(155): warning:  #223-D: function "Ascii" declared implicitly
+..\module\buffer.c(156): warning:  #223-D: function "Ascii" declared implicitly
               result = result + Ascii(cha)*E(i);
-..\module\buffer.c(161): warning:  #1-D: last line of file ends without a newline
+..\module\buffer.c(162): warning:  #1-D: last line of file ends without a newline
   }
-..\module\buffer.c: 16 warnings, 5 errors
+..\module\buffer.c: 14 warnings, 0 errors
 compiling delta.c...
+..\module\delta.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif
 ..\module\type.h(6): warning:  #14-D: extra text after expected end of preprocessing directive
   #undef  SQ(x)
-..\module\type.h(102): warning:  #1-D: last line of file ends without a newline
+..\module\type.h(94): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\config.h(127): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\delta.h(28): warning:  #1-D: last line of file ends without a newline
+..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
   #endif
 ..\module\delta.c(29): warning:  #175-D: subscript out of range
       float j = sqrtf(SQ(vj[0])+SQ(vj[1])+SQ(vj[3]));
@@ -127,37 +98,49 @@ compiling delta.c...
 }
 ..\module\delta.c: 12 warnings, 0 errors
 compiling gcode.c...
+..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\user\LDR_v0.2\stm32f4xx.h(1304): error:  #40: expected an identifier
+    __IO uint32_t ARR;         /*!< TIM auto-reload register,            Address offset: 0x2C */
+..\module\bsp.h(145): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\module\gcode.h(33): error:  #20: identifier "gcode_list_t" is undefined
+  void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff);
+..\module\gcode.h(33): error:  #20: identifier "uart_buff_t" is undefined
+  void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff);
+..\module\gcode.h(41): warning:  #1-D: last line of file ends without a newline
+  #endif
 ..\module\type.h(6): warning:  #14-D: extra text after expected end of preprocessing directive
   #undef  SQ(x)
-..\module\type.h(102): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\config.h(127): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\buffer.h(35): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(147): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\gcode.h(41): warning:  #1-D: last line of file ends without a newline
+..\module\type.h(94): warning:  #1-D: last line of file ends without a newline
   #endif
 ..\module\gcode.c(21): warning:  #940-D: missing return statement at end of non-void function "Ascii"
   }
+..\module\gcode.c(30): warning:  #223-D: function "Uart_Buff_Read" declared implicitly
+      key = Uart_Buff_Read(uart_buff);
 ..\module\gcode.c(32): warning:  #174-D: expression has no effect
       for(key;key==0x0d||uart_buff->length==0;key=Uart_Buff_Read(uart_buff))
-..\module\gcode.c(53): error:  #167: argument of type "gcode_list_t **" is incompatible with parameter of type "gcode_list_t *"
+..\module\gcode.c(46): warning:  #223-D: function "Uart_Buff_Read_Num" declared implicitly
+          }else if (key=='X') gcode_node.x = Uart_Buff_Read_Num(uart_buff);
+..\module\gcode.c(47): warning:  #223-D: function "Uart_Buff_Read_Num" declared implicitly
+          else if (key=='Y')  gcode_node.y = Uart_Buff_Read_Num(uart_buff);
+..\module\gcode.c(48): warning:  #223-D: function "Uart_Buff_Read_Num" declared implicitly
+          else if (key=='Z')  gcode_node.z = Uart_Buff_Read_Num(uart_buff);
+..\module\gcode.c(49): warning:  #223-D: function "Uart_Buff_Read_Num" declared implicitly
+          else if (key=='R'||key=='P')  gcode_node.radius_dwell = Uart_Buff_Read_Num(uart_buff);
+..\module\gcode.c(50): warning:  #223-D: function "Uart_Buff_Read_Num" declared implicitly
+          else if (key=='F')  gcode_node.feedrate = Uart_Buff_Read_Num(uart_buff);
+..\module\gcode.c(53): warning:  #223-D: function "Gcode_Buff_Write" declared implicitly
       Gcode_Buff_Write(&gcode_list,&gcode_node);
-..\module\gcode.c: 8 warnings, 1 error
+..\module\gcode.c: 14 warnings, 3 errors
 compiling motion.c...
 ..\module\type.h(6): warning:  #14-D: extra text after expected end of preprocessing directive
   #undef  SQ(x)
-..\module\type.h(102): warning:  #1-D: last line of file ends without a newline
+..\module\type.h(94): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\config.h(127): warning:  #1-D: last line of file ends without a newline
+..\module\bsp.h(145): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\buffer.h(35): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(147): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\motion.h(204): warning:  #1-D: last line of file ends without a newline
+..\module\motion.h(202): warning:  #1-D: last line of file ends without a newline
   #endif
 ..\module\motion.c(18): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
       Min_Max(&dx,&dy,&dz,&da,&db,&dc);
@@ -177,6 +160,8 @@ compiling motion.c...
       Linear_Path_Convert(traj, len_traj,case_path);
 ..\module\motion.c(80): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
       Kinematics_Planner(traj, len_traj, velocity);
+..\module\motion.c(82): error:  #20: identifier "block_buff" is undefined
+      Trej_Apply(traj, len_traj, dwell,&block_buff);
 ..\module\motion.c(82): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
       Trej_Apply(traj, len_traj, dwell,&block_buff);
 ..\module\motion.c(87): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
@@ -275,190 +260,190 @@ compiling motion.c...
           Arc_Path_Part(traj_p,xy_c_s1,len_part,abs((int16_t)radius));
 ..\module\motion.c(257): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
           Path_Convert(traj_p, len_part, s_t);
-..\module\motion.c(260): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
-          Path_Add_Offset(traj_p,len_part, xy_p[0],xy_p[1], xyz_t[2]);
-..\module\motion.c: 35 warnings, 30 errors
+..\module\motion.c: 33 warnings, 30 errors
 compiling planner.c...
+..\module\bsp.h(145): warning:  #1-D: last line of file ends without a newline
+  #endif
 ..\module\type.h(6): warning:  #14-D: extra text after expected end of preprocessing directive
   #undef  SQ(x)
-..\module\type.h(102): warning:  #1-D: last line of file ends without a newline
+..\module\type.h(94): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\config.h(127): warning:  #1-D: last line of file ends without a newline
+..\module\planner.h(71): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\buffer.h(35): warning:  #1-D: last line of file ends without a newline
+..\module\buffer.h(34): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\bsp.h(147): warning:  #1-D: last line of file ends without a newline
+..\module\delta.h(27): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\planner.h(16): warning:  #47-D: incompatible redefinition of macro "ARR" (declared at line 92 of "..\module\config.h")
-  #define ARR     84-1
-..\module\planner.h(73): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\delta.h(28): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(16): error:  #2571: invalid redefinition of enum "stepper_state" (declared at line 16)
+..\module\bsp.h(14): error:  #2571: invalid redefinition of enum "stepper_state" (declared at line 14)
   enum stepper_state
-..\module\bsp.h(18): error:  #101: "stepper_ON" has already been declared in the current scope
+..\module\bsp.h(16): error:  #101: "stepper_ON" has already been declared in the current scope
       stepper_ON,
-..\module\bsp.h(19): error:  #101: "stepper_OFF" has already been declared in the current scope
+..\module\bsp.h(17): error:  #101: "stepper_OFF" has already been declared in the current scope
       stepper_OFF
-..\module\bsp.h(65): error:  #256: invalid redeclaration of type name "stepper_t" (declared at line 65)
+..\module\bsp.h(20): error:  #101: "_stepper" has already been declared in the current scope
+  typedef struct _stepper
+..\module\bsp.h(63): error:  #256: invalid redeclaration of type name "stepper_t" (declared at line 63)
   }stepper_t;
-..\module\bsp.h(73): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Init(stepper_t *)" (declared at line 73)
+..\module\bsp.h(71): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Init(stepper_t *)" (declared at line 71)
   void Bsp_Stepper_Init(stepper_t* stepperX);
-..\module\bsp.h(80): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Update(stepper_t *)" (declared at line 80)
+..\module\bsp.h(78): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Update(stepper_t *)" (declared at line 78)
   void Bsp_Stepper_Update(stepper_t* stepperX);
-..\module\bsp.h(92): error:  #256: invalid redeclaration of type name "monitor_t" (declared at line 92)
+..\module\bsp.h(82): error:  #101: "_monitor" has already been declared in the current scope
+  typedef struct _monitor
+..\module\bsp.h(90): error:  #256: invalid redeclaration of type name "monitor_t" (declared at line 90)
   }monitor_t;
-..\module\bsp.h(94): error:  #147-D: declaration is incompatible with "void Bsp_Monitor_Init(monitor_t *)" (declared at line 94)
+..\module\bsp.h(92): error:  #147-D: declaration is incompatible with "void Bsp_Monitor_Init(monitor_t *)" (declared at line 92)
   void Bsp_Monitor_Init(monitor_t* monitor);
-..\module\bsp.h(122): error:  #256: invalid redeclaration of type name "switch_t" (declared at line 122)
+..\module\bsp.h(99): error:  #101: "_switch" has already been declared in the current scope
+  typedef struct _switch
+..\module\bsp.h(120): error:  #256: invalid redeclaration of type name "switch_t" (declared at line 120)
   }switch_t;
-..\module\bsp.h(124): error:  #147-D: declaration is incompatible with "void Bsp_Switch_Init(switch_t *)" (declared at line 124)
+..\module\bsp.h(122): error:  #147-D: declaration is incompatible with "void Bsp_Switch_Init(switch_t *)" (declared at line 122)
   void Bsp_Switch_Init(switch_t* switchX);
-..\module\bsp.h(135): error:  #256: invalid redeclaration of type name "led_t" (declared at line 135)
+..\module\bsp.h(126): error:  #101: "_led" has already been declared in the current scope
+  typedef struct _led
+..\module\bsp.h(133): error:  #256: invalid redeclaration of type name "led_t" (declared at line 133)
   }led_t;
-..\module\bsp.h(137): error:  #147-D: declaration is incompatible with "void Bsp_LED_Init(led_t *)" (declared at line 137)
+..\module\bsp.h(135): error:  #147-D: declaration is incompatible with "void Bsp_LED_Init(led_t *)" (declared at line 135)
   void Bsp_LED_Init(led_t* LEDX);
-..\module\bsp.h(139): error:  #147-D: declaration is incompatible with "void Bsp_LED_Update(led_t *)" (declared at line 139)
+..\module\bsp.h(137): error:  #147-D: declaration is incompatible with "void Bsp_LED_Update(led_t *)" (declared at line 137)
   void Bsp_LED_Update(led_t* LEDX);
-..\module\bsp.h(147): warning:  #1-D: last line of file ends without a newline
+..\module\bsp.h(145): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\motion.h(204): warning:  #1-D: last line of file ends without a newline
+..\module\motion.h(202): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\planner.c(6): error:  #147-D: declaration is incompatible with "void Acc_Planner(block_t *, stepper_t *, stepper_t *, stepper_t *, int32_t *, int32_t *)" (declared at line 34 of "..\module\planner.h")
+..\module\config.h(87): warning:  #47-D: incompatible redefinition of macro "ARR" (declared at line 14 of "..\module\planner.h")
+  #define ARR 8400
+..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\module\planner.c(7): error:  #147-D: declaration is incompatible with "void Acc_Planner(block_t *, stepper_t *, stepper_t *, stepper_t *, int32_t *, int32_t *)" (declared at line 32 of "..\module\planner.h")
   void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
-..\module\planner.c(13): warning:  #174-D: expression has no effect
-      if (block->dir[0]==stepperI->dir)   v_entr[0]==stepperI->freq;
 ..\module\planner.c(14): warning:  #174-D: expression has no effect
+      if (block->dir[0]==stepperI->dir)   v_entr[0]==stepperI->freq;
+..\module\planner.c(15): warning:  #174-D: expression has no effect
       else                                v_entr[0]==0;
-..\module\planner.c(16): warning:  #174-D: expression has no effect
-      if (block->dir[1]==stepperJ->dir)   v_entr[1]==stepperJ->freq;
 ..\module\planner.c(17): warning:  #174-D: expression has no effect
+      if (block->dir[1]==stepperJ->dir)   v_entr[1]==stepperJ->freq;
+..\module\planner.c(18): warning:  #174-D: expression has no effect
       else                                v_entr[1]==0;
-..\module\planner.c(19): warning:  #174-D: expression has no effect
-      if (block->dir[2]==stepperK->dir)   v_entr[2]==stepperK->freq;
 ..\module\planner.c(20): warning:  #174-D: expression has no effect
+      if (block->dir[2]==stepperK->dir)   v_entr[2]==stepperK->freq;
+..\module\planner.c(21): warning:  #174-D: expression has no effect
       else                                v_entr[2]==0;
-..\module\planner.c(22): warning:  #174-D: expression has no effect
-      if (block->freq[0]>JERK_FREQ)       v_out[0]==JERK_FREQ;
 ..\module\planner.c(23): warning:  #174-D: expression has no effect
+      if (block->freq[0]>JERK_FREQ)       v_out[0]==JERK_FREQ;
+..\module\planner.c(24): warning:  #174-D: expression has no effect
       else                                v_out[0]==block->freq[0];
-..\module\planner.c(25): warning:  #174-D: expression has no effect
-      if (block->freq[1]>JERK_FREQ)       v_out[1]==JERK_FREQ;
 ..\module\planner.c(26): warning:  #174-D: expression has no effect
+      if (block->freq[1]>JERK_FREQ)       v_out[1]==JERK_FREQ;
+..\module\planner.c(27): warning:  #174-D: expression has no effect
       else                                v_out[1]==block->freq[1];
-..\module\planner.c(28): warning:  #174-D: expression has no effect
-      if (block->freq[2]>JERK_FREQ)       v_out[2]==JERK_FREQ;
 ..\module\planner.c(29): warning:  #174-D: expression has no effect
+      if (block->freq[2]>JERK_FREQ)       v_out[2]==JERK_FREQ;
+..\module\planner.c(30): warning:  #174-D: expression has no effect
       else                                v_out[2]==block->freq[2];
-..\module\planner.c(36): error:  #101: "t_acc2" has already been declared in the current scope
-      int32_t t_acc2[3] = {v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
-..\module\planner.c(36): error:  #144: a value of type "int32_t *" cannot be used to initialize an entity of type "int32_t"
+..\module\planner.c(37): error:  #101: "t_acc2" has already been declared in the current scope
       int32_t t_acc2[3] = {v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
 ..\module\planner.c(37): error:  #144: a value of type "int32_t *" cannot be used to initialize an entity of type "int32_t"
-                          v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
+      int32_t t_acc2[3] = {v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
 ..\module\planner.c(38): error:  #144: a value of type "int32_t *" cannot be used to initialize an entity of type "int32_t"
+                          v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
+..\module\planner.c(39): error:  #144: a value of type "int32_t *" cannot be used to initialize an entity of type "int32_t"
                           v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ)};
-..\module\planner.c(41): warning:  #223-D: function "abs" declared implicitly
+..\module\planner.c(42): warning:  #223-D: function "abs" declared implicitly
       int32_t s_acc2[3] = {(block->freq[0]+v_out[0])*abs(t_acc2[0])/2,
-..\module\planner.c(47): error:  #101: "t_acc1" has already been declared in the current scope
+..\module\planner.c(48): error:  #101: "t_acc1" has already been declared in the current scope
       int32_t t_acc1[3] = {(block->freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
-..\module\planner.c(8): warning:  #177-D: variable "t_acc1" was declared but never referenced
+..\module\planner.c(9): warning:  #177-D: variable "t_acc1" was declared but never referenced
       int32_t t_acc1[3];
-..\module\planner.c(9): warning:  #177-D: variable "t_acc2" was declared but never referenced
+..\module\planner.c(10): warning:  #177-D: variable "t_acc2" was declared but never referenced
       int32_t t_acc2[3];
-..\module\planner.c(90): error:  #147-D: declaration is incompatible with "void Acc_Cnt(stepper_t *, stepper_t *, stepper_t *, int32_t *, int32_t *, block_t *)" (declared at line 61 of "..\module\planner.h")
+..\module\planner.c(91): error:  #147-D: declaration is incompatible with "void Acc_Cnt(stepper_t *, stepper_t *, stepper_t *, int32_t *, int32_t *, block_t *)" (declared at line 59 of "..\module\planner.h")
   void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, block_t* block)
-..\module\planner.c(136): error:  #147-D: declaration is incompatible with "void Stepper_Cnt(block_t *, stepper_t *, stepper_t *, stepper_t *)" (declared at line 71 of "..\module\planner.h")
+..\module\planner.c(137): error:  #147-D: declaration is incompatible with "void Stepper_Cnt(block_t *, stepper_t *, stepper_t *, stepper_t *)" (declared at line 69 of "..\module\planner.h")
   void Stepper_Cnt(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
-..\module\planner.c: 25 warnings, 21 errors
+..\module\planner.c: 25 warnings, 25 errors
 compiling main.c...
+..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
+  #endif
 ..\module\type.h(6): warning:  #14-D: extra text after expected end of preprocessing directive
   #undef  SQ(x)
-..\module\type.h(102): warning:  #1-D: last line of file ends without a newline
+..\module\type.h(94): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\config.h(127): warning:  #1-D: last line of file ends without a newline
+..\module\bsp.h(145): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\buffer.h(35): warning:  #1-D: last line of file ends without a newline
+..\module\motion.h(202): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\bsp.h(147): warning:  #1-D: last line of file ends without a newline
+..\module\buffer.h(34): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\motion.h(204): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(16): error:  #2571: invalid redefinition of enum "stepper_state" (declared at line 16)
+..\module\bsp.h(14): error:  #2571: invalid redefinition of enum "stepper_state" (declared at line 14)
   enum stepper_state
-..\module\bsp.h(18): error:  #101: "stepper_ON" has already been declared in the current scope
+..\module\bsp.h(16): error:  #101: "stepper_ON" has already been declared in the current scope
       stepper_ON,
-..\module\bsp.h(19): error:  #101: "stepper_OFF" has already been declared in the current scope
+..\module\bsp.h(17): error:  #101: "stepper_OFF" has already been declared in the current scope
       stepper_OFF
-..\module\bsp.h(65): error:  #256: invalid redeclaration of type name "stepper_t" (declared at line 65)
+..\module\bsp.h(20): error:  #101: "_stepper" has already been declared in the current scope
+  typedef struct _stepper
+..\module\bsp.h(63): error:  #256: invalid redeclaration of type name "stepper_t" (declared at line 63)
   }stepper_t;
-..\module\bsp.h(73): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Init(stepper_t *)" (declared at line 73)
+..\module\bsp.h(71): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Init(stepper_t *)" (declared at line 71)
   void Bsp_Stepper_Init(stepper_t* stepperX);
-..\module\bsp.h(80): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Update(stepper_t *)" (declared at line 80)
+..\module\bsp.h(78): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Update(stepper_t *)" (declared at line 78)
   void Bsp_Stepper_Update(stepper_t* stepperX);
-..\module\bsp.h(92): error:  #256: invalid redeclaration of type name "monitor_t" (declared at line 92)
+..\module\bsp.h(82): error:  #101: "_monitor" has already been declared in the current scope
+  typedef struct _monitor
+..\module\bsp.h(90): error:  #256: invalid redeclaration of type name "monitor_t" (declared at line 90)
   }monitor_t;
-..\module\bsp.h(94): error:  #147-D: declaration is incompatible with "void Bsp_Monitor_Init(monitor_t *)" (declared at line 94)
+..\module\bsp.h(92): error:  #147-D: declaration is incompatible with "void Bsp_Monitor_Init(monitor_t *)" (declared at line 92)
   void Bsp_Monitor_Init(monitor_t* monitor);
-..\module\bsp.h(122): error:  #256: invalid redeclaration of type name "switch_t" (declared at line 122)
+..\module\bsp.h(99): error:  #101: "_switch" has already been declared in the current scope
+  typedef struct _switch
+..\module\bsp.h(120): error:  #256: invalid redeclaration of type name "switch_t" (declared at line 120)
   }switch_t;
-..\module\bsp.h(124): error:  #147-D: declaration is incompatible with "void Bsp_Switch_Init(switch_t *)" (declared at line 124)
+..\module\bsp.h(122): error:  #147-D: declaration is incompatible with "void Bsp_Switch_Init(switch_t *)" (declared at line 122)
   void Bsp_Switch_Init(switch_t* switchX);
-..\module\bsp.h(135): error:  #256: invalid redeclaration of type name "led_t" (declared at line 135)
+..\module\bsp.h(126): error:  #101: "_led" has already been declared in the current scope
+  typedef struct _led
+..\module\bsp.h(133): error:  #256: invalid redeclaration of type name "led_t" (declared at line 133)
   }led_t;
-..\module\bsp.h(137): error:  #147-D: declaration is incompatible with "void Bsp_LED_Init(led_t *)" (declared at line 137)
+..\module\bsp.h(135): error:  #147-D: declaration is incompatible with "void Bsp_LED_Init(led_t *)" (declared at line 135)
   void Bsp_LED_Init(led_t* LEDX);
-..\module\bsp.h(139): error:  #147-D: declaration is incompatible with "void Bsp_LED_Update(led_t *)" (declared at line 139)
+..\module\bsp.h(137): error:  #147-D: declaration is incompatible with "void Bsp_LED_Update(led_t *)" (declared at line 137)
   void Bsp_LED_Update(led_t* LEDX);
-..\module\bsp.h(147): warning:  #1-D: last line of file ends without a newline
+..\module\bsp.h(145): warning:  #1-D: last line of file ends without a newline
   #endif
 ..\module\gcode.h(41): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\bsp.h(16): error:  #2571: invalid redefinition of enum "stepper_state" (declared at line 16)
+..\module\bsp.h(14): error:  #2571: invalid redefinition of enum "stepper_state" (declared at line 14)
   enum stepper_state
-..\module\bsp.h(18): error:  #101: "stepper_ON" has already been declared in the current scope
+..\module\bsp.h(16): error:  #101: "stepper_ON" has already been declared in the current scope
       stepper_ON,
-..\module\bsp.h(19): error:  #101: "stepper_OFF" has already been declared in the current scope
+..\module\bsp.h(17): error:  #101: "stepper_OFF" has already been declared in the current scope
       stepper_OFF
-..\module\bsp.h(65): error:  #256: invalid redeclaration of type name "stepper_t" (declared at line 65)
+..\module\bsp.h(20): error:  #101: "_stepper" has already been declared in the current scope
+  typedef struct _stepper
+..\module\bsp.h(63): error:  #256: invalid redeclaration of type name "stepper_t" (declared at line 63)
   }stepper_t;
-..\module\bsp.h(73): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Init(stepper_t *)" (declared at line 73)
+..\module\bsp.h(71): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Init(stepper_t *)" (declared at line 71)
   void Bsp_Stepper_Init(stepper_t* stepperX);
-..\module\bsp.h(80): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Update(stepper_t *)" (declared at line 80)
+..\module\bsp.h(78): error:  #147-D: declaration is incompatible with "void Bsp_Stepper_Update(stepper_t *)" (declared at line 78)
   void Bsp_Stepper_Update(stepper_t* stepperX);
-..\module\bsp.h(92): error:  #256: invalid redeclaration of type name "monitor_t" (declared at line 92)
+..\module\bsp.h(82): error:  #101: "_monitor" has already been declared in the current scope
+  typedef struct _monitor
+..\module\bsp.h(90): error:  #256: invalid redeclaration of type name "monitor_t" (declared at line 90)
   }monitor_t;
-..\module\bsp.h(94): error:  #147-D: declaration is incompatible with "void Bsp_Monitor_Init(monitor_t *)" (declared at line 94)
+..\module\bsp.h(92): error:  #147-D: declaration is incompatible with "void Bsp_Monitor_Init(monitor_t *)" (declared at line 92)
   void Bsp_Monitor_Init(monitor_t* monitor);
-..\module\bsp.h(122): error:  #256: invalid redeclaration of type name "switch_t" (declared at line 122)
+..\module\bsp.h(99): error:  #101: "_switch" has already been declared in the current scope
+  typedef struct _switch
+..\module\bsp.h(120): error:  #256: invalid redeclaration of type name "switch_t" (declared at line 120)
   }switch_t;
-..\module\bsp.h(124): error:  #147-D: declaration is incompatible with "void Bsp_Switch_Init(switch_t *)" (declared at line 124)
+..\module\bsp.h(122): error:  #147-D: declaration is incompatible with "void Bsp_Switch_Init(switch_t *)" (declared at line 122)
   void Bsp_Switch_Init(switch_t* switchX);
-..\module\bsp.h(135): error:  #256: invalid redeclaration of type name "led_t" (declared at line 135)
-  }led_t;
-..\module\bsp.h(137): error:  #147-D: declaration is incompatible with "void Bsp_LED_Init(led_t *)" (declared at line 137)
-  void Bsp_LED_Init(led_t* LEDX);
-..\module\bsp.h(139): error:  #147-D: declaration is incompatible with "void Bsp_LED_Update(led_t *)" (declared at line 139)
-  void Bsp_LED_Update(led_t* LEDX);
-..\module\bsp.h(147): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\planner.h(16): warning:  #47-D: incompatible redefinition of macro "ARR" (declared at line 92 of "..\module\config.h")
-  #define ARR     84-1
-..\module\planner.h(73): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(16): error:  #2571: invalid redefinition of enum "stepper_state" (declared at line 16)
-  enum stepper_state
-..\module\bsp.h(18): error:  #101: "stepper_ON" has already been declared in the current scope
-      stepper_ON,
-..\module\bsp.h(19): error:  #101: "stepper_OFF" has already been declared in the current scope
-      stepper_OFF
-..\module\bsp.h(65): error:  #256: invalid redeclaration of type name "stepper_t" (declared at line 65)
-  }stepper_t;
-..\user\LDR_v0.2\main.c: 11 warnings, 30 errors
+..\user\LDR_v0.2\main.c: 8 warnings, 30 errors
 compiling stm32f4xx_it.c...
 compiling system_stm32f4xx.c...
-".\Objects\Relta.axf" - 91 Error(s), 113 Warning(s).
+".\Objects\Relta.axf" - 88 Error(s), 108 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   D:\CodeStorage\Relta\mdk\RTE

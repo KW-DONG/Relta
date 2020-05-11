@@ -224,10 +224,10 @@ void TIM5_IRQHandler()
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
         static uint8_t block_state;
-        #if USE_PLANNER
+        
         static int32_t acc1_step[3];//head
         static int32_t acc2_step[3];//tail
-        #endif
+        
         Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
         if (block_c.step[0]==0) stepperA.state==STOP;
@@ -243,13 +243,11 @@ void TIM5_IRQHandler()
                 if(block_state==TRUE)
                 {
                     //always maximum acceleration
-                    #if USE_PLANNER
                     Acc_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc1_step, acc2_step);
-                    #else
+                    
                     stepperA.freq = block_c.freq[0];
                     stepperB.freq = block_c.freq[1];
                     stepperC.freq = block_c.freq[2];
-                    #endif
 
                     stepperA.state = START;
                     stepperB.state = START;

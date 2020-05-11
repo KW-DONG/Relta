@@ -1,9 +1,7 @@
 #ifndef __PLANNER_H
 #define __PLANNER_H
-
-#include "type.h"
-#include "config.h"
 #include "bsp.h"
+#include "type.h"
 
 #define CLOCKWISE       0
 #define ANTICLOCKWISE   1

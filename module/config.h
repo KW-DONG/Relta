@@ -1,11 +1,6 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
-
-#include "sys.h"
-#include "type.h"
-
-//
-
+#include <math.h>
 
 /**
  * IO Table
@@ -100,14 +95,8 @@
 
 //use gcode command -> the machine is controlled with gcode
 //else please preload the path
-
-#define EXECUTE_MACHINE YES
-
-#if EXECUTE_MACHINE
-#define USE_PRELOAD_PATH YES
-#define USE_PLANNER NO
-#endif
-
+#define COMPILE_YES 0
+#define COMPILE_NO  1
 
 /****************GENERATE_AUTOMATICALLY****************/
 

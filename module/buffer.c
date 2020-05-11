@@ -84,7 +84,7 @@ uint8_t Block_Buff_Read(block_t* block, block_buff_t* ring_buff)
 {
     if(ring_buff->length == 0) return FALSE;
 
-    *block = ring_buff->Block_Buff[ring_buff->head];
+    block = ring_buff->Block_Buff[ring_buff->head];
     ring_buff->head = (ring_buff->head+1)%RINGBUFF_LEN;
     ring_buff->length --;
 }
