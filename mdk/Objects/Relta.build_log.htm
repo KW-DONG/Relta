@@ -25,82 +25,7 @@ D:\CodeStorage\Relta\mdk\Relta.uvprojx
 Project File Date:  05/11/2020
 
 <h2>Output:</h2>
-Rebuild target 'RELTA'
-assembling startup_stm32f40_41xxx.s...
-compiling delay.c...
-compiling stm32f4xx_exti.c...
-compiling stm32f4xx_gpio.c...
-compiling stm32f4xx_rcc.c...
-compiling stm32f4xx_syscfg.c...
-compiling stm32f4xx_tim.c...
-compiling stm32f4xx_usart.c...
-compiling sys.c...
-compiling bsp.c...
-..\module\type.h(14): warning:  #14-D: extra text after expected end of preprocessing directive
-  #undef  SQ(x)
-..\module\type.h(197): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(46): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.c(243): warning:  #1293-D: assignment in condition
-      for (i=0;i=len;i++)
-..\module\bsp.c: 4 warnings, 0 errors
-compiling buffer.c...
-..\module\type.h(14): warning:  #14-D: extra text after expected end of preprocessing directive
-  #undef  SQ(x)
-..\module\type.h(197): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\buffer.h(34): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\buffer.c(41): warning:  #223-D: function "Gcode_Buffer_Remove" declared implicitly
-      Gcode_Buffer_Remove(gcode_buff);
-..\module\buffer.c(46): warning:  #223-D: function "Gcode_Buffer_Init" declared implicitly
-      if(gcode_buff->length == 1) Gcode_Buffer_Init(gcode_buff);
-..\module\buffer.c(60): warning:  #1293-D: assignment in condition
-      for (uint32_t i=0;i=len;i++)
-..\module\buffer.c(90): warning:  #940-D: missing return statement at end of non-void function "Block_Buff_Read"
-  }
-..\module\buffer.c(83): warning:  #550-D: parameter "block" was set but never used
-  uint8_t Block_Buff_Read(block_t* block, block_buff_t* ring_buff)
-..\module\buffer.c(122): warning:  #111-D: statement is unreachable
-      uart_buff->head = (uart_buff->head+1)%RINGBUFF_LEN;
-..\module\buffer.c(147): warning:  #174-D: expression has no effect
-      for (cha;cha<='0'||cha>='9';cha = Uart_Buff_Read(uart_buff))
-..\module\buffer.c(149): warning:  #223-D: function "Ascii" declared implicitly
-          result = result*10.0f+Ascii(cha);
-..\module\buffer.c(151): warning:  #187-D: use of "=" where "==" may have been intended
-      if (cha = '.')
-..\module\buffer.c(156): warning:  #223-D: function "Ascii" declared implicitly
-              result = result + Ascii(cha)*E(i);
-..\module\buffer.c(162): warning:  #1-D: last line of file ends without a newline
-  }
-..\module\buffer.c: 14 warnings, 0 errors
-compiling delta.c...
-..\module\delta.h(27): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\type.h(14): warning:  #14-D: extra text after expected end of preprocessing directive
-  #undef  SQ(x)
-..\module\type.h(197): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\delta.c(29): warning:  #175-D: subscript out of range
-      float j = sqrtf(SQ(vj[0])+SQ(vj[1])+SQ(vj[3]));
-..\module\delta.c(29): warning:  #175-D: subscript out of range
-      float j = sqrtf(SQ(vj[0])+SQ(vj[1])+SQ(vj[3]));
-..\module\delta.c(37): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      float xe = d*0.5;
-..\module\delta.c(38): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      float ye = (SQ(xe))+SQ(xe-i)+SQ(j)*INV(2.0*j);
-..\module\delta.c(66): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-      abc_v[2] = 3.0*xyz_v[2];
-..\module\delta.c(67): warning:  #1-D: last line of file ends without a newline
-  }
-..\module\delta.c(53): warning: C4487E: read from variable 'vj' with offset out of bounds
-}
-..\module\delta.c(53): warning: C4487E: read from variable 'vj' with offset out of bounds
-}
-..\module\delta.c: 12 warnings, 0 errors
+Build target 'RELTA'
 compiling gcode.c...
 ..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
   #endif
@@ -142,125 +67,127 @@ compiling motion.c...
   #endif
 ..\module\motion.h(202): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\motion.c(18): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
+..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\module\motion.c(20): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
       Min_Max(&dx,&dy,&dz,&da,&db,&dc);
-..\module\motion.c(18): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
+..\module\motion.c(20): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
       Min_Max(&dx,&dy,&dz,&da,&db,&dc);
-..\module\motion.c(18): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
+..\module\motion.c(20): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
       Min_Max(&dx,&dy,&dz,&da,&db,&dc);
-..\module\motion.c(18): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
+..\module\motion.c(20): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
       Min_Max(&dx,&dy,&dz,&da,&db,&dc);
-..\module\motion.c(18): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
+..\module\motion.c(20): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
       Min_Max(&dx,&dy,&dz,&da,&db,&dc);
-..\module\motion.c(18): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
+..\module\motion.c(20): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "int16_t *"
       Min_Max(&dx,&dy,&dz,&da,&db,&dc);
-..\module\motion.c(76): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int16_t *(*)[2]"
-      Linear_Path(traj, da, db, dc);
 ..\module\motion.c(78): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int16_t *(*)[2]"
+      Linear_Path(traj, da, db, dc);
+..\module\motion.c(80): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int16_t *(*)[2]"
       Linear_Path_Convert(traj, len_traj,case_path);
-..\module\motion.c(80): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
-      Kinematics_Planner(traj, len_traj, velocity);
-..\module\motion.c(82): error:  #20: identifier "block_buff" is undefined
-      Trej_Apply(traj, len_traj, dwell,&block_buff);
 ..\module\motion.c(82): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
-      Trej_Apply(traj, len_traj, dwell,&block_buff);
-..\module\motion.c(87): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
-      if (abs(dx)>=abs(dy))
-..\module\motion.c(87): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+      Kinematics_Planner(traj, len_traj, velocity);
+..\module\motion.c(84): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
+      Trej_Apply(traj, len_traj, dwell, buff);
+..\module\motion.c(89): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
       if (abs(dx)>=abs(dy))
 ..\module\motion.c(89): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+      if (abs(dx)>=abs(dy))
+..\module\motion.c(91): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
           if (abs(dz)>abs(dx))
-..\module\motion.c(89): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+..\module\motion.c(91): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
           if (abs(dz)>abs(dx))
-..\module\motion.c(98): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+..\module\motion.c(100): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
               if (abs(dy)>=abs(dz))
-..\module\motion.c(98): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+..\module\motion.c(100): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
               if (abs(dy)>=abs(dz))
-..\module\motion.c(108): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+..\module\motion.c(110): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
           if (abs(dz)>abs(dy))
-..\module\motion.c(108): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+..\module\motion.c(110): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
           if (abs(dz)>abs(dy))
-..\module\motion.c(117): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+..\module\motion.c(119): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
               if (abs(dx)>=abs(dz))
-..\module\motion.c(117): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
+..\module\motion.c(119): error:  #167: argument of type "int16_t *" is incompatible with parameter of type "int"
               if (abs(dx)>=abs(dz))
-..\module\motion.c(85): warning:  #550-D: parameter "da" was set but never used
+..\module\motion.c(87): warning:  #550-D: parameter "da" was set but never used
   void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz, int16_t* da, int16_t* db, int16_t* dc)
-..\module\motion.c(85): warning:  #550-D: parameter "db" was set but never used
+..\module\motion.c(87): warning:  #550-D: parameter "db" was set but never used
   void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz, int16_t* da, int16_t* db, int16_t* dc)
-..\module\motion.c(85): warning:  #550-D: parameter "dc" was set but never used
+..\module\motion.c(87): warning:  #550-D: parameter "dc" was set but never used
   void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz, int16_t* da, int16_t* db, int16_t* dc)
-..\module\motion.c(133): warning:  #1293-D: assignment in condition
+..\module\motion.c(135): warning:  #1293-D: assignment in condition
       for(i=1;i=len;i++)
-..\module\motion.c(139): warning:  #175-D: subscript out of range
-          if(-5<dc*i%da<5)    traj[i][2][0] = traj[i-1][2][0];
-..\module\motion.c(139): warning:  #175-D: subscript out of range
-          if(-5<dc*i%da<5)    traj[i][2][0] = traj[i-1][2][0];
-..\module\motion.c(140): warning:  #175-D: subscript out of range
-          else if(dc>0)       traj[i][2][0] = traj[i-1][2][0]+1;
-..\module\motion.c(140): warning:  #175-D: subscript out of range
-          else if(dc>0)       traj[i][2][0] = traj[i-1][2][0]+1;
 ..\module\motion.c(141): warning:  #175-D: subscript out of range
-          else                traj[i][2][0] = traj[i-1][2][0]-1;
+          if(-5<dc*i%da<5)    traj[i][2][0] = traj[i-1][2][0];
 ..\module\motion.c(141): warning:  #175-D: subscript out of range
+          if(-5<dc*i%da<5)    traj[i][2][0] = traj[i-1][2][0];
+..\module\motion.c(142): warning:  #175-D: subscript out of range
+          else if(dc>0)       traj[i][2][0] = traj[i-1][2][0]+1;
+..\module\motion.c(142): warning:  #175-D: subscript out of range
+          else if(dc>0)       traj[i][2][0] = traj[i-1][2][0]+1;
+..\module\motion.c(143): warning:  #175-D: subscript out of range
           else                traj[i][2][0] = traj[i-1][2][0]-1;
-..\module\motion.c(145): warning:  #1293-D: assignment in condition
+..\module\motion.c(143): warning:  #175-D: subscript out of range
+          else                traj[i][2][0] = traj[i-1][2][0]-1;
+..\module\motion.c(147): warning:  #1293-D: assignment in condition
           for (i=1;i=len;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
-..\module\motion.c(148): warning:  #1293-D: assignment in condition
+..\module\motion.c(150): warning:  #1293-D: assignment in condition
           for (i=1;i=len;i++)     traj[i][0][0] = traj[i-1][0][0] - 1;
-..\module\motion.c(159): warning:  #1293-D: assignment in condition
+..\module\motion.c(161): warning:  #1293-D: assignment in condition
           for (i=0;i=len;i++)
-..\module\motion.c(161): warning:  #175-D: subscript out of range
+..\module\motion.c(163): warning:  #175-D: subscript out of range
               xyz[1] = traj[i][2][0];
-..\module\motion.c(164): warning:  #175-D: subscript out of range
+..\module\motion.c(166): warning:  #175-D: subscript out of range
               traj[i][2][0] = xyz[2];
-..\module\motion.c(168): warning:  #1293-D: assignment in condition
+..\module\motion.c(170): warning:  #1293-D: assignment in condition
           for (i=0;i=len;i++)
-..\module\motion.c(177): warning:  #1293-D: assignment in condition
+..\module\motion.c(179): warning:  #1293-D: assignment in condition
           for (i=0;i=len;i++)
-..\module\motion.c(179): warning:  #175-D: subscript out of range
+..\module\motion.c(181): warning:  #175-D: subscript out of range
               xyz[0] = traj[i][2][0];
-..\module\motion.c(184): warning:  #175-D: subscript out of range
+..\module\motion.c(186): warning:  #175-D: subscript out of range
               traj[i][2][0] = xyz[2];
-..\module\motion.c(188): warning:  #1293-D: assignment in condition
+..\module\motion.c(190): warning:  #1293-D: assignment in condition
           for (i=0;i=len;i++)
-..\module\motion.c(190): warning:  #175-D: subscript out of range
+..\module\motion.c(192): warning:  #175-D: subscript out of range
               xyz[0] = traj[i][2][0];
-..\module\motion.c(195): warning:  #175-D: subscript out of range
+..\module\motion.c(197): warning:  #175-D: subscript out of range
               traj[i][2][0] = xyz[2];
-..\module\motion.c(199): warning:  #1293-D: assignment in condition
+..\module\motion.c(201): warning:  #1293-D: assignment in condition
           for (i=0;i=len;i++)
-..\module\motion.c(201): warning:  #175-D: subscript out of range
+..\module\motion.c(203): warning:  #175-D: subscript out of range
               xyz[0] = traj[i][2][0];
-..\module\motion.c(204): warning:  #175-D: subscript out of range
+..\module\motion.c(206): warning:  #175-D: subscript out of range
               traj[i][2][0] = xyz[2];
-..\module\motion.c(224): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\module\motion.c(226): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       int32_t xy_t_s = {(int32_t)((xyz_t[0]*10.0)-xy_p[0]),
-..\module\motion.c(225): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-                      (int32_t)((xyz_t[1]*10.0)-xy_p[1])};
-..\module\motion.c(225): error:  #146: too many initializer values
-                      (int32_t)((xyz_t[1]*10.0)-xy_p[1])};
 ..\module\motion.c(227): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                      (int32_t)((xyz_t[1]*10.0)-xy_p[1])};
+..\module\motion.c(227): error:  #146: too many initializer values
+                      (int32_t)((xyz_t[1]*10.0)-xy_p[1])};
+..\module\motion.c(229): warning:  #1035-D: single-precision operand implicitly converted to double-precision
       int32_t xy_c_s = {(int32_t)((xyz_c[0]*10.0)-xy_p[0]),
-..\module\motion.c(228): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+..\module\motion.c(230): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                       (int32_t)((xyz_c[1]*10.0)-xy_p[1])};
-..\module\motion.c(228): error:  #146: too many initializer values
+..\module\motion.c(230): error:  #146: too many initializer values
                       (int32_t)((xyz_c[1]*10.0)-xy_p[1])};
-..\module\motion.c(231): error:  #167: argument of type "int32_t" is incompatible with parameter of type "int32_t *"
+..\module\motion.c(233): error:  #167: argument of type "int32_t" is incompatible with parameter of type "int32_t *"
       uint8_t s_t = Get_Sector(xy_t_s);
-..\module\motion.c(232): error:  #167: argument of type "int32_t" is incompatible with parameter of type "int32_t *"
+..\module\motion.c(234): error:  #167: argument of type "int32_t" is incompatible with parameter of type "int32_t *"
       uint8_t s_c = Get_Sector(xy_c_s);
-..\module\motion.c(246): error:  #167: argument of type "int32_t" is incompatible with parameter of type "int32_t *"
+..\module\motion.c(248): error:  #167: argument of type "int32_t" is incompatible with parameter of type "int32_t *"
           Sector_Convert(xy_t_s, xy_t_s1, s_t);
-..\module\motion.c(247): error:  #167: argument of type "int32_t" is incompatible with parameter of type "int32_t *"
+..\module\motion.c(249): error:  #167: argument of type "int32_t" is incompatible with parameter of type "int32_t *"
           Sector_Convert(xy_c_s, xy_c_s1, s_c);
-..\module\motion.c(254): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
-          Arc_Path_Part(traj_p,xy_c_s1,len_part,abs((int16_t)radius));
-..\module\motion.c(254): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "uint16_t"
-          Arc_Path_Part(traj_p,xy_c_s1,len_part,abs((int16_t)radius));
-..\module\motion.c(257): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
+..\module\motion.c(256): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
+          Arc_Path_Part(traj_p,xy_c_s1,len_part,(uint16_t)abs((int16_t)radius));
+..\module\motion.c(256): error:  #167: argument of type "int32_t *" is incompatible with parameter of type "uint16_t"
+          Arc_Path_Part(traj_p,xy_c_s1,len_part,(uint16_t)abs((int16_t)radius));
+..\module\motion.c(259): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
           Path_Convert(traj_p, len_part, s_t);
-..\module\motion.c: 33 warnings, 30 errors
+..\module\motion.c(262): error:  #167: argument of type "int32_t (*)[3][2]" is incompatible with parameter of type "int32_t *(*)[2]"
+          Path_Add_Offset(traj_p,len_part, xy_p[0],xy_p[1], xyz_t[2]);
+..\module\motion.c: 34 warnings, 30 errors
 compiling planner.c...
 ..\module\type.h(14): warning:  #14-D: extra text after expected end of preprocessing directive
   #undef  SQ(x)
@@ -282,84 +209,40 @@ compiling planner.c...
   #define ARR 8400
 ..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
   #endif
-..\module\planner.c(14): warning:  #174-D: expression has no effect
+..\module\planner.c(12): warning:  #174-D: expression has no effect
       if (block->dir[0]==stepperI->dir)   v_entr[0]==stepperI->freq;
-..\module\planner.c(15): warning:  #174-D: expression has no effect
+..\module\planner.c(13): warning:  #174-D: expression has no effect
       else                                v_entr[0]==0;
-..\module\planner.c(17): warning:  #174-D: expression has no effect
+..\module\planner.c(15): warning:  #174-D: expression has no effect
       if (block->dir[1]==stepperJ->dir)   v_entr[1]==stepperJ->freq;
-..\module\planner.c(18): warning:  #174-D: expression has no effect
+..\module\planner.c(16): warning:  #174-D: expression has no effect
       else                                v_entr[1]==0;
-..\module\planner.c(20): warning:  #174-D: expression has no effect
+..\module\planner.c(18): warning:  #174-D: expression has no effect
       if (block->dir[2]==stepperK->dir)   v_entr[2]==stepperK->freq;
-..\module\planner.c(21): warning:  #174-D: expression has no effect
+..\module\planner.c(19): warning:  #174-D: expression has no effect
       else                                v_entr[2]==0;
-..\module\planner.c(23): warning:  #174-D: expression has no effect
+..\module\planner.c(21): warning:  #174-D: expression has no effect
       if (block->freq[0]>JERK_FREQ)       v_out[0]==JERK_FREQ;
-..\module\planner.c(24): warning:  #174-D: expression has no effect
+..\module\planner.c(22): warning:  #174-D: expression has no effect
       else                                v_out[0]==block->freq[0];
-..\module\planner.c(26): warning:  #174-D: expression has no effect
+..\module\planner.c(24): warning:  #174-D: expression has no effect
       if (block->freq[1]>JERK_FREQ)       v_out[1]==JERK_FREQ;
-..\module\planner.c(27): warning:  #174-D: expression has no effect
+..\module\planner.c(25): warning:  #174-D: expression has no effect
       else                                v_out[1]==block->freq[1];
-..\module\planner.c(29): warning:  #174-D: expression has no effect
+..\module\planner.c(27): warning:  #174-D: expression has no effect
       if (block->freq[2]>JERK_FREQ)       v_out[2]==JERK_FREQ;
-..\module\planner.c(30): warning:  #174-D: expression has no effect
+..\module\planner.c(28): warning:  #174-D: expression has no effect
       else                                v_out[2]==block->freq[2];
-..\module\planner.c(37): error:  #29: expected an expression
-      t_acc2[3] = {v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
-..\module\planner.c(37): warning:  #175-D: subscript out of range
-      t_acc2[3] = {v_out-block->freq[0]*STEPPER_RES/SQ(MAX_FREQ),
-..\module\planner.c(42): warning:  #223-D: function "abs" declared implicitly
+..\module\planner.c(35): error:  #144: a value of type "int32_t *" cannot be used to initialize an entity of type "int32_t"
+      int32_t t_acc2[3] = {v_out-block->freq[0]*32/SQ(MAX_FREQ),
+..\module\planner.c(36): error:  #144: a value of type "int32_t *" cannot be used to initialize an entity of type "int32_t"
+                          v_out-block->freq[0]*32/SQ(MAX_FREQ),
+..\module\planner.c(37): error:  #144: a value of type "int32_t *" cannot be used to initialize an entity of type "int32_t"
+                          v_out-block->freq[0]*32/SQ(MAX_FREQ)};
+..\module\planner.c(40): warning:  #223-D: function "abs" declared implicitly
       int32_t s_acc2[3] = {(block->freq[0]+v_out[0])*abs(t_acc2[0])/2,
-..\module\planner.c(48): error:  #29: expected an expression
-      t_acc1[3] = {(block->freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
-..\module\planner.c(48): warning:  #175-D: subscript out of range
-      t_acc1[3] = {(block->freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
-..\module\planner.c: 25 warnings, 2 errors
-compiling main.c...
-..\module\config.h(116): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\type.h(14): warning:  #14-D: extra text after expected end of preprocessing directive
-  #undef  SQ(x)
-..\module\type.h(197): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(46): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\motion.h(202): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\buffer.h(34): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(46): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\gcode.h(41): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(46): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\planner.h(14): warning:  #47-D: incompatible redefinition of macro "ARR" (declared at line 87 of "..\module\config.h")
-  #define ARR     84-1
-..\module\planner.h(71): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\module\bsp.h(46): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\user\LDR_v0.2\main.c(150): warning:  #223-D: function "LED_Init" declared implicitly
-      LED_Init(&led_red);
-..\user\LDR_v0.2\main.c(161): warning:  #223-D: function "Uart_Init" declared implicitly
-      Uart_Init(115200);
-..\user\LDR_v0.2\main.c(164): warning:  #177-D: variable "len" was declared but never referenced
-      uint32_t len;
-..\user\LDR_v0.2\main.c(233): warning:  #174-D: expression has no effect
-          if (block_c.step[0]==0) stepperA.state==STOP;
-..\user\LDR_v0.2\main.c(234): warning:  #174-D: expression has no effect
-          if (block_c.step[1]==0) stepperB.state==STOP;
-..\user\LDR_v0.2\main.c(235): warning:  #174-D: expression has no effect
-          if (block_c.step[2]==0) stepperC.state==STOP;
-..\user\LDR_v0.2\main.c(267): warning:  #223-D: function "Forward_Kinematics" declared implicitly
-                      Forward_Kinematics(machine.abc,machine.xyz);
-..\user\LDR_v0.2\main.c: 19 warnings, 0 errors
-compiling stm32f4xx_it.c...
-compiling system_stm32f4xx.c...
-".\Objects\Relta.axf" - 33 Error(s), 121 Warning(s).
+..\module\planner.c: 23 warnings, 3 errors
+".\Objects\Relta.axf" - 34 Error(s), 71 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   D:\CodeStorage\Relta\mdk\RTE

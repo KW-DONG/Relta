@@ -9,7 +9,7 @@
 
 /**********************************Linear_Motion**********************************/
 
-void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell)
+void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, block_buff_t* buff)
 {
     int32_t dx = (int32_t)(xyz_t[0]*10) - (int32_t)(xyz_c[0]*10);
     int32_t dy = (int32_t)(xyz_t[1]*10) - (int32_t)(xyz_c[1]*10);
@@ -81,10 +81,10 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell)
 
     Kinematics_Planner(traj, len_traj, velocity);
 
-    Trej_Apply(traj, len_traj, dwell,&block_buff);
+    Trej_Apply(traj, len_traj, dwell, buff);
 }
 
-void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz, int16_t* da, int16_t* db, int16_t* dc)
+void Min_Max(int32_t dx, int32_t dy, int32_t dz, int32_t* da, int32_t* db, int32_t* dc)
 {
     if (abs(dx)>=abs(dy))
     {
@@ -211,7 +211,7 @@ void Linear_Path_Convert(int16_t* traj[3][2], uint16_t len,uint8_t case_path)
 /************************************Arc_Motion***********************************/
 
 //if (xyz_raw[2] != xyz_c[2]) a linear motion must be called in main function
-void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float dwell)
+void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float dwell, block_buff_t* buff)
 {
     uint8_t dir;
     uint32_t radius_p = abs((uint32_t)radius);
@@ -253,7 +253,7 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
         int32_t traj_p[len_part][3][2];
 
         //create a path in section 1 
-        Arc_Path_Part(traj_p,xy_c_s1,len_part,abs((int16_t)radius));
+        Arc_Path_Part(traj_p,xy_c_s1,len_part,(uint16_t)abs((int16_t)radius));
 
         //convert path
         Path_Convert(traj_p, len_part, s_t);
@@ -265,7 +265,7 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
         Kinematics_Planner(traj_p, len_part, velocity);
 
         //write buffer
-        Trej_Apply(traj_p, len_part, dwell, &block_buff);
+        Trej_Apply(traj_p, len_part, dwell, buff);
 
     }else
     //case 2: have to calculate  head and tail individually
@@ -358,24 +358,24 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
             Kinematics_Planner(traj_body, len_body, velocity);
             Kinematics_Planner(traj_tail, len_tail, velocity);
 
-            Trej_Apply(traj_head, len_head, 0.0, &block_buff);
-            Trej_Apply(traj_body, len_body, 0.0, &block_buff);
-            Trej_Apply(traj_tail, len_tail, dwell, &block_buff);
+            Trej_Apply(traj_head, len_head, 0.0, buff);
+            Trej_Apply(traj_body, len_body, 0.0, buff);
+            Trej_Apply(traj_tail, len_tail, dwell, buff);
 
         }else//the path includes a head and a tail
         {
             int32_t traj_head[len_head][3][2];
             int32_t traj_tail[len_tail][3][2];
-            Arc_Path_Part(traj_head,x_i_head,len_head,abs((int16_t)radius));
-            Arc_Path_Part(traj_tail,x_i_tail,len_tail,abs((int16_t)radius));
+            Arc_Path_Part(traj_head,x_i_head,len_head,(uint16_t)abs((int16_t)radius));
+            Arc_Path_Part(traj_tail,x_i_tail,len_tail,(uint16_t)abs((int16_t)radius));
             Path_Convert(traj_head, len_head, s_c);
             Path_Convert(traj_tail, len_tail, s_t);
 
             Kinematics_Planner(traj_head, len_head, velocity);
             Kinematics_Planner(traj_tail, len_tail, velocity);
 
-            Trej_Apply(traj_head, len_head, 0.0, &block_buff);
-            Trej_Apply(traj_tail, len_tail, dwell, &block_buff);
+            Trej_Apply(traj_head, len_head, 0.0, buff);
+            Trej_Apply(traj_tail, len_tail, dwell, buff);
         }
     }
 }

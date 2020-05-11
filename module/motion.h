@@ -28,7 +28,7 @@
  * @param velocity  operation velocity
  * @param dwell     dwell time before the motion
  */
-void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell);
+void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, block_buff_t* buff);
 
 /**
  * @brief param sorting
@@ -40,7 +40,7 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell);
  * @param dc output
  * @note abs(da)>abs(db)>abs(dc), the preprocess of Bresenham's method
  */
-void Min_Max(int16_t* dx, int16_t* dy, int16_t* dz, int16_t* da, int16_t* db, int16_t* dc);
+void Min_Max(int32_t dx, int32_t dy, int16_t dz, int32_t* da, int32_t* db, int32_t* dc);
 
 /**
  * @brief create a linear path
@@ -80,7 +80,7 @@ void Linear_Path_Convert(int16_t* traj[3][2], uint16_t len,uint8_t case_path);
  * @note radius>0 -> clockwise, vice versa
  * 
  */
-void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float dwell);
+void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float dwell, block_buff_t* buff);
 
 /**
  * @brief find the pivot point on a plane

@@ -174,9 +174,9 @@ int main()
 
             if (temp_node.type == home_t)
             {
-                Linear_Motion(XYZ_Home,XYZ_C,10.0,10.0);
-                Linear_Motion(XYZ_R,XYZ_Home,10.0,10.0);
-            }else if (temp_node.type == linear_t)   Linear_Motion(XYZ_T,XYZ_C,temp_node.feedrate,dwell);
+                Linear_Motion(XYZ_Home,XYZ_C,10.0,10.0, &block_buff);
+                Linear_Motion(XYZ_R,XYZ_Home,10.0,10.0, &block_buff);
+            }else if (temp_node.type == linear_t)   Linear_Motion(XYZ_T,XYZ_C,temp_node.feedrate,dwell,&block_buff);
             else if (temp_node.type == arc_t)
             {
                 //arc
@@ -185,11 +185,11 @@ int main()
                     XYZ_Arc[0] = XYZ_C[0];
                     XYZ_Arc[1] = XYZ_C[1];
                     XYZ_Arc[2] = XYZ_T[2];
-                    Linear_Motion(XYZ_Arc,XYZ_C,temp_node.feedrate,dwell);
-                    Arc_Motion(XYZ_T,XYZ_Arc,temp_node.radius_dwell,temp_node.feedrate,0.0);
+                    Linear_Motion(XYZ_Arc,XYZ_C,temp_node.feedrate,dwell,&block_buff);
+                    Arc_Motion(XYZ_T,XYZ_Arc,temp_node.radius_dwell,temp_node.feedrate,0.0,&block_buff);
                 }else
                 {
-                    Arc_Motion(XYZ_T,XYZ_C,temp_node.radius_dwell,temp_node.feedrate,dwell);
+                    Arc_Motion(XYZ_T,XYZ_C,temp_node.radius_dwell,temp_node.feedrate,dwell,&block_buff);
                 }
                 
             }
