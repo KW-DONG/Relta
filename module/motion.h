@@ -40,7 +40,7 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, bloc
  * @param dc output
  * @note abs(da)>abs(db)>abs(dc), the preprocess of Bresenham's method
  */
-void Min_Max(int32_t dx, int32_t dy, int16_t dz, int32_t* da, int32_t* db, int32_t* dc);
+void Min_Max(int32_t dx, int32_t dy, int32_t dz, int32_t* da, int32_t* db, int32_t* dc);
 
 /**
  * @brief create a linear path
@@ -53,7 +53,7 @@ void Min_Max(int32_t dx, int32_t dy, int16_t dz, int32_t* da, int32_t* db, int32
  *      path[i][1] = db
  *      path[i][2] = dc
  */
-void Linear_Path(int16_t* traj[3][2], int16_t da, int16_t db, int16_t dc);
+void Linear_Path(int32_t (*traj)[3][2], int32_t da, int32_t db, int32_t dc);
 
 /**
  * @brief rearrange the path to x->y->z order
@@ -66,7 +66,7 @@ void Linear_Path(int16_t* traj[3][2], int16_t da, int16_t db, int16_t dc);
  *                  case 5: zxy
  *                  case 6: zyx
  */
-void Linear_Path_Convert(int16_t* traj[3][2], uint16_t len,uint8_t case_path);
+void Linear_Path_Convert(int32_t (*traj)[3][2], uint16_t len,uint8_t case_path);
 
 /************************************Arc_Motion***********************************/
 
@@ -124,7 +124,7 @@ void Sector_Convert(int32_t* xy_i, int32_t* xy_o, uint8_t s);
  * @param len   size of the path
  * @param s     sector number
  */
-void Path_Convert(int32_t* traj[3][2], uint16_t len, uint8_t s);
+void Path_Convert(int32_t (*traj)[3][2], uint16_t len, uint8_t s);
 
 /**
  * @brief generate a path by cutting a full path
@@ -134,7 +134,7 @@ void Path_Convert(int32_t* traj[3][2], uint16_t len, uint8_t s);
  * @param x_i       start offset
  * @param x_o       finish offset
  */
-void Arc_Path_Oper(int32_t* traj_full[3][2], int32_t* traj_o[3][2], uint16_t len_o, int32_t x_i, int32_t x_o);
+void Arc_Path_Oper(int32_t (*traj_full)[3][2], int32_t (*traj_o)[3][2], uint16_t len_o, int32_t x_i, int32_t x_o);
 
 /**
  * @brief generate full path in sector 1
@@ -142,7 +142,7 @@ void Arc_Path_Oper(int32_t* traj_full[3][2], int32_t* traj_o[3][2], uint16_t len
  * @param len   path length
  * @param r     radius
  */
-void Arc_Path_Full(int32_t* traj[3][2], uint16_t len, uint16_t radius);
+void Arc_Path_Full(int32_t (*traj)[3][2], uint16_t len, uint16_t radius);
 
 /**
  * @brief generate a short path in sector 1
@@ -151,7 +151,7 @@ void Arc_Path_Full(int32_t* traj[3][2], uint16_t len, uint16_t radius);
  * @param len   path length
  * @param r     radius
  */
-void Arc_Path_Part(int32_t* traj[3][2], uint16_t x_i, uint16_t len, uint16_t radius);
+void Arc_Path_Part(int32_t (*traj)[3][2], uint16_t x_i, uint16_t len, uint16_t radius);
 
 /**
  * @brief add offset to the path
@@ -161,7 +161,7 @@ void Arc_Path_Part(int32_t* traj[3][2], uint16_t x_i, uint16_t len, uint16_t rad
  * @param y0    y offset
  * @param z0    z offset
  */
-void Path_Add_Offset(int32_t* traj[3][2], uint16_t len ,int32_t x0, int32_t y0, int32_t z0);
+void Path_Add_Offset(int32_t (*traj)[3][2], uint16_t len ,int32_t x0, int32_t y0, int32_t z0);
 
 /*******************************Kinematics_Planning******************************/
 
@@ -171,7 +171,7 @@ void Path_Add_Offset(int32_t* traj[3][2], uint16_t len ,int32_t x0, int32_t y0, 
  * @param traj_len
  * 
  */
-void Kinematics_Planner(int32_t* traj[3][2], uint16_t traj_len,float v_n);
+void Kinematics_Planner(int32_t (*traj)[3][2], uint16_t traj_len,float v_n);
 
 /**
  * @brief decouple the velocity: scalar -> vector
@@ -184,10 +184,9 @@ void Velocity_Decouple(float* xyz_v, uint8_t* d_xyz, float v_n);
 /**
  * @brief convert the carriage velocity to timer prescalar
  */
-uint16_t Velocity_To_Psc(int32_t mm_per_s);
+int32_t Velocity_To_Freq(float v);
 
 /**********************************Motion_Update*********************************/
-
 
 /**
  * @brief trajectory -> ring buff
@@ -195,7 +194,7 @@ uint16_t Velocity_To_Psc(int32_t mm_per_s);
  * @param len
  * @param ring_buff
  */
-void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, block_buff_t* ring_buff);
+void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* ring_buff);
 
 void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
 

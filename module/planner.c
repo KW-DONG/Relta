@@ -32,9 +32,9 @@ void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepp
 
     //positive -> accelerate
     //negative -> decelerate
-    int32_t t_acc2[3] = {v_out-block->freq[0]*32/SQ(MAX_FREQ),
-                        v_out-block->freq[0]*32/SQ(MAX_FREQ),
-                        v_out-block->freq[0]*32/SQ(MAX_FREQ)};
+    int32_t t_acc2[3] = {v_out[0]-block->freq[0]*32/SQ(MAX_FREQ),
+                        v_out[1]-block->freq[1]*32/SQ(MAX_FREQ),
+                        v_out[2]-block->freq[2]*32/SQ(MAX_FREQ)};
 
     //dcc distance -> s_acc2
     int32_t s_acc2[3] = {(block->freq[0]+v_out[0])*abs(t_acc2[0])/2,

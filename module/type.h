@@ -11,7 +11,6 @@
 #include "stm32f4xx_syscfg.h"
 #include "misc.h"
 
-#undef  SQ(x)
 #define SQ(x)   ((x)*(x))
 #define COS(x)  (cosf(x))
 #define SIN(x)  (sinf(x))

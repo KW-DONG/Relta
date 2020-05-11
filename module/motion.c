@@ -17,7 +17,7 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, bloc
 
     int32_t da,db,dc;
 
-    Min_Max(&dx,&dy,&dz,&da,&db,&dc);
+    Min_Max(dx,dy,dz,&da,&db,&dc);
 
     uint32_t len_traj = abs(da);
 
@@ -90,49 +90,49 @@ void Min_Max(int32_t dx, int32_t dy, int32_t dz, int32_t* da, int32_t* db, int32
     {
         if (abs(dz)>abs(dx))
         {
-            da = dz;
-            db = dx;
-            dc = dy;
+            da[0] = dz;
+            db[0] = dx;
+            dc[0] = dy;
         }
         else                    
         {
-            da = dx;
+            da[0] = dx;
             if (abs(dy)>=abs(dz))
-            {db = dy;
-             dc = dz;} 
+            {db[0] = dy;
+             dc[0] = dz;} 
             else
-            {db = dz;
-             dc = dy;} 
+            {db[0] = dz;
+             dc[0] = dy;} 
         }
     }
     else
     {
         if (abs(dz)>abs(dy))
         {
-            da = dz;
-            db = dy;
-            dc = dx;
+            da[0] = dz;
+            db[0] = dy;
+            dc[0] = dx;
         }
         else
         {
-            da = dy;
+            da[0] = dy;
             if (abs(dx)>=abs(dz))
-            {db = dx;
-             dc = dz;} 
+            {db[0] = dx;
+             dc[0] = dz;} 
             else
-            {db = dz;
-             dc = dx;} 
+            {db[0] = dz;
+             dc[0] = dx;} 
         }
     }
 }
 
-void Linear_Path(int16_t* traj[3][2], int16_t da, int16_t db, int16_t dc)
+void Linear_Path(int32_t (*traj)[3][2], int32_t da, int32_t db, int32_t dc)
 {
     uint16_t i;
 
     uint16_t len = (uint16_t)abs(da);
 
-    for(i=1;i=len;i++)
+    for(i=1;i==len;i++)
     {
         if(-5<db*i%dc<5)    traj[i][1][0] = traj[i-1][1][0];
         else if(db>0)       traj[i][1][0] = traj[i-1][1][0]+1;
@@ -144,21 +144,21 @@ void Linear_Path(int16_t* traj[3][2], int16_t da, int16_t db, int16_t dc)
     }
     if(da<0)
     {
-        for (i=1;i=len;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
+        for (i=1;i==len;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
     }else
     {
-        for (i=1;i=len;i++)     traj[i][0][0] = traj[i-1][0][0] - 1;
+        for (i=1;i==len;i++)     traj[i][0][0] = traj[i-1][0][0] - 1;
     }
 }
 
-void Linear_Path_Convert(int16_t* traj[3][2], uint16_t len,uint8_t case_path)
+void Linear_Path_Convert(int32_t (*traj)[3][2], uint16_t len,uint8_t case_path)
 {
     int32_t xyz[3];
     uint16_t i;
     if (case_path==1);
     else if (case_path==2)
     {
-        for (i=0;i=len;i++)
+        for (i=0;i==len;i++)
         {
             xyz[1] = traj[i][2][0];
             xyz[2] = traj[i][1][0];
@@ -167,7 +167,7 @@ void Linear_Path_Convert(int16_t* traj[3][2], uint16_t len,uint8_t case_path)
         }
     }else if (case_path==3)
     {
-        for (i=0;i=len;i++)
+        for (i=0;i==len;i++)
         {
             xyz[0] = traj[i][1][0];
             xyz[1] = traj[i][0][0];
@@ -176,7 +176,7 @@ void Linear_Path_Convert(int16_t* traj[3][2], uint16_t len,uint8_t case_path)
         }
     }else if (case_path==4)
     {
-        for (i=0;i=len;i++)
+        for (i=0;i==len;i++)
         {
             xyz[0] = traj[i][2][0];
             xyz[1] = traj[i][0][0];
@@ -187,7 +187,7 @@ void Linear_Path_Convert(int16_t* traj[3][2], uint16_t len,uint8_t case_path)
         }
     }else if (case_path==5)
     {
-        for (i=0;i=len;i++)
+        for (i=0;i==len;i++)
         {
             xyz[0] = traj[i][2][0];
             xyz[1] = traj[i][0][0];
@@ -198,7 +198,7 @@ void Linear_Path_Convert(int16_t* traj[3][2], uint16_t len,uint8_t case_path)
         }
     }else if (case_path==6)
     {
-        for (i=0;i=len;i++)
+        for (i=0;i==len;i++)
         {
             xyz[0] = traj[i][2][0];
             xyz[2] = traj[i][0][0];
@@ -223,11 +223,11 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
 
     Get_Pivot(xyz_t, xyz_c, radius, xy_p);
 
-    int32_t xy_t_s = {(int32_t)((xyz_t[0]*10.0)-xy_p[0]),
-                    (int32_t)((xyz_t[1]*10.0)-xy_p[1])};
+    int32_t xy_t_s[2] = {(int32_t)((xyz_t[0]*10.0f)-xy_p[0]),
+                    (int32_t)((xyz_t[1]*10.0f)-xy_p[1])};
 
-    int32_t xy_c_s = {(int32_t)((xyz_c[0]*10.0)-xy_p[0]),
-                    (int32_t)((xyz_c[1]*10.0)-xy_p[1])};
+    int32_t xy_c_s[2] = {(int32_t)((xyz_c[0]*10.0f)-xy_p[0]),
+                    (int32_t)((xyz_c[1]*10.0f)-xy_p[1])};
 
     //get sector number of the current poiny and target point
     uint8_t s_t = Get_Sector(xy_t_s);
@@ -253,7 +253,7 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
         int32_t traj_p[len_part][3][2];
 
         //create a path in section 1 
-        Arc_Path_Part(traj_p,xy_c_s1,len_part,(uint16_t)abs((int16_t)radius));
+        Arc_Path_Part(traj_p,xy_c_s1[0],len_part,(uint16_t)abs((int16_t)radius));
 
         //convert path
         Path_Convert(traj_p, len_part, s_t);
@@ -392,7 +392,7 @@ void Get_Pivot(float* xyz_t, float* xyz_c, float radius, int32_t* xy_p)
     float ij_ct_u[2] = {ij_ct[0]*INV(d_ct), ij_ct[1]*INV(d_ct)};
 
     //middle point between current point and target point
-    float xy_m[2] = {(xyz_t[0]-xyz_c[0])*INV(2.0), (xyz_t[0]-xyz_c[0])*INV(2.0)};
+    float xy_m[2] = {(xyz_t[0]-xyz_c[0])*INV(2.0f), (xyz_t[0]-xyz_c[0])*INV(2.0f)};
 
     //unit vector from middle point to pivot
     float ij_mp_u[2];
@@ -407,7 +407,7 @@ void Get_Pivot(float* xyz_t, float* xyz_c, float radius, int32_t* xy_p)
     }
 
     //distance between middle point and pivot
-    float d_mp = sqrtf(SQ(d_ct*INV(2.0))+SQ(radius));
+    float d_mp = sqrtf(SQ(d_ct*INV(2.0f))+SQ(radius));
 
     //vector from middle point to pivot
     float ij_mp[2] = {ij_mp_u[0]*d_mp, ij_mp_u[1]*d_mp};
@@ -424,17 +424,17 @@ uint8_t Count_Sector(uint8_t s_t, uint8_t s_c, uint8_t dir)
     i = 0;
     if (dir==CLOCKWISE)
     {
-        for (s=s_c; s=s_t; i++)
+        for (s=s_c; s==s_t; i++)
         {
-            if (s=8)    s=1;
+            if (s==8)    s=1;
             else        s++;
         }
         return i;
     }else
     {
-        for (s=s_c; s=s_t; i++)
+        for (s=s_c; s==s_t; i++)
         {
-            if (s=8)    s=1;
+            if (s==8)    s=1;
             else        s--;
         }
         return i;
@@ -511,7 +511,7 @@ void Sector_Convert(int32_t* xy_i, int32_t* xy_o, uint8_t s)
 }
 
 //convert path from sector 1 to sector s
-void Path_Convert(int32_t* traj[3][2], uint16_t len, uint8_t s)
+void Path_Convert(int32_t (*traj)[3][2], uint16_t len, uint8_t s)
 {
     uint16_t i;
     int32_t xy_i[2];
@@ -529,7 +529,7 @@ void Path_Convert(int32_t* traj[3][2], uint16_t len, uint8_t s)
         {
             xy_i[0] = path_t[i][0];
             xy_i[1] = path_t[i][1];
-            Sector_Convert(&xy_i,&xy_o,s);
+            Sector_Convert(xy_i,xy_o,s);
             traj[len-i][0][0] = xy_o[0];
             traj[len-i][1][0] = xy_o[1];
         }
@@ -540,7 +540,7 @@ void Path_Convert(int32_t* traj[3][2], uint16_t len, uint8_t s)
         {
             xy_i[0] = path_t[i][0];
             xy_i[1] = path_t[i][1];
-            Sector_Convert(&xy_i,&xy_o,s);
+            Sector_Convert(xy_i,xy_o,s);
             traj[i][0][0] = xy_o[0];
             traj[i][1][0] = xy_o[1];
         }
@@ -548,15 +548,14 @@ void Path_Convert(int32_t* traj[3][2], uint16_t len, uint8_t s)
 }
 
 //cut a section of path in section 1
-void Arc_Path_Oper(int32_t* traj_full[3][2], int32_t* traj_part[3][2],
-                uint16_t len_o, int32_t x_i, int32_t x_o)
+void Arc_Path_Oper(int32_t (*traj_full)[3][2], int32_t (*traj_part)[3][2],uint16_t len_o, int32_t x_i, int32_t x_o)
 {
     uint16_t i;
     if (x_i<x_o)
     {
         for (i=0;i=len_o;i++)
         {
-            traj_part[i][1][0] = traj_full[x_i][1];
+            traj_part[i][1][0] = traj_full[x_i][1][0];
             traj_part[i][0][0] = x_i;
             x_i ++;
         }
@@ -564,7 +563,7 @@ void Arc_Path_Oper(int32_t* traj_full[3][2], int32_t* traj_part[3][2],
     {
         for (i=0;i=len_o;i++)
         {
-            traj_part[i][1][0] = traj_full[x_o][1];
+            traj_part[i][1][0] = traj_full[x_o][1][0];
             traj_part[i][0][0] = x_i;
             x_o --;
         }
@@ -575,7 +574,7 @@ void Arc_Path_Oper(int32_t* traj_full[3][2], int32_t* traj_part[3][2],
 //generate path in section 1
 //len = sqrt(2)/2*R
 //path[0] = x_s, path[1] = y_s
-void Arc_Path_Full(int32_t* traj[3][2], uint16_t len, uint16_t radius)
+void Arc_Path_Full(int32_t (*traj)[3][2], uint16_t len, uint16_t radius)
 {
     uint16_t i;
     traj[0][1][0] = radius;
@@ -590,7 +589,7 @@ void Arc_Path_Full(int32_t* traj[3][2], uint16_t len, uint16_t radius)
 }
 
 //for example a small section of arc with a large radius
-void Arc_Path_Part(int32_t* traj[3][2], uint16_t x_i, uint16_t len, uint16_t radius)
+void Arc_Path_Part(int32_t (*traj)[3][2], uint16_t x_i, uint16_t len, uint16_t radius)
 {
     uint16_t i;
     float y;
@@ -606,7 +605,7 @@ void Arc_Path_Part(int32_t* traj[3][2], uint16_t x_i, uint16_t len, uint16_t rad
     }
 }
 
-void Path_Add_Offset(int32_t* traj[3][2], uint16_t len ,int32_t x0, int32_t y0, int32_t z0)
+void Path_Add_Offset(int32_t (*traj)[3][2], uint16_t len ,int32_t x0, int32_t y0, int32_t z0)
 {
     uint16_t i;
     for (i=0;i=len;i++)
@@ -621,7 +620,7 @@ void Path_Add_Offset(int32_t* traj[3][2], uint16_t len ,int32_t x0, int32_t y0, 
 
 //traj must include the init point
 //abc_c is abc_i
-void Kinematics_Planner(int32_t* traj[3][2], uint16_t len,float v_n)
+void Kinematics_Planner(int32_t (*traj)[3][2], uint16_t len,float v_n)
 {
     uint16_t i;
     float xyz_n[3];//next
@@ -729,12 +728,12 @@ void Velocity_Decouple(float* xyz_v, uint8_t* d_xyz, float v_n)
 
 int32_t Velocity_To_Freq(float v)
 {
-    return (int32_t)(v*10.0f)/(STEPS_PER_UNIT);
+    return ((int32_t)(v*10.0f))/(STEPS_PER_UNIT);
 }
 
 /**********************************Motion_Update*********************************/
 
-void Trej_Apply(int32_t* traj[3][2], uint32_t len, float dwell, block_buff_t* ring_buff)
+void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* ring_buff)
 {
     block_t   block;
     int32_t d_abc[3];
