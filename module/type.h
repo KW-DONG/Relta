@@ -68,9 +68,9 @@ typedef struct
 typedef struct 
 {
     uint8_t     dir[3];
-    int32_t    freq[3];//pps
+    int32_t     freq[3];
     uint16_t    step[3];
-    uint32_t    step_dwell;//calculated with monitor frequency
+    uint32_t    step_dwell;
 }block_t;
 
 typedef struct

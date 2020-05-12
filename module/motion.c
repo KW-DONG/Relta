@@ -17,19 +17,19 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, bloc
     int32_t dy = (int32_t)(xyz_t[1]*10) - (int32_t)(xyz_c[1]*10);
     int32_t dz = (int32_t)(xyz_t[2]*10) - (int32_t)(xyz_c[2]*10);
 
-    int32_t da,db,dc;
+    int32_t d1,d2,d3;//abs(d1)>abs(d2)>abs(d3)
 
-    Min_Max(dx,dy,dz,&da,&db,&dc);
+    Min_Max(dx,dy,dz,&d1,&d2,&d3);//sorting
 
-    uint32_t len_traj = abs(da);
+    uint32_t len_traj = abs(d1);
 
     uint8_t case_path;
 
     int32_t traj[len_traj][3][2];
 
-    if (da==dx)
+    if (d1==dx)
     {
-        if (db==dy) 
+        if (d2==dy) 
         {
             case_path = 1;//case 1: xyz
             traj[0][0][0] = xyz_c[0];
@@ -43,9 +43,9 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, bloc
             traj[0][1][0] = xyz_c[2];
             traj[0][2][0] = xyz_c[1];
         }
-    }else if (da==dy)
+    }else if (d1==dy)
     {
-        if (db==dx) 
+        if (d2==dx) 
         {
             case_path = 3;//case 3: yxz
             traj[0][0][0] = xyz_c[1];
@@ -61,7 +61,7 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, bloc
         }
     }else
     {
-        if (db==dx) 
+        if (d2==dx) 
         {
             case_path = 5;//case 5: zxy
             traj[0][0][0] = xyz_c[2];
@@ -77,7 +77,7 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, bloc
         }
     }
     
-    Linear_Path(traj, da, db, dc);
+    Linear_Path(traj, d1, d2, d3);
 
     Linear_Path_Convert(traj, len_traj,case_path);
 
@@ -86,65 +86,65 @@ void Linear_Motion(float* xyz_t, float* xyz_c, float velocity, float dwell, bloc
     Trej_Apply(traj, len_traj, dwell, buff);
 }
 
-void Min_Max(int32_t dx, int32_t dy, int32_t dz, int32_t* da, int32_t* db, int32_t* dc)
+void Min_Max(int32_t dx, int32_t dy, int32_t dz, int32_t* d1, int32_t* d2, int32_t* d3)
 {
     if (abs(dx)>=abs(dy))
     {
         if (abs(dz)>abs(dx))
         {
-            da[0] = dz;
-            db[0] = dx;
-            dc[0] = dy;
+            d1[0] = dz;
+            d2[0] = dx;
+            d3[0] = dy;
         }
         else                    
         {
-            da[0] = dx;
+            d1[0] = dx;
             if (abs(dy)>=abs(dz))
-            {db[0] = dy;
-             dc[0] = dz;} 
+            {d2[0] = dy;
+             d3[0] = dz;} 
             else
-            {db[0] = dz;
-             dc[0] = dy;} 
+            {d2[0] = dz;
+             d3[0] = dy;} 
         }
     }
     else
     {
         if (abs(dz)>abs(dy))
         {
-            da[0] = dz;
-            db[0] = dy;
-            dc[0] = dx;
+            d1[0] = dz;
+            d2[0] = dy;
+            d3[0] = dx;
         }
         else
         {
-            da[0] = dy;
+            d1[0] = dy;
             if (abs(dx)>=abs(dz))
-            {db[0] = dx;
-             dc[0] = dz;} 
+            {d2[0] = dx;
+             d3[0] = dz;} 
             else
-            {db[0] = dz;
-             dc[0] = dx;} 
+            {d2[0] = dz;
+             d3[0] = dx;} 
         }
     }
 }
 
-void Linear_Path(int32_t (*traj)[3][2], int32_t da, int32_t db, int32_t dc)
+void Linear_Path(int32_t (*traj)[3][2], int32_t d1, int32_t d2, int32_t d3)
 {
     uint16_t i;
 
-    uint16_t len = (uint16_t)abs(da);
+    uint16_t len = (uint16_t)abs(d1);
 
     for(i=1;i==len;i++)
     {
-        if(-5<db*i%dc<5)    traj[i][1][0] = traj[i-1][1][0];
-        else if(db>0)       traj[i][1][0] = traj[i-1][1][0]+1;
+        if(-5<d2*i%d3<5)    traj[i][1][0] = traj[i-1][1][0];
+        else if(d2>0)       traj[i][1][0] = traj[i-1][1][0]+1;
         else                traj[i][1][0] = traj[i-1][1][0]-1;
 
-        if(-5<dc*i%da<5)    traj[i][2][0] = traj[i-1][2][0];
-        else if(dc>0)       traj[i][2][0] = traj[i-1][2][0]+1;
+        if(-5<d3*i%d1<5)    traj[i][2][0] = traj[i-1][2][0];
+        else if(d3>0)       traj[i][2][0] = traj[i-1][2][0]+1;
         else                traj[i][2][0] = traj[i-1][2][0]-1;
     }
-    if(da<0)
+    if(d1<0)
     {
         for (i=1;i==len;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
     }else
