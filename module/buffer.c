@@ -2,68 +2,6 @@
 #include "stdlib.h"
 #include "gcode.h"
 
-void Gcode_Buff_Init(gcode_list_t* gcode_buff)
-{
-    gcode_buff->head = NULL;
-    gcode_buff->tail = gcode_buff->head;
-    gcode_buff->length = 0;
-}
-
-void Gcode_Buff_Write(gcode_list_t* gcode_buff, gcode_node_t* gcode_node)
-{
-    gcode_node_t *p = (gcode_node_t*)malloc(sizeof(gcode_node_t));
-
-    p->x = gcode_node->x;
-    p->y = gcode_node->y;
-    p->z = gcode_node->z;
-    p->radius_dwell = gcode_node->radius_dwell;
-    p->feedrate = gcode_node->feedrate;
-    p->next = NULL;
-
-    if(gcode_buff->length != 0)
-    {
-        gcode_buff->tail->next = p;
-        gcode_buff->tail = p;
-    }else
-    {
-        gcode_buff->head = p;
-        gcode_buff->length ++;
-    }
-}
-
-void Gcode_Buff_Read(gcode_list_t* gcode_buff,gcode_node_t* temp_node)
-{
-    temp_node->x = gcode_buff->head->x;
-    temp_node->y = gcode_buff->head->y;
-    temp_node->z = gcode_buff->head->z;
-    temp_node->radius_dwell = gcode_buff->head->radius_dwell;
-    temp_node->feedrate = gcode_buff->head->feedrate;
-
-    Gcode_Buff_Remove(gcode_buff);
-}
-
-void Gcode_Buff_Remove(gcode_list_t* gcode_buff)
-{
-    if(gcode_buff->length == 1) Gcode_Buff_Init(gcode_buff);
-    else
-    {
-        gcode_node_t* new_head = gcode_buff->head->next;
-        free(gcode_buff->head);
-        gcode_buff->head = new_head;
-        gcode_buff->length --;
-    }
-    
-}
-
-void Gcode_Buff_Clear(gcode_list_t* gcode_buff)
-{
-    uint32_t len = gcode_buff->length;
-    for (uint32_t i=0;i==len;i++)
-    {
-        Gcode_Buff_Remove(gcode_buff);
-    }
-}
-
 void Block_Buff_Init(block_buff_t* block)
 {
     block->head = NULL;

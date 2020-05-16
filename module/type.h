@@ -40,22 +40,14 @@
  * radius_dwell depend on the type
  */
 
-typedef struct _node
+typedef struct _command
 {
-    float   x,y,z,
-            feedrate,
-            radius_dwell;
-    uint8_t coordinate_sys;
+    float xyz[3];
+    float feedrate;
+    float radius_dwell;
     uint8_t type;
-    struct _node* next;
-}gcode_node_t;
+}command_t;
 
-typedef struct 
-{
-    gcode_node_t*       head;
-    gcode_node_t*       tail;
-    uint32_t            length;
-}gcode_list_t;
 
 typedef struct 
 {
@@ -71,6 +63,7 @@ typedef struct
     int32_t     freq[3];
     uint16_t    step[3];
     uint32_t    step_dwell;
+    uint8_t     flag;
 }block_t;
 
 typedef struct
@@ -83,11 +76,18 @@ typedef struct
 
 typedef struct 
 {
+    //feedback information
     float   xyz[3];
     float   abc[3];
     float   xyz_v[3];
     float   feedrate;
     uint8_t state;
+
+    //flags
+    uint8_t interpret_flag;
+    uint8_t fk_flag;
+    uint8_t traj_flag;
+
 }machine_t;
 
 enum machine_state

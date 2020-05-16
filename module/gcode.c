@@ -21,12 +21,11 @@ float Ascii(uint8_t value)
     }
 }
 
-void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff)
+void Gcode_Interpret(command_t* command, uart_buff_t* uart_buff)
 {
 
     uint8_t type=0;
     uint8_t key;
-    gcode_node_t gcode_node;
 
     key = Uart_Buff_Read(uart_buff);
 
@@ -44,13 +43,12 @@ void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff)
                 else            type = G2;
             }else if (key=='3') type = G3;
             else if (key=='4')  type = G4;
-        }else if (key=='X') gcode_node.x = Uart_Buff_Read_Num(uart_buff);
-        else if (key=='Y')  gcode_node.y = Uart_Buff_Read_Num(uart_buff);
-        else if (key=='Z')  gcode_node.z = Uart_Buff_Read_Num(uart_buff);
-        else if (key=='R'||key=='P')  gcode_node.radius_dwell = Uart_Buff_Read_Num(uart_buff);
-        else if (key=='F')  gcode_node.feedrate = Uart_Buff_Read_Num(uart_buff);
+        }else if (key=='X') command->xyz[0] = Uart_Buff_Read_Num(uart_buff);
+        else if (key=='Y')  command->xyz[1] = Uart_Buff_Read_Num(uart_buff);
+        else if (key=='Z')  command->xyz[2] = Uart_Buff_Read_Num(uart_buff);
+        else if (key=='R'||key=='P')  command->radius_dwell = Uart_Buff_Read_Num(uart_buff);
+        else if (key=='F')  command->feedrate = Uart_Buff_Read_Num(uart_buff);
     }
-    if (type==G3)   gcode_node.radius_dwell = -gcode_node.radius_dwell;
-    Gcode_Buff_Write(gcode_list,&gcode_node);
+    if (type==G3)   command->radius_dwell = -command->radius_dwell;
 }
 

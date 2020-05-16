@@ -30,7 +30,7 @@ enum Motion_Type
  * @param gcode_list
  * @param uart_buff
  */
-void Gcode_Interpret(gcode_list_t* gcode_list, uart_buff_t* uart_buff);
+void Gcode_Interpret(command_t* command, uart_buff_t* uart_buff);
 
 /**
  * @brief char -> float

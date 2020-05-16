@@ -25,9 +25,9 @@ machine_t   machine;
 monitor_t   monitor;
 
 //buffer
-gcode_list_t gcode_list;
 block_buff_t block_buff;
 uart_buff_t  uart_buff;
+command_t    command_c;
 
 //block
 block_t block_c;
@@ -165,54 +165,55 @@ int main()
     monitor.TIMX_IRQn = TIM5_IRQn;
     Bsp_Monitor_Init(&monitor);
     
-    Gcode_Buff_Init(&gcode_list);
     Block_Buff_Init(&block_buff);
 
     //hardware init
     Bsp_UART_Init(115200);
 
-    gcode_node_t temp_node;
 
     while (1)
     {
-        while(gcode_list.length != 0&&block_buff.length<100)
+        //task 1: interprete g_code
+        if (machine.interpret_flag==1)
         {
-            Gcode_Buff_Read(&gcode_list, &temp_node);
-            XYZ_T[0] = temp_node.x;
-            XYZ_T[1] = temp_node.y;
-            XYZ_T[2] = temp_node.z;
+            Gcode_Interpret(&command_c,&uart_buff);
+            machine.interpret_flag = 0;
+            machine.traj_flag = 1;
+        }
 
-            if (temp_node.type == home_t)
+        //task 2: generate trajectory
+        if (machine.traj_flag==1)
+        {
+            if (command_c.type == home_t)
             {
                 Linear_Motion(XYZ_Home,XYZ_C,10.0,10.0, &block_buff);
                 Linear_Motion(XYZ_R,XYZ_Home,10.0,10.0, &block_buff);
-            }else if (temp_node.type == linear_t)   Linear_Motion(XYZ_T,XYZ_C,temp_node.feedrate,dwell,&block_buff);
-            else if (temp_node.type == arc_t)
+            }else if (command_c.type == linear_t)
             {
-                //arc
-                if (XYZ_T[2]!=XYZ_C[2])
+                Linear_Motion(command_c.xyz, XYZ_C, command_c.feedrate, dwell, &block_buff);
+                dwell = 0.0f;
+            }else if (command_c.type == arc_t)
+            {
+                if (command_c.xyz[2]!=XYZ_C[2])
                 {
-                    XYZ_Arc[0] = XYZ_C[0];
-                    XYZ_Arc[1] = XYZ_C[1];
-                    XYZ_Arc[2] = XYZ_T[2];
-                    Linear_Motion(XYZ_Arc,XYZ_C,temp_node.feedrate,dwell,&block_buff);
-                    Arc_Motion(XYZ_T,XYZ_Arc,temp_node.radius_dwell,temp_node.feedrate,0.0,&block_buff);
+                    float xyz_arc[3] = {XYZ_C[0],XYZ_C[1], command_c.xyz[2]};
+                    Linear_Motion(xyz_arc, XYZ_C, 10.0,dwell,&block_buff);
+                    Arc_Motion(command_c.xyz,xyz_arc, command_c.radius_dwell,command_c.feedrate, 0.0f, &block_buff);
                 }else
                 {
-                    Arc_Motion(XYZ_T,XYZ_C,temp_node.radius_dwell,temp_node.feedrate,dwell,&block_buff);
+                    Arc_Motion(command_c.xyz, XYZ_C, command_c.radius_dwell, command_c.feedrate, dwell, &block_buff);
                 }
-                
-            }
-            if (temp_node.type == dwell_t)
+                dwell = 0.0f;
+            }else if (command_c.type == dwell_t)
             {
-                dwell = temp_node.radius_dwell;
+                dwell = command_c.radius_dwell;
             }
-            XYZ_C[0] = XYZ_T[0];
-            XYZ_C[1] = XYZ_T[1];
-            XYZ_C[2] = XYZ_T[2];
+            XYZ_C[0] = command_c.xyz[0];
+            XYZ_C[1] = command_c.xyz[1];
+            XYZ_C[2] = command_c.xyz[2];
         }
+        //task 3: apply FK and report feedback
     }
-    
 }
 
 void USART1_IRQHandler(void)
@@ -223,8 +224,7 @@ void USART1_IRQHandler(void)
         USART_ClearITPendingBit(USART1, USART_IT_RXNE);
         res = USART_ReceiveData(USART1);
         Uart_Buff_Write(&uart_buff,res);
-        if (res==13)    Gcode_Interpret(&gcode_list,&uart_buff);
-
+        if (res==13)    machine.interpret_flag = 1;
     }
 }
 
@@ -335,9 +335,6 @@ void EXTI3_IRQHandler(void)
     stepperA.state = STOP;
     stepperB.state = STOP;
     stepperC.state = STOP;
-
-    Gcode_Buff_Clear(&gcode_list);
-    Gcode_Buff_Init(&gcode_list);
 
     Block_Buff_Clear(&block_buff);
     Block_Buff_Init(&block_buff);

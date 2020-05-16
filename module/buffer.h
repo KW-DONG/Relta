@@ -3,15 +3,6 @@
 
 #include "type.h"
 
-void Gcode_Buff_Init(gcode_list_t* gcode_buff);
-
-void Gcode_Buff_Write(gcode_list_t* gcode_buff, gcode_node_t* gcode_node);
-
-void Gcode_Buff_Read(gcode_list_t* gcode_buff, gcode_node_t* temp_node);
-
-void Gcode_Buff_Remove(gcode_list_t* gcode_buff);
-
-void Gcode_Buff_Clear(gcode_list_t* gcode_buff);
 
 void Block_Buff_Init(block_buff_t* block);
 
