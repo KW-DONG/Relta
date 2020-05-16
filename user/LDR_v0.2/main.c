@@ -50,21 +50,23 @@ int main()
     stepperA.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM2;
     stepperA.GPIO_Pin_X = GPIO_Pin_11;
     stepperA.GPIO_PinSourceX = GPIO_PinSource11;
-    stepperA.GPIOX = GPIOA;
-    stepperA.TIMX = TIM5;
+    stepperA.GPIOX = GPIOB;
+    stepperA.TIMX = TIM2;
+    stepperA.PWM_Ch = 4;
     stepperA.arr = TIM_ARR;
-    stepperA.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOB;
-    stepperA.GPIO_Pin_X_Dir = GPIO_Pin_3;
-    stepperA.GPIOX_Dir = GPIOB;
+    stepperA.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOA;
+    stepperA.GPIO_Pin_X_Dir = GPIO_Pin_15;
+    stepperA.GPIOX_Dir = GPIOA;
     Bsp_Stepper_Init(&stepperA);
 
     //stepper_B init
     stepperB.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
-    stepperB.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM2;
-    stepperB.GPIO_Pin_X = GPIO_Pin_11;
-    stepperB.GPIO_PinSourceX = GPIO_PinSource11;
+    stepperB.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM3;
+    stepperB.GPIO_Pin_X = GPIO_Pin_6;
+    stepperB.GPIO_PinSourceX = GPIO_PinSource6;
     stepperB.GPIOX = GPIOC;
-    stepperB.TIMX = TIM6;
+    stepperB.TIMX = TIM3;
+    stepperB.PWM_Ch = 1;
     stepperB.arr = TIM_ARR;
     stepperB.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOC;
     stepperB.GPIO_Pin_X_Dir = GPIO_Pin_7;
@@ -72,26 +74,27 @@ int main()
     Bsp_Stepper_Init(&stepperB);
 
     //stepper_C init
-    stepperC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
-    stepperC.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM2;
-    stepperC.GPIO_Pin_X = GPIO_Pin_11;
-    stepperC.GPIO_PinSourceX = GPIO_PinSource11;
-    stepperC.GPIOX = GPIOC;
-    stepperC.TIMX = TIM6;
+    stepperC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOB;
+    stepperC.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM4;
+    stepperC.GPIO_Pin_X = GPIO_Pin_6;
+    stepperC.GPIO_PinSourceX = GPIO_PinSource6;
+    stepperC.GPIOX = GPIOB;
+    stepperC.TIMX = TIM4;
+    stepperC.PWM_Ch = 1;
     stepperC.arr = TIM_ARR;
-    stepperC.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOC;
-    stepperC.GPIO_Pin_X_Dir = GPIO_Pin_7;
-    stepperC.GPIOX_Dir = GPIOC;
+    stepperC.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOA;
+    stepperC.GPIO_Pin_X_Dir = GPIO_Pin_6;
+    stepperC.GPIOX_Dir = GPIOA;
     Bsp_Stepper_Init(&stepperC);
 
 /*******************************SWITCH_KEY*******************************/
     //stop_start_key
-    stop_start_key.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOE;
-    stop_start_key.GPIOX = GPIOE;
+    stop_start_key.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
+    stop_start_key.GPIOX = GPIOC;
     stop_start_key.GPIO_PinX = GPIO_Pin_0;
     stop_start_key.EXTI_LineX = EXTI_Line0;
     stop_start_key.EXTI_PinSourceX = EXTI_PinSource0;
-    stop_start_key.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
+    stop_start_key.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
     stop_start_key.EXTIX_IRQn = EXTI0_IRQn;
     stop_start_key.mode = NC;
     stop_start_key.NVIC_PP = 1;
@@ -99,51 +102,55 @@ int main()
     Bsp_Switch_Init(&stop_start_key);
 
     //reset key
-    reset_key.EXTI_LineX = EXTI_Line3;
-    reset_key.EXTI_PinSourceX = EXTI_PinSource3;
-    reset_key.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
-    reset_key.EXTIX_IRQn = EXTI3_IRQn;
-    reset_key.GPIO_PinX = GPIO_Pin_3;
-    reset_key.GPIOX = GPIOE;
+    reset_key.EXTI_LineX = EXTI_Line1;
+    reset_key.EXTI_PinSourceX = EXTI_PinSource1;
+    reset_key.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
+    reset_key.EXTIX_IRQn = EXTI1_IRQn;
+    reset_key.GPIO_PinX = GPIO_Pin_1;
+    reset_key.GPIOX = GPIOC;
     reset_key.mode = NC;
     reset_key.NVIC_PP = 1;
     reset_key.NVIC_SP = 1;
+    reset_key.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&reset_key);
 
     //switch A
-    switchA.EXTI_LineX = EXTI_Line0;
-    switchA.EXTI_PinSourceX = EXTI_PinSource0;
-    switchA.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
-    switchA.EXTIX_IRQn = EXTI0_IRQn;
-    switchA.GPIO_PinX = GPIO_Pin_0;
-    switchA.GPIOX = GPIOE;
+    switchA.EXTI_LineX = EXTI_Line2;
+    switchA.EXTI_PinSourceX = EXTI_PinSource2;
+    switchA.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
+    switchA.EXTIX_IRQn = EXTI2_IRQn;
+    switchA.GPIO_PinX = GPIO_Pin_2;
+    switchA.GPIOX = GPIOC;
     switchA.mode = NC;
     switchA.NVIC_PP = 1;
     switchA.NVIC_SP = 1;
+    switchA.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchA);
 
     //switch B
-    switchB.EXTI_LineX = EXTI_Line1;
-    switchB.EXTI_PinSourceX = EXTI_PinSource1;
-    switchB.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
-    switchB.EXTIX_IRQn = EXTI1_IRQn;
-    switchB.GPIO_PinX = GPIO_Pin_1;
-    switchB.GPIOX = GPIOE;
+    switchB.EXTI_LineX = EXTI_Line3;
+    switchB.EXTI_PinSourceX = EXTI_PinSource3;
+    switchB.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
+    switchB.EXTIX_IRQn = EXTI3_IRQn;
+    switchB.GPIO_PinX = GPIO_Pin_3;
+    switchB.GPIOX = GPIOC;
     switchB.mode = NC;
     switchB.NVIC_PP = 1;
     switchB.NVIC_SP = 1;
+    switchB.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchB);
 
     //switch C
-    switchC.EXTI_LineX = EXTI_Line2;
-    switchC.EXTI_PinSourceX = EXTI_PinSource2;
-    switchC.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOE;
-    switchC.EXTIX_IRQn = EXTI2_IRQn;
-    switchC.GPIO_PinX = GPIO_Pin_2;
-    switchC.GPIOX = GPIOE;
+    switchC.EXTI_LineX = EXTI_Line4;
+    switchC.EXTI_PinSourceX = EXTI_PinSource4;
+    switchC.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
+    switchC.EXTIX_IRQn = EXTI3_IRQn;
+    switchC.GPIO_PinX = GPIO_Pin_3;
+    switchC.GPIOX = GPIOC;
     switchC.mode = NC;
     switchC.NVIC_PP = 1;
     switchC.NVIC_SP = 1;
+    switchC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchC);
 
 /*********************************LED*********************************/
@@ -186,8 +193,8 @@ int main()
         {
             if (command_c.type == home_t)
             {
-                Linear_Motion(XYZ_Home,XYZ_C,10.0,10.0, &block_buff);
-                Linear_Motion(XYZ_R,XYZ_Home,10.0,10.0, &block_buff);
+                Linear_Motion(XYZ_Home,XYZ_C,10.0f,10.0f, &block_buff);
+                Linear_Motion(XYZ_R,XYZ_Home,10.0f,10.0f, &block_buff);
             }else if (command_c.type == linear_t)
             {
                 Linear_Motion(command_c.xyz, XYZ_C, command_c.feedrate, dwell, &block_buff);
@@ -197,7 +204,7 @@ int main()
                 if (command_c.xyz[2]!=XYZ_C[2])
                 {
                     float xyz_arc[3] = {XYZ_C[0],XYZ_C[1], command_c.xyz[2]};
-                    Linear_Motion(xyz_arc, XYZ_C, 10.0,dwell,&block_buff);
+                    Linear_Motion(xyz_arc, XYZ_C, 10.0f,dwell,&block_buff);
                     Arc_Motion(command_c.xyz,xyz_arc, command_c.radius_dwell,command_c.feedrate, 0.0f, &block_buff);
                 }else
                 {
@@ -294,7 +301,7 @@ void TIM5_IRQHandler()
 }
 
 //switch A
-void EXTI0_IRQHandler(void)
+void EXTI2_IRQHandler(void)
 {
 	delay_ms(10);
     machine.abc[0] = CARRIAGE_A_RESET;
@@ -307,7 +314,7 @@ void EXTI0_IRQHandler(void)
 }
 
 //switch B
-void EXTI1_IRQHandler(void)
+void EXTI3_IRQHandler(void)
 {
     delay_ms(10);
     machine.abc[1] = CARRIAGE_B_RESET;
@@ -320,7 +327,7 @@ void EXTI1_IRQHandler(void)
 }
 
 //switch C
-void EXTI2_IRQHandler(void)
+void EXTI4_IRQHandler(void)
 {
     delay_ms(10);
     machine.abc[2] = CARRIAGE_C_RESET;
@@ -333,7 +340,7 @@ void EXTI2_IRQHandler(void)
 }
 
 //switch R
-void EXTI3_IRQHandler(void)
+void EXTI1_IRQHandler(void)
 {
     delay_ms(10);
 	machine.state = machine_OFF;
@@ -353,7 +360,7 @@ void EXTI3_IRQHandler(void)
 }
 
 //switch S
-void EXTI4_IRQHandler(void)
+void EXTI0_IRQHandler(void)
 {
     delay_ms(10);
 	if (machine.state != machine_ON) machine.state = machine_ON;

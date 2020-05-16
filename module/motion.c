@@ -376,7 +376,7 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
             Kinematics_Planner(traj_head, len_head, velocity);
             Kinematics_Planner(traj_tail, len_tail, velocity);
 
-            Trej_Apply(traj_head, len_head, 0.0, buff);
+            Trej_Apply(traj_head, len_head, 0.0f, buff);
             Trej_Apply(traj_tail, len_tail, dwell, buff);
         }
     }
@@ -680,27 +680,27 @@ void Velocity_Decouple(float* xyz_v, uint8_t* d_xyz, float v_n)
         {
             if (d_xyz[2]==1)
             {
-                xyz_v[0] = v_n*INV(sqrtf(3.0));
+                xyz_v[0] = v_n*INV(sqrtf(3.0f));
                 xyz_v[1] = xyz_v[0];
                 xyz_v[2] = xyz_v[0];
             }else
             {
-                xyz_v[0] = v_n*INV(sqrtf(2.0));
+                xyz_v[0] = v_n*INV(sqrtf(2.0f));
                 xyz_v[1] = xyz_v[0];
-                xyz_v[2] = 0.0;
+                xyz_v[2] = 0.0f;
             }
         }else
         {
             if (d_xyz[2]==1)
             {
-                xyz_v[0] = v_n*INV(sqrtf(2.0));
-                xyz_v[1] = 0.0;
+                xyz_v[0] = v_n*INV(sqrtf(2.0f));
+                xyz_v[1] = 0.0f;
                 xyz_v[2] = xyz_v[0];
             }else
             {
                 xyz_v[0] = v_n;
-                xyz_v[1] = 0.0;
-                xyz_v[2] = 0.0;
+                xyz_v[1] = 0.0f;
+                xyz_v[2] = 0.0f;
             }
         }
         
@@ -710,19 +710,19 @@ void Velocity_Decouple(float* xyz_v, uint8_t* d_xyz, float v_n)
         {
             if (d_xyz[2]==1)
             {
-                xyz_v[0] = 0.0;
-                xyz_v[1] = v_n*INV(sqrtf(2.0));
+                xyz_v[0] = 0.0f;
+                xyz_v[1] = v_n*INV(sqrtf(2.0f));
                 xyz_v[2] = xyz_v[1];
             }else
             {
-                xyz_v[0] = 0.0;
+                xyz_v[0] = 0.0f;
                 xyz_v[1] = v_n;
-                xyz_v[2] = 0.0;
+                xyz_v[2] = 0.0f;
             }
         }else
         {
-            xyz_v[0] = 0.0;
-            xyz_v[1] = 0.0;
+            xyz_v[0] = 0.0f;
+            xyz_v[1] = 0.0f;
             xyz_v[2] = v_n;
         }
     }
@@ -756,12 +756,12 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
         d_abc[1] = abc_n[1] - abc_l[1];
         d_abc[2] = abc_n[2] - abc_l[2];
 
-        if (d_abc[0]>0) block.dir[0] = 1;
-        else            block.dir[0] = 0;
-        if (d_abc[1]>0) block.dir[1] = 1;
-        else            block.dir[1] = 0;
-        if (d_abc[2]>0) block.dir[2] = 1;
-        else            block.dir[2] = 0;
+        if (d_abc[0]>0) block.dir[0] = stepper_ON;
+        else            block.dir[0] = stepper_DOWN;
+        if (d_abc[1]>0) block.dir[1] = stepper_ON;
+        else            block.dir[1] = stepper_DOWN;
+        if (d_abc[2]>0) block.dir[2] = stepper_ON;
+        else            block.dir[2] = stepper_DOWN;
 
         block.step_dwell = dwell*MONITOR_FREQ;
 

@@ -5,19 +5,19 @@
 /**
  * IO Table
  * 				Set 	Dir
- * Stepper_A: 	PB11	PB3
+ * Stepper_A: 	PB11	PA15
  * Stepper_B:	PC6		PC7
- * Stepper_C:	PB6		PB5
+ * Stepper_C:	PB6		PA6
  * 
- * MS1:         PB10
- * MS2:         PD0
- * MS3:         PD3
+ * MS1:         PF6
+ * MS2:         PF7
+ * MS3:         PF8
  * 
- * Switch_A:    PE0
- * Switch_B:    PE1
- * Switch_C:    PE2
- * Switch_R:    PE3
- * Switch_S:    PD4
+ * Switch_A:    PC2
+ * Switch_B:    PC3
+ * Switch_C:    PC4
+ * Switch_R:    PC1
+ * Switch_S:    PC0
  * 
  * LED_G:       PF9
  * LED_R:       PF10
