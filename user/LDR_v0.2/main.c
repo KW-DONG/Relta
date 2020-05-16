@@ -174,15 +174,15 @@ int main()
     while (1)
     {
         //task 1: interprete g_code
-        if (machine.interpret_flag==1)
+        if (machine.interpret_flag == SET)
         {
             Gcode_Interpret(&command_c,&uart_buff);
-            machine.interpret_flag = 0;
-            machine.traj_flag = 1;
+            machine.interpret_flag = RESET;
+            machine.traj_flag = SET;
         }
 
         //task 2: generate trajectory
-        if (machine.traj_flag==1)
+        if (machine.traj_flag == SET)
         {
             if (command_c.type == home_t)
             {
@@ -211,8 +211,15 @@ int main()
             XYZ_C[0] = command_c.xyz[0];
             XYZ_C[1] = command_c.xyz[1];
             XYZ_C[2] = command_c.xyz[2];
+            machine.traj_flag = RESET;
+
         }
         //task 3: apply FK and report feedback
+        if (machine.fk_flag == SET)
+        {
+            Forward_Kinematics(machine.abc, machine.xyz);
+            machine.fk_flag = RESET;
+        }
     }
 }
 
@@ -224,7 +231,7 @@ void USART1_IRQHandler(void)
         USART_ClearITPendingBit(USART1, USART_IT_RXNE);
         res = USART_ReceiveData(USART1);
         Uart_Buff_Write(&uart_buff,res);
-        if (res==13)    machine.interpret_flag = 1;
+        if (res==13)    machine.interpret_flag = SET;
     }
 }
 
@@ -234,7 +241,6 @@ void TIM5_IRQHandler()
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
         static uint8_t block_state;
-        
         static int32_t acc1_step[3];//head
         static int32_t acc2_step[3];//tail
         
@@ -247,13 +253,16 @@ void TIM5_IRQHandler()
         if (machine.state==machine_ON)
         {
             //check whether the current block is executing
-            if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0&&block_c.step_dwell==0)
+            if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0)
             {
+                machine.fk_flag = SET;
                 block_state = Block_Buff_Read(&block_c, &block_buff);
                 if(block_state==TRUE)
                 {
                     //always maximum acceleration
+                    #if USE_PLANNER
                     Acc_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc1_step, acc2_step);
+                    #endif
                     
                     stepperA.freq = block_c.freq[0];
                     stepperB.freq = block_c.freq[1];
@@ -270,11 +279,10 @@ void TIM5_IRQHandler()
                 Dwell_Step_Update(&block_c);
                 else
                 {
-                    Stepper_Cnt(&block_c, &stepperA, &stepperB, &stepperC);
+                    Stepper_Cnt(&block_c, &machine, &stepperA, &stepperB, &stepperC);
                     #if USE_PLANNER
                     Acc_Cnt(&stepperA, &stepperB, &stepperC, acc1_step, acc2_step, &block_c);
                     #endif
-                    Forward_Kinematics(machine.abc,machine.xyz);
                 }
             }
         }
@@ -293,7 +301,7 @@ void EXTI0_IRQHandler(void)
     if (stepperA.dir==1)
     {
         block_c.step[0] = 0;
-        stepperA.dir = 0;
+        stepperA.dir = stepper_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line0);
 }
@@ -306,7 +314,7 @@ void EXTI1_IRQHandler(void)
     if (stepperB.dir==1)
     {
         block_c.step[1] = 0;
-        stepperB.dir = 0;
+        stepperB.dir = stepper_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line1);
 }
@@ -319,7 +327,7 @@ void EXTI2_IRQHandler(void)
     if (stepperC.dir==1)
     {
         block_c.step[2] = 0;
-        stepperC.dir = 0;
+        stepperC.dir = stepper_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line2);
 }

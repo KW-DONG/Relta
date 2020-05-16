@@ -133,11 +133,26 @@ void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int3
     }
 }
 
-void Stepper_Cnt(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
+void Stepper_Cnt(block_t* block, machine_t* machine,stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
 {
-    if (stepperI->pin_state_last==0&&stepperI->pin_state==1)    block->step[0]--;
-    if (stepperJ->pin_state_last==0&&stepperJ->pin_state==1)    block->step[1]--;
-    if (stepperK->pin_state_last==0&&stepperK->pin_state==1)    block->step[2]--;
+    if (stepperI->pin_state_last==0&&stepperI->pin_state==1)
+    {
+        block->step[0]--;
+        if (stepperI->dir == 0) machine->abc[0]-INV(STEPS_PER_UNIT);
+        else                    machine->abc[0]+INV(STEPS_PER_UNIT);
+    }
+    if (stepperJ->pin_state_last==0&&stepperJ->pin_state==1)
+    {
+        block->step[1]--;
+        if (stepperJ->dir == 0) machine->abc[1]-INV(STEPS_PER_UNIT);
+        else                    machine->abc[1]+INV(STEPS_PER_UNIT);
+    }
+    if (stepperK->pin_state_last==0&&stepperK->pin_state==1)    
+    {
+        block->step[2]--;
+        if (stepperK->dir == 0) machine->abc[2]-INV(STEPS_PER_UNIT);
+        else                    machine->abc[2]+INV(STEPS_PER_UNIT);
+    }
 }
 
 

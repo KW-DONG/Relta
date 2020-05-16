@@ -782,19 +782,19 @@ void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, 
     //check carriage reset point and motor direction
     if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==1)
     {
-        stepperI->dir=0;
+        stepperI->dir=stepper_DOWN;
         stepperI->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_A_FAIL",15);
     }
     if (machine->abc[1]==CARRIAGE_B_RESET&&stepperJ->dir==1)
     {
-        stepperJ->dir=0;
+        stepperJ->dir=stepper_DOWN;
         stepperJ->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_B_FAIL",15);
     }
     if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==1)
     {
-        stepperK->dir=0;
+        stepperK->dir=stepper_DOWN;
         stepperK->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_C_FAIL",15);
     }

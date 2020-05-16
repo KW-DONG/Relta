@@ -9,7 +9,6 @@
 //machine status
 #define WORK            0
 #define SLEEP           1
-#define RESET           2
 
 #define ARR     84-1
 
@@ -66,6 +65,6 @@ void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int3
  * @param stepperK
  * @note by detecting rising edge
  */
-void Stepper_Cnt(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
+void Stepper_Cnt(block_t* block, machine_t* machine,stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
 
 #endif

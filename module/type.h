@@ -102,7 +102,9 @@ enum machine_state
 enum stepper_state
 {
     stepper_ON,
-    stepper_OFF
+    stepper_OFF,
+    stepper_UP,
+    stepper_DOWN
 };
 
 typedef struct _stepper
