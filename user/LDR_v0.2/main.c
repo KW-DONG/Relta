@@ -25,18 +25,16 @@ machine_t   machine;
 monitor_t   monitor;
 
 //buffer
-volatile  block_buff_t block_buff;
-volatile uart_buff_t  uart_buff;
-volatile command_t    command_c;
+block_buff_t block_buff;
+uart_buff_t  uart_buff;
+command_t    command_c;
 
 //block
-volatile block_t block_c;
+block_t block_c;
 
 int main()
 {
     float XYZ_C[3];
-    float XYZ_T[3];
-    float XYZ_Arc[3];
     float XYZ_Home[3] = {0.0f,0.0f,50.0f};
     float XYZ_R[3] = {0.0f,0.0f,300.0f};
     static float dwell;
@@ -225,10 +223,8 @@ int main()
         if (machine.carriage_move[1]!=0)    machine.abc[1] = machine.abc[1] + machine.carriage_move[1]*INV(STEPS_PER_UNIT);
         if (machine.carriage_move[2]!=0)    machine.abc[2] = machine.abc[2] + machine.carriage_move[2]*INV(STEPS_PER_UNIT);
         Forward_Kinematics(machine.abc, machine.xyz);
-        }
     }
 }
-
 void USART1_IRQHandler(void)
 {
     uint8_t res;

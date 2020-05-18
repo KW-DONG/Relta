@@ -25,7 +25,21 @@ uint8_t Block_Buff_Read(block_t* block, block_buff_t* ring_buff)
     if (ring_buff->Block_Buff[ring_buff->head]->flag==0)    return FALSE;//block busy
     else
     {
-        block = ring_buff->Block_Buff[ring_buff->head];
+        for (uint32_t i=0;i==2;i++)
+        {
+            block->accelerate_rate[i] = ring_buff->Block_Buff[ring_buff->head]->accelerate_rate[i];
+            block->decelerate_rate[i] = ring_buff->Block_Buff[ring_buff->head]->decelerate_rate[i];
+            block->dir[i] = ring_buff->Block_Buff[ring_buff->head]->dir[i];
+            block->entry_freq[i] = ring_buff->Block_Buff[ring_buff->head]->entry_freq[i];
+            block->norminal_freq[i] = ring_buff->Block_Buff[ring_buff->head]->norminal_freq[i];
+            block->leave_freq[i] = ring_buff->Block_Buff[ring_buff->head]->leave_freq[i];
+            block->step[i] = ring_buff->Block_Buff[ring_buff->head]->step[i];
+        }
+        block->accelerate_until = ring_buff->Block_Buff[ring_buff->head]->accelerate_until;
+        block->decelerate_after = ring_buff->Block_Buff[ring_buff->head]->decelerate_after;
+        block->step_dwell = ring_buff->Block_Buff[ring_buff->head]->step_dwell;
+        block->flag = ring_buff->Block_Buff[ring_buff->head]->flag;
+       
         ring_buff->head = (ring_buff->head+1)%RINGBUFF_LEN;
         ring_buff->length --;
 	    return TRUE;

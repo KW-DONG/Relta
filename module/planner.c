@@ -1,4 +1,4 @@
-#include "motion.h"
+#include "planner.h"
 #include "stdlib.h"
 #include "stdint.h"
 #include "type.h"
@@ -757,33 +757,33 @@ void Acceleration_Planner(block_t* block)
     {
         if (freq_d1[0]>freq_d1[2])
         {
-            block->accelerate_rate[0] = ACC;
-            block->accelerate_until = freq_d1[0]/ACC;
-            block->accelerate_rate[1] = ACC/freq_d1[0]*freq_d1[1];
-            block->accelerate_rate[2] = ACC/freq_d1[0]*freq_d1[2];
+            block->accelerate_rate[0] = MAX_ACCELERATION;
+            block->accelerate_until = freq_d1[0]/MAX_ACCELERATION;
+            block->accelerate_rate[1] = MAX_ACCELERATION/freq_d1[0]*freq_d1[1];
+            block->accelerate_rate[2] = MAX_ACCELERATION/freq_d1[0]*freq_d1[2];
         }
         else
         {
-            block->accelerate_rate[2] = ACC;
-            block->accelerate_until = freq_d1[2]/ACC;
-            block->accelerate_rate[1] = ACC/freq_d1[2]*freq_d1[1];
-            block->accelerate_rate[0] = ACC/freq_d1[2]*freq_d1[0];
+            block->accelerate_rate[2] = MAX_ACCELERATION;
+            block->accelerate_until = freq_d1[2]/MAX_ACCELERATION;
+            block->accelerate_rate[1] = MAX_ACCELERATION/freq_d1[2]*freq_d1[1];
+            block->accelerate_rate[0] = MAX_ACCELERATION/freq_d1[2]*freq_d1[0];
         }                        
     }else if (freq_d1[0]<freq_d1[1])
     {
         if (freq_d1[1]>freq_d1[2])
         {
-            block->accelerate_rate[1] = ACC;
-            block->accelerate_until = freq_d1[0]/ACC;
-            block->accelerate_rate[0] = ACC/freq_d1[1]*freq_d1[0];
-            block->accelerate_rate[2] = ACC/freq_d1[1]*freq_d1[2];
+            block->accelerate_rate[1] = MAX_ACCELERATION;
+            block->accelerate_until = freq_d1[0]/MAX_ACCELERATION;
+            block->accelerate_rate[0] = MAX_ACCELERATION/freq_d1[1]*freq_d1[0];
+            block->accelerate_rate[2] = MAX_ACCELERATION/freq_d1[1]*freq_d1[2];
         }
         else
         {
-            block->accelerate_rate[2] = ACC;
-            block->accelerate_until = freq_d1[2]/ACC;
-            block->accelerate_rate[1] = ACC/freq_d1[2]*freq_d1[1];
-            block->accelerate_rate[0] = ACC/freq_d1[2]*freq_d1[0];
+            block->accelerate_rate[2] = MAX_ACCELERATION;
+            block->accelerate_until = freq_d1[2]/MAX_ACCELERATION;
+            block->accelerate_rate[1] = MAX_ACCELERATION/freq_d1[2]*freq_d1[1];
+            block->accelerate_rate[0] = MAX_ACCELERATION/freq_d1[2]*freq_d1[0];
         }
     }else{
         block->accelerate_rate[0] = 0;
@@ -796,33 +796,33 @@ void Acceleration_Planner(block_t* block)
     {
         if (freq_d2[0]>freq_d2[2])
         {
-            block->decelerate_rate[0] = ACC;
-            block->decelerate_after = freq_d2[0]/ACC;
-            block->decelerate_rate[1] = ACC/freq_d2[0]*freq_d2[1];
-            block->decelerate_rate[2] = ACC/freq_d2[0]*freq_d2[2];
+            block->decelerate_rate[0] = MAX_ACCELERATION;
+            block->decelerate_after = freq_d2[0]/MAX_ACCELERATION;
+            block->decelerate_rate[1] = MAX_ACCELERATION/freq_d2[0]*freq_d2[1];
+            block->decelerate_rate[2] = MAX_ACCELERATION/freq_d2[0]*freq_d2[2];
         }
         else
         {
-            block->decelerate_rate[2] = ACC;
-            block->decelerate_after = freq_d2[2]/ACC;
-            block->decelerate_rate[1] = ACC/freq_d2[2]*freq_d2[1];
-            block->decelerate_rate[0] = ACC/freq_d2[2]*freq_d2[0];
+            block->decelerate_rate[2] = MAX_ACCELERATION;
+            block->decelerate_after = freq_d2[2]/MAX_ACCELERATION;
+            block->decelerate_rate[1] = MAX_ACCELERATION/freq_d2[2]*freq_d2[1];
+            block->decelerate_rate[0] = MAX_ACCELERATION/freq_d2[2]*freq_d2[0];
         }                        
     }else if (freq_d2[0]<freq_d2[1])
     {
         if (freq_d2[1]>freq_d2[2])
         {
-            block->decelerate_rate[1] = ACC;
-            block->decelerate_after = freq_d2[0]/ACC;
-            block->decelerate_rate[0] = ACC/freq_d2[1]*freq_d2[0];
-            block->decelerate_rate[2] = ACC/freq_d2[1]*freq_d2[2];
+            block->decelerate_rate[1] = MAX_ACCELERATION;
+            block->decelerate_after = freq_d2[0]/MAX_ACCELERATION;
+            block->decelerate_rate[0] = MAX_ACCELERATION/freq_d2[1]*freq_d2[0];
+            block->decelerate_rate[2] = MAX_ACCELERATION/freq_d2[1]*freq_d2[2];
         }
         else
         {
-            block->decelerate_rate[2] = ACC;
-            block->decelerate_after = freq_d2[2]/ACC;
-            block->decelerate_rate[1] = ACC/freq_d2[2]*freq_d2[1];
-            block->decelerate_rate[0] = ACC/freq_d2[2]*freq_d2[0];
+            block->decelerate_rate[2] = MAX_ACCELERATION;
+            block->decelerate_after = freq_d2[2]/MAX_ACCELERATION;
+            block->decelerate_rate[1] = MAX_ACCELERATION/freq_d2[2]*freq_d2[1];
+            block->decelerate_rate[0] = MAX_ACCELERATION/freq_d2[2]*freq_d2[0];
         }
     }else
     {

@@ -19,6 +19,7 @@ float Ascii(uint8_t value)
         case 0x38: return 8.0f;
         case 0x39: return 9.0f;
     }
+	return 10.0f;
 }
 
 void Gcode_Interpret(command_t* command, uart_buff_t* uart_buff)
