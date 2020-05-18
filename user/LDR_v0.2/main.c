@@ -193,22 +193,22 @@ int main()
         {
             if (command_c.type == home_t)
             {
-                Linear_Motion(XYZ_Home,XYZ_C,10.0f,10.0f, &block_buff);
-                Linear_Motion(XYZ_R,XYZ_Home,10.0f,10.0f, &block_buff);
+                Linear_Planner(XYZ_Home,XYZ_C,10.0f,10.0f, &block_buff);
+                Linear_Planner(XYZ_R,XYZ_Home,10.0f,10.0f, &block_buff);
             }else if (command_c.type == linear_t)
             {
-                Linear_Motion(command_c.xyz, XYZ_C, command_c.feedrate, dwell, &block_buff);
+                Linear_Planner(command_c.xyz, XYZ_C, command_c.feedrate, dwell, &block_buff);
                 dwell = 0.0f;
             }else if (command_c.type == arc_t)
             {
                 if (command_c.xyz[2]!=XYZ_C[2])
                 {
                     float xyz_arc[3] = {XYZ_C[0],XYZ_C[1], command_c.xyz[2]};
-                    Linear_Motion(xyz_arc, XYZ_C, 10.0f,dwell,&block_buff);
-                    Arc_Motion(command_c.xyz,xyz_arc, command_c.radius_dwell,command_c.feedrate, 0.0f, &block_buff);
+                    Linear_Planner(xyz_arc, XYZ_C, 10.0f,dwell,&block_buff);
+                    Arc_Planner(command_c.xyz,xyz_arc, command_c.radius_dwell,command_c.feedrate, 0.0f, &block_buff);
                 }else
                 {
-                    Arc_Motion(command_c.xyz, XYZ_C, command_c.radius_dwell, command_c.feedrate, dwell, &block_buff);
+                    Arc_Planner(command_c.xyz, XYZ_C, command_c.radius_dwell, command_c.feedrate, dwell, &block_buff);
                 }
                 dwell = 0.0f;
             }else if (command_c.type == dwell_t)

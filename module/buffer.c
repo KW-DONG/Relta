@@ -22,11 +22,14 @@ uint8_t Block_Buff_Write(block_t* block, block_buff_t* ring_buff)
 uint8_t Block_Buff_Read(block_t* block, block_buff_t* ring_buff)
 {
     if(ring_buff->length == 0) return FALSE;
-
-    block = ring_buff->Block_Buff[ring_buff->head];
-    ring_buff->head = (ring_buff->head+1)%RINGBUFF_LEN;
-    ring_buff->length --;
-	return TRUE;
+    if (ring_buff->Block_Buff[ring_buff->head]->flag==0)    return FALSE;//block busy
+    else
+    {
+        block = ring_buff->Block_Buff[ring_buff->head];
+        ring_buff->head = (ring_buff->head+1)%RINGBUFF_LEN;
+        ring_buff->length --;
+	    return TRUE;
+    }
 }
 
 void Block_Buff_Clear(block_buff_t* ring_buff)

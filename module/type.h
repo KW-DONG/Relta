@@ -62,6 +62,7 @@ typedef struct
     uint8_t     dir[3];
     int32_t     entry_freq[3];
     int32_t     norminal_freq[3];
+    int32_t     leave_freq[3];
     uint32_t    step[3];
     uint32_t    step_dwell;
 
