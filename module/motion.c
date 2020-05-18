@@ -24,49 +24,23 @@ uint8_t Block_Check(block_t* blockX, block_buff_t* list)
     else return 1;
 }
 
-void Acceleration_Count(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, block_t* block)
+void Acceleration_Count(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, block_t* block)
 {
     //if acc
-    if (acc_step[0]!=0)
+    if (block->accelerate_until!=0)
     {
-        stepperI->freq = stepperI->freq + ACC;
-        acc_step[0]--;
-        dcc_step[0]--;
-    }else if (dcc_step[0]==0)
+        stepperI->freq = stepperI->freq + block->accelerate_rate[0];
+        stepperJ->freq = stepperJ->freq + block->accelerate_rate[1];
+        stepperK->freq = stepperK->freq + block->accelerate_rate[2];
+        block->accelerate_until--;
+    }else if(block->decelerate_after==0)
     {
-        stepperI->freq = stepperI->freq - ACC;
+        stepperI->freq = stepperI->freq - block->decelerate_rate[0];
+        stepperJ->freq = stepperJ->freq - block->decelerate_rate[1];
+        stepperK->freq = stepperK->freq - block->decelerate_rate[2];
     }else
     {
-        stepperI->freq = block->norminal_freq[0];
-        dcc_step[0]--;
-    }
-/*************************************************/
-    if (acc_step[1]!=0)
-    {
-        stepperJ->freq = stepperJ->freq + ACC;
-        acc_step[1]--;
-        dcc_step[1]--;
-    }else if (dcc_step[1]==0)
-    {
-        stepperJ->freq = stepperJ->freq - ACC;
-    }else
-    {
-        stepperJ->freq = block->norminal_freq[1];
-        dcc_step[1]--;
-    }
-/*************************************************/
-    if (acc_step[2]!=0)
-    {
-        stepperK->freq = stepperK->freq + ACC;
-        acc_step[2]--;
-        dcc_step[2]--;
-    }else if (dcc_step[2]==0)
-    {
-        stepperK->freq = stepperK->freq - ACC;
-    }else
-    {
-        stepperK->freq = block->norminal_freq[2];
-        dcc_step[2]--;
+        block->decelerate_after--;
     }
 }
 
@@ -75,20 +49,20 @@ void Stepper_Count(block_t* block, machine_t* machine,stepper_t* stepperI, stepp
     if (stepperI->pin_state_last==0&&stepperI->pin_state==1)
     {
         block->step[0]--;
-        if (stepperI->dir == 0) machine->abc[0]-INV(STEPS_PER_UNIT);
-        else                    machine->abc[0]+INV(STEPS_PER_UNIT);
+        if (stepperI->dir == 0) machine->carriage_move[0]--;
+        else                    machine->carriage_move[0]++;
     }
     if (stepperJ->pin_state_last==0&&stepperJ->pin_state==1)
     {
         block->step[1]--;
-        if (stepperJ->dir == 0) machine->abc[1]-INV(STEPS_PER_UNIT);
-        else                    machine->abc[1]+INV(STEPS_PER_UNIT);
+        if (stepperJ->dir == 0) machine->carriage_move[0]--;
+        else                    machine->carriage_move[0]++;
     }
     if (stepperK->pin_state_last==0&&stepperK->pin_state==1)    
     {
         block->step[2]--;
-        if (stepperK->dir == 0) machine->abc[2]-INV(STEPS_PER_UNIT);
-        else                    machine->abc[2]+INV(STEPS_PER_UNIT);
+        if (stepperK->dir == 0) machine->carriage_move[0]--;
+        else                    machine->carriage_move[0]++;
     }
 }
 

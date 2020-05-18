@@ -25,12 +25,12 @@ machine_t   machine;
 monitor_t   monitor;
 
 //buffer
-block_buff_t block_buff;
-uart_buff_t  uart_buff;
-command_t    command_c;
+volatile  block_buff_t block_buff;
+volatile uart_buff_t  uart_buff;
+volatile command_t    command_c;
 
 //block
-block_t block_c;
+volatile block_t block_c;
 
 int main()
 {
@@ -219,15 +219,12 @@ int main()
             XYZ_C[1] = command_c.xyz[1];
             XYZ_C[2] = command_c.xyz[2];
             machine.traj_flag = RESET;
-
-            
-
         }
         //task 3: apply FK and report feedback
-        if (machine.fk_flag == SET)
-        {
-            Forward_Kinematics(machine.abc, machine.xyz);
-            machine.fk_flag = RESET;
+        if (machine.carriage_move[0]!=0)    machine.abc[0] = machine.abc[0] + machine.carriage_move[0]*INV(STEPS_PER_UNIT);
+        if (machine.carriage_move[1]!=0)    machine.abc[1] = machine.abc[1] + machine.carriage_move[1]*INV(STEPS_PER_UNIT);
+        if (machine.carriage_move[2]!=0)    machine.abc[2] = machine.abc[2] + machine.carriage_move[2]*INV(STEPS_PER_UNIT);
+        Forward_Kinematics(machine.abc, machine.xyz);
         }
     }
 }
@@ -250,8 +247,6 @@ void TIM5_IRQHandler()
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
         static uint8_t block_state;
-        static int32_t acc1_step[3];//head
-        static int32_t acc2_step[3];//tail
         
         Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
@@ -269,10 +264,6 @@ void TIM5_IRQHandler()
                 if(block_state==TRUE)
                 {
                     //always maximum acceleration
-                    #if USE_PLANNER
-                    Acceleration_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc1_step, acc2_step);
-                    #endif
-                    
                     stepperA.freq = block_c.norminal_freq[0];
                     stepperB.freq = block_c.norminal_freq[1];
                     stepperC.freq = block_c.norminal_freq[2];
@@ -289,9 +280,7 @@ void TIM5_IRQHandler()
                 else
                 {
                     Stepper_Count(&block_c, &machine, &stepperA, &stepperB, &stepperC);
-                    #if USE_PLANNER
-                    Acceleration_Count(&stepperA, &stepperB, &stepperC, acc1_step, acc2_step, &block_c);
-                    #endif
+                    Acceleration_Count(&stepperA, &stepperB, &stepperC, &block_c);
                 }
             }
         }

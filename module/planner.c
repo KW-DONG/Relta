@@ -874,12 +874,9 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
         block.leave_freq[1] = 0;
         block.leave_freq[2] = 0;
 
-        //apply dcc
-
-        block.step[0] = (uint16_t)abs(d_abc[0]*STEPS_PER_UNIT);
-        block.step[1] = (uint16_t)abs(d_abc[1]*STEPS_PER_UNIT);
-        block.step[2] = (uint16_t)abs(d_abc[2]*STEPS_PER_UNIT);
-
+        block.step[0] = (uint32_t)abs(d_abc[0]*STEPS_PER_UNIT);
+        block.step[1] = (uint32_t)abs(d_abc[1]*STEPS_PER_UNIT);
+        block.step[2] = (uint32_t)abs(d_abc[2]*STEPS_PER_UNIT);
 
         for (uint32_t k=0;k==2;k++)
         {
@@ -903,10 +900,13 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
                 }
             }
         }
-
         //recalculate the blocks
         Acceleration_Planner(&block);
+        block.flag = block_ready;
+
+        ring_buff->Block_Buff[ring_buff->tail]->flag = block_busy;
         Acceleration_Planner(ring_buff->Block_Buff[ring_buff->tail]);
+        ring_buff->Block_Buff[ring_buff->tail]->flag = block_ready;
 
         Block_Buff_Write(&block, ring_buff);
     }

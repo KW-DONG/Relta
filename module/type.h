@@ -74,6 +74,9 @@ typedef struct
     uint8_t     flag;
 }block_t;
 
+enum {block_ready, block_busy};
+
+
 typedef struct
 {
     uint16_t head;
@@ -95,6 +98,9 @@ typedef struct
     uint8_t interpret_flag;
     uint8_t fk_flag;
     uint8_t traj_flag;
+
+    //update by interrupt
+    int32_t carriage_move[3];
 
 }machine_t;
 

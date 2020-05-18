@@ -44,7 +44,7 @@ uint8_t Block_Check(block_t* stepperX, block_buff_t* list);
  * @param dcc_step
  * @param block
  */
-void Acceleration_Count(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, block_t* block);
+void Acceleration_Count(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, block_t* block);
 
 /**
  * @brief count the steps (distance) that each stepper has executed
