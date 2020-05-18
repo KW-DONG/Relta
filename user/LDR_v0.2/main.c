@@ -270,7 +270,7 @@ void TIM5_IRQHandler()
                 {
                     //always maximum acceleration
                     #if USE_PLANNER
-                    Acc_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc1_step, acc2_step);
+                    Acceleration_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc1_step, acc2_step);
                     #endif
                     
                     stepperA.freq = block_c.norminal_freq[0];
@@ -288,9 +288,9 @@ void TIM5_IRQHandler()
                 Dwell_Step_Update(&block_c);
                 else
                 {
-                    Stepper_Cnt(&block_c, &machine, &stepperA, &stepperB, &stepperC);
+                    Stepper_Count(&block_c, &machine, &stepperA, &stepperB, &stepperC);
                     #if USE_PLANNER
-                    Acc_Cnt(&stepperA, &stepperB, &stepperC, acc1_step, acc2_step, &block_c);
+                    Acceleration_Count(&stepperA, &stepperB, &stepperC, acc1_step, acc2_step, &block_c);
                     #endif
                 }
             }

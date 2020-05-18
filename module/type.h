@@ -66,9 +66,10 @@ typedef struct
     uint32_t    step[3];
     uint32_t    step_dwell;
 
-    uint32_t    acc_until;
-    uint32_t    dcc_after;
-    uint32_t    acc_rate[3];
+    uint32_t    accelerate_until;//in terms of monitor frequency
+    uint32_t    decelerate_after;//in terms of monitor frequency
+    uint32_t    accelerate_rate[3];
+    uint32_t    decelerate_rate[3];
 
     uint8_t     flag;
 }block_t;

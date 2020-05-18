@@ -740,70 +740,97 @@ int32_t Velocity_To_Freq(float v)
     return ((int32_t)(v*10.0f))/(STEPS_PER_UNIT);
 }
 
-void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
+void Acceleration_Planner(block_t* block)
 {
-    int32_t v_entr[3];
-    int32_t v_out[3];
+    int32_t freq_d1[3];
+    int32_t freq_d2[3];
 
-    if (block->dir[0]==stepperI->dir)   v_entr[0]=stepperI->freq;
-    else                                v_entr[0]=0;
+    freq_d1[0] = block->norminal_freq[0] - block->entry_freq[0];
+    freq_d1[1] = block->norminal_freq[1] - block->entry_freq[1];
+    freq_d1[2] = block->norminal_freq[2] - block->entry_freq[2];
 
-    if (block->dir[1]==stepperJ->dir)   v_entr[1]=stepperJ->freq;
-    else                                v_entr[1]=0;
+    freq_d2[0] = block->norminal_freq[0] - block->leave_freq[0];
+    freq_d2[1] = block->norminal_freq[1] - block->leave_freq[1];
+    freq_d2[2] = block->norminal_freq[2] - block->leave_freq[2];
 
-    if (block->dir[2]==stepperK->dir)   v_entr[2]=stepperK->freq;
-    else                                v_entr[2]=0;
+    if (freq_d1[0]>freq_d1[1])
+    {
+        if (freq_d1[0]>freq_d1[2])
+        {
+            block->accelerate_rate[0] = ACC;
+            block->accelerate_until = freq_d1[0]/ACC;
+            block->accelerate_rate[1] = ACC/freq_d1[0]*freq_d1[1];
+            block->accelerate_rate[2] = ACC/freq_d1[0]*freq_d1[2];
+        }
+        else
+        {
+            block->accelerate_rate[2] = ACC;
+            block->accelerate_until = freq_d1[2]/ACC;
+            block->accelerate_rate[1] = ACC/freq_d1[2]*freq_d1[1];
+            block->accelerate_rate[0] = ACC/freq_d1[2]*freq_d1[0];
+        }                        
+    }else if (freq_d1[0]<freq_d1[1])
+    {
+        if (freq_d1[1]>freq_d1[2])
+        {
+            block->accelerate_rate[1] = ACC;
+            block->accelerate_until = freq_d1[0]/ACC;
+            block->accelerate_rate[0] = ACC/freq_d1[1]*freq_d1[0];
+            block->accelerate_rate[2] = ACC/freq_d1[1]*freq_d1[2];
+        }
+        else
+        {
+            block->accelerate_rate[2] = ACC;
+            block->accelerate_until = freq_d1[2]/ACC;
+            block->accelerate_rate[1] = ACC/freq_d1[2]*freq_d1[1];
+            block->accelerate_rate[0] = ACC/freq_d1[2]*freq_d1[0];
+        }
+    }else{
+        block->accelerate_rate[0] = 0;
+        block->accelerate_rate[1] = 0;
+        block->accelerate_rate[2] = 0;
+        block->accelerate_until = 0;
+    }
 
-    if (block->norminal_freq[0]>JERK_FREQ)       v_out[0]=JERK_FREQ;
-    else                                v_out[0]=block->norminal_freq[0];
-
-    if (block->norminal_freq[1]>JERK_FREQ)       v_out[1]=JERK_FREQ;
-    else                                v_out[1]=block->norminal_freq[1];
-
-    if (block->norminal_freq[2]>JERK_FREQ)       v_out[2]=JERK_FREQ;
-    else                                v_out[2]=block->norminal_freq[2];
-
-    //calculate distance -> s
-    int32_t s[3] = {block->step[0],block->step[1],block->step[2]};
-
-    //positive -> accelerate
-    //negative -> decelerate
-    int32_t t_acc2[3] = {v_out[0]-block->norminal_freq[0]*32/SQ(MAX_FREQ),
-                        v_out[1]-block->norminal_freq[1]*32/SQ(MAX_FREQ),
-                        v_out[2]-block->norminal_freq[2]*32/SQ(MAX_FREQ)};
-
-    //dcc distance -> s_acc2
-    int32_t s_acc2[3] = {(block->norminal_freq[0]+v_out[0])*abs(t_acc2[0])/2,
-                        (block->norminal_freq[1]+v_out[1])*abs(t_acc2[1])/2,
-                        (block->norminal_freq[2]+v_out[2])*abs(t_acc2[2])/2};
-
-    //positive -> accelerate
-    //negative -> decelerate
-    int32_t t_acc1[3] = {(block->norminal_freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
-                        (block->norminal_freq[1]-v_entr[1])*STEPPER_RES/SQ(MAX_FREQ),
-                        (block->norminal_freq[2]-v_entr[2])*STEPPER_RES/SQ(MAX_FREQ)};
-
-    acc1[0] = t_acc1[0]*MONITOR_FREQ;
-    acc1[1] = t_acc1[1]*MONITOR_FREQ;
-    acc1[2] = t_acc1[2]*MONITOR_FREQ;
-
-    //acc distance -> s_a
-    int32_t s_acc1[3] = {(block->norminal_freq[0]+stepperI->freq)*abs(t_acc1[0])/2,
-                        (block->norminal_freq[1]+stepperJ->freq)*abs(t_acc1[1])/2,
-                        (block->norminal_freq[2]+stepperK->freq)*abs(t_acc1[2])/2};
-
-    //n distance -> s_n
-    int32_t s_n[3] = {s[0]-s_acc1[0]-s_acc2[0],s[1]-s_acc1[1]-s_acc2[1],s[2]-s_acc1[2]-s_acc2[2]};
-
-    //n time -> t_n
-    int32_t t_n[3] = {s_n[0]/block->norminal_freq[0],s_n[1]/block->norminal_freq[1],s_n[2]/block->norminal_freq[2]};
-
-    //dcc at t_a + t_n
-    int32_t t[3] = {abs(t_acc1[0])+t_n[0],abs(t_acc1[1])+t_n[1],abs(t_acc1[2])+t_n[2]};
-
-    acc2[0] = t[0]*MONITOR_FREQ;
-    acc2[1] = t[1]*MONITOR_FREQ;
-    acc2[2] = t[2]*MONITOR_FREQ;
+    if (freq_d2[0]>freq_d2[1])
+    {
+        if (freq_d2[0]>freq_d2[2])
+        {
+            block->decelerate_rate[0] = ACC;
+            block->decelerate_after = freq_d2[0]/ACC;
+            block->decelerate_rate[1] = ACC/freq_d2[0]*freq_d2[1];
+            block->decelerate_rate[2] = ACC/freq_d2[0]*freq_d2[2];
+        }
+        else
+        {
+            block->decelerate_rate[2] = ACC;
+            block->decelerate_after = freq_d2[2]/ACC;
+            block->decelerate_rate[1] = ACC/freq_d2[2]*freq_d2[1];
+            block->decelerate_rate[0] = ACC/freq_d2[2]*freq_d2[0];
+        }                        
+    }else if (freq_d2[0]<freq_d2[1])
+    {
+        if (freq_d2[1]>freq_d2[2])
+        {
+            block->decelerate_rate[1] = ACC;
+            block->decelerate_after = freq_d2[0]/ACC;
+            block->decelerate_rate[0] = ACC/freq_d2[1]*freq_d2[0];
+            block->decelerate_rate[2] = ACC/freq_d2[1]*freq_d2[2];
+        }
+        else
+        {
+            block->decelerate_rate[2] = ACC;
+            block->decelerate_after = freq_d2[2]/ACC;
+            block->decelerate_rate[1] = ACC/freq_d2[2]*freq_d2[1];
+            block->decelerate_rate[0] = ACC/freq_d2[2]*freq_d2[0];
+        }
+    }else
+    {
+        block->decelerate_rate[0] = 0;
+        block->decelerate_rate[1] = 0;
+        block->decelerate_rate[2] = 0;
+        block->decelerate_after = 0;
+    }
 }
 
 
@@ -864,24 +891,23 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
                 {
                     ring_buff->Block_Buff[ring_buff->tail]->leave_freq[k] = ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k];
                     block.entry_freq[k] = ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k];
-                    //apply acceleration
-
-
                 }else if (ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k]-block.norminal_freq[k]>JERK_FREQ)
                 {
                     ring_buff->Block_Buff[ring_buff->tail]->leave_freq[k] = block.norminal_freq[k];
-                    //apply deceleration
                 }else
                 {
                     //no acc or dcc
                     ring_buff->Block_Buff[ring_buff->tail]->leave_freq[k] = ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k];
-                    ring_buff->Block_Buff[ring_buff->tail]->dcc_after = 100;
+                    ring_buff->Block_Buff[ring_buff->tail]->decelerate_after = 100;
                     block.entry_freq[k] = block.norminal_freq[k];
-
-
                 }
             }
         }
+
+        //recalculate the blocks
+        Acceleration_Planner(&block);
+        Acceleration_Planner(ring_buff->Block_Buff[ring_buff->tail]);
+
         Block_Buff_Write(&block, ring_buff);
     }
 }

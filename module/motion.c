@@ -5,6 +5,9 @@
 #include "config.h"
 #include "math.h"
 
+//the functions will be called in the interrupt
+//avoid using complex calulation and float calculation
+
 void Dwell_Step_Update(block_t* stepperX)
 {
     if (stepperX->step_dwell!=0)
@@ -21,7 +24,7 @@ uint8_t Block_Check(block_t* blockX, block_buff_t* list)
     else return 1;
 }
 
-void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, block_t* block)
+void Acceleration_Count(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc_step, int32_t* dcc_step, block_t* block)
 {
     //if acc
     if (acc_step[0]!=0)
@@ -67,7 +70,7 @@ void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int3
     }
 }
 
-void Stepper_Cnt(block_t* block, machine_t* machine,stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
+void Stepper_Count(block_t* block, machine_t* machine,stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
 {
     if (stepperI->pin_state_last==0&&stepperI->pin_state==1)
     {

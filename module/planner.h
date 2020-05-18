@@ -197,7 +197,7 @@ int32_t Velocity_To_Freq(float v);
  * @note if the operation speed is lower than the jerk speed, acc2 will not be planned
  *      use this function when a new block is read
  */
-void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2);
+void Acceleration_Planner(block_t* block);
 
 /**********************************Motion_Update*********************************/
 
