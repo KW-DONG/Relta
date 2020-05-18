@@ -359,6 +359,10 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
             Kinematics_Planner(traj_head, len_head, velocity);
             Kinematics_Planner(traj_body, len_body, velocity);
             Kinematics_Planner(traj_tail, len_tail, velocity);
+            //add offset
+            Path_Add_Offset(traj_head, len_head, xy_p[0], xy_p[1], xyz_c[2]);
+            Path_Add_Offset(traj_body, len_body, xy_p[0], xy_p[1], xyz_c[2]);
+            Path_Add_Offset(traj_tail, len_tail, xy_p[0], xy_p[1], xyz_c[2]);
 
             Trej_Apply(traj_head, len_head, 0.0, buff);
             Trej_Apply(traj_body, len_body, 0.0, buff);
@@ -372,6 +376,9 @@ void Arc_Motion(float* xyz_t, float* xyz_c, float radius, float velocity, float 
             Arc_Path_Part(traj_tail,x_i_tail,len_tail,(uint16_t)abs((int16_t)radius));
             Path_Convert(traj_head, len_head, s_c);
             Path_Convert(traj_tail, len_tail, s_t);
+
+            Path_Add_Offset(traj_head, len_head, xy_p[0], xy_p[1], xyz_c[2]);
+            Path_Add_Offset(traj_tail, len_tail, xy_p[0], xy_p[1], xyz_c[2]);
 
             Kinematics_Planner(traj_head, len_head, velocity);
             Kinematics_Planner(traj_tail, len_tail, velocity);
@@ -765,13 +772,15 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
 
         block.step_dwell = dwell*MONITOR_FREQ;
 
-        block.freq[0] = traj[i][0][1];
-        block.freq[1] = traj[i][1][1];
-        block.freq[2] = traj[i][2][1];
+        block.norminal_freq[0] = traj[i][0][1];
+        block.norminal_freq[1] = traj[i][1][1];
+        block.norminal_freq[2] = traj[i][2][1];
 
         block.step[0] = (uint16_t)abs(d_abc[0]*STEPS_PER_UNIT);
         block.step[1] = (uint16_t)abs(d_abc[1]*STEPS_PER_UNIT);
         block.step[2] = (uint16_t)abs(d_abc[2]*STEPS_PER_UNIT);
+
+        
 
         Block_Buff_Write(&block, ring_buff);
     }

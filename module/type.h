@@ -60,9 +60,15 @@ typedef struct
 typedef struct 
 {
     uint8_t     dir[3];
-    int32_t     freq[3];
-    uint16_t    step[3];
+    int32_t     entry_freq[3];
+    int32_t     norminal_freq[3];
+    uint32_t    step[3];
     uint32_t    step_dwell;
+
+    uint32_t    acc_until;
+    uint32_t    dcc_after;
+    uint32_t    acc_rate[3];
+
     uint8_t     flag;
 }block_t;
 

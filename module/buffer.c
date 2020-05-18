@@ -76,26 +76,25 @@ void Uart_Buff_Clear(uart_buff_t* uart_buff)
 
 float Uart_Buff_Read_Num(uart_buff_t* uart_buff)
 {
-    uint8_t cha;
+    uint8_t value;
     uint8_t sign = 0;
     float result = 0.0f;
-    cha = Uart_Buff_Read(uart_buff);
-    if (cha=='-')
+    value = Uart_Buff_Read(uart_buff);
+    if (value=='-')
     {
         sign = 1;
-        cha = Uart_Buff_Read(uart_buff);
+        value = Uart_Buff_Read(uart_buff);
     }
-
-    for (cha;cha<='0'||cha>='9';cha = Uart_Buff_Read(uart_buff))
+    for (value;value<='0'||value>='9';value = Uart_Buff_Read(uart_buff))
     {
-        result = result*10.0f+Ascii(cha);
+        result = result*10.0f+Ascii(value);
     }
-    if (cha == '.')
+    if (value == '.')
     {
-        cha = Uart_Buff_Read(uart_buff);
-        for (float i = -1.0f;cha<='0'||cha>='9';cha = Uart_Buff_Read(uart_buff))
+        value = Uart_Buff_Read(uart_buff);
+        for (float i = -1.0f;value<='0'||value>='9';value = Uart_Buff_Read(uart_buff))
         {
-            result = result + Ascii(cha)*E(i);
+            result = result + Ascii(value)*E(i);
             i = i - 1.0f;
         }
     }

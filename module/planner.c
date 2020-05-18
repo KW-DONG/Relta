@@ -5,6 +5,8 @@
 #include "config.h"
 #include "math.h"
 
+
+
 void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int32_t* acc1, int32_t* acc2)
 {
     int32_t v_entr[3];
@@ -19,49 +21,49 @@ void Acc_Planner(block_t* block, stepper_t* stepperI, stepper_t* stepperJ, stepp
     if (block->dir[2]==stepperK->dir)   v_entr[2]=stepperK->freq;
     else                                v_entr[2]=0;
 
-    if (block->freq[0]>JERK_FREQ)       v_out[0]=JERK_FREQ;
-    else                                v_out[0]=block->freq[0];
+    if (block->norminal_freq[0]>JERK_FREQ)       v_out[0]=JERK_FREQ;
+    else                                v_out[0]=block->norminal_freq[0];
 
-    if (block->freq[1]>JERK_FREQ)       v_out[1]=JERK_FREQ;
-    else                                v_out[1]=block->freq[1];
+    if (block->norminal_freq[1]>JERK_FREQ)       v_out[1]=JERK_FREQ;
+    else                                v_out[1]=block->norminal_freq[1];
 
-    if (block->freq[2]>JERK_FREQ)       v_out[2]=JERK_FREQ;
-    else                                v_out[2]=block->freq[2];
+    if (block->norminal_freq[2]>JERK_FREQ)       v_out[2]=JERK_FREQ;
+    else                                v_out[2]=block->norminal_freq[2];
 
     //calculate distance -> s
     int32_t s[3] = {block->step[0],block->step[1],block->step[2]};
 
     //positive -> accelerate
     //negative -> decelerate
-    int32_t t_acc2[3] = {v_out[0]-block->freq[0]*32/SQ(MAX_FREQ),
-                        v_out[1]-block->freq[1]*32/SQ(MAX_FREQ),
-                        v_out[2]-block->freq[2]*32/SQ(MAX_FREQ)};
+    int32_t t_acc2[3] = {v_out[0]-block->norminal_freq[0]*32/SQ(MAX_FREQ),
+                        v_out[1]-block->norminal_freq[1]*32/SQ(MAX_FREQ),
+                        v_out[2]-block->norminal_freq[2]*32/SQ(MAX_FREQ)};
 
     //dcc distance -> s_acc2
-    int32_t s_acc2[3] = {(block->freq[0]+v_out[0])*abs(t_acc2[0])/2,
-                        (block->freq[1]+v_out[1])*abs(t_acc2[1])/2,
-                        (block->freq[2]+v_out[2])*abs(t_acc2[2])/2};
+    int32_t s_acc2[3] = {(block->norminal_freq[0]+v_out[0])*abs(t_acc2[0])/2,
+                        (block->norminal_freq[1]+v_out[1])*abs(t_acc2[1])/2,
+                        (block->norminal_freq[2]+v_out[2])*abs(t_acc2[2])/2};
 
     //positive -> accelerate
     //negative -> decelerate
-    int32_t t_acc1[3] = {(block->freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
-                        (block->freq[1]-v_entr[1])*STEPPER_RES/SQ(MAX_FREQ),
-                        (block->freq[2]-v_entr[2])*STEPPER_RES/SQ(MAX_FREQ)};
+    int32_t t_acc1[3] = {(block->norminal_freq[0]-v_entr[0])*STEPPER_RES/SQ(MAX_FREQ),
+                        (block->norminal_freq[1]-v_entr[1])*STEPPER_RES/SQ(MAX_FREQ),
+                        (block->norminal_freq[2]-v_entr[2])*STEPPER_RES/SQ(MAX_FREQ)};
 
     acc1[0] = t_acc1[0]*MONITOR_FREQ;
     acc1[1] = t_acc1[1]*MONITOR_FREQ;
     acc1[2] = t_acc1[2]*MONITOR_FREQ;
 
     //acc distance -> s_a
-    int32_t s_acc1[3] = {(block->freq[0]+stepperI->freq)*abs(t_acc1[0])/2,
-                        (block->freq[1]+stepperJ->freq)*abs(t_acc1[1])/2,
-                        (block->freq[2]+stepperK->freq)*abs(t_acc1[2])/2};
+    int32_t s_acc1[3] = {(block->norminal_freq[0]+stepperI->freq)*abs(t_acc1[0])/2,
+                        (block->norminal_freq[1]+stepperJ->freq)*abs(t_acc1[1])/2,
+                        (block->norminal_freq[2]+stepperK->freq)*abs(t_acc1[2])/2};
 
     //n distance -> s_n
     int32_t s_n[3] = {s[0]-s_acc1[0]-s_acc2[0],s[1]-s_acc1[1]-s_acc2[1],s[2]-s_acc1[2]-s_acc2[2]};
 
     //n time -> t_n
-    int32_t t_n[3] = {s_n[0]/block->freq[0],s_n[1]/block->freq[1],s_n[2]/block->freq[2]};
+    int32_t t_n[3] = {s_n[0]/block->norminal_freq[0],s_n[1]/block->norminal_freq[1],s_n[2]/block->norminal_freq[2]};
 
     //dcc at t_a + t_n
     int32_t t[3] = {abs(t_acc1[0])+t_n[0],abs(t_acc1[1])+t_n[1],abs(t_acc1[2])+t_n[2]};
@@ -100,7 +102,7 @@ void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int3
         stepperI->freq = stepperI->freq - ACC;
     }else
     {
-        stepperI->freq = block->freq[0];
+        stepperI->freq = block->norminal_freq[0];
         dcc_step[0]--;
     }
 /*************************************************/
@@ -114,7 +116,7 @@ void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int3
         stepperJ->freq = stepperJ->freq - ACC;
     }else
     {
-        stepperJ->freq = block->freq[1];
+        stepperJ->freq = block->norminal_freq[1];
         dcc_step[1]--;
     }
 /*************************************************/
@@ -128,7 +130,7 @@ void Acc_Cnt(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, int3
         stepperK->freq = stepperK->freq - ACC;
     }else
     {
-        stepperK->freq = block->freq[2];
+        stepperK->freq = block->norminal_freq[2];
         dcc_step[2]--;
     }
 }

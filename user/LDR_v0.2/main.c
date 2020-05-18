@@ -220,6 +220,8 @@ int main()
             XYZ_C[2] = command_c.xyz[2];
             machine.traj_flag = RESET;
 
+            
+
         }
         //task 3: apply FK and report feedback
         if (machine.fk_flag == SET)
@@ -271,9 +273,9 @@ void TIM5_IRQHandler()
                     Acc_Planner(&block_c, &stepperA, &stepperB, &stepperC, acc1_step, acc2_step);
                     #endif
                     
-                    stepperA.freq = block_c.freq[0];
-                    stepperB.freq = block_c.freq[1];
-                    stepperC.freq = block_c.freq[2];
+                    stepperA.freq = block_c.norminal_freq[0];
+                    stepperB.freq = block_c.norminal_freq[1];
+                    stepperC.freq = block_c.norminal_freq[2];
 
                     stepperA.state = START;
                     stepperB.state = START;
