@@ -38,34 +38,40 @@ compiling sys.c...
 compiling misc.c...
 compiling bsp.c...
 compiling buffer.c...
-..\module\buffer.c(22): error:  #147-D: declaration is incompatible with "uint8_t Block_Buff_Read(block_t *, block_buff_t *)" (declared at line 11 of "..\module\buffer.h")
-  uint8_t Block_Buff_Read(stepper_exe_t* stepper_exe, block_buff_t* ring_buff)
-..\module\buffer.c(50): error:  #167: argument of type "block_t *" is incompatible with parameter of type "stepper_exe_t *"
-          Block_Buff_Read(&block, ring_buff);
-..\module\buffer.c(101): warning:  #174-D: expression has no effect
+..\module\buffer.c(80): warning:  #174-D: expression has no effect
       for (value;value<='0'||value>='9';value = Uart_Buff_Read(uart_buff))
-..\module\buffer.c: 1 warning, 2 errors
+..\module\buffer.c: 1 warning, 0 errors
 compiling delta.c...
 compiling gcode.c...
 ..\module\gcode.c(30): warning:  #174-D: expression has no effect
       for(key;key==0x0d||uart_buff->length==0;key=Uart_Buff_Read(uart_buff))
 ..\module\gcode.c: 1 warning, 0 errors
 compiling motion.c...
+..\module\motion.c(21): warning:  #174-D: expression has no effect
+          buffer->content[buffer->head]->step[stepperX->id];
+..\module\motion.c: 1 warning, 0 errors
 compiling planner.c...
 compiling main.c...
-..\user\LDR_v0.2\main.c(265): error:  #167: argument of type "stepper_exe_t *" is incompatible with parameter of type "block_t *"
-                  block_state = Block_Buff_Read(&exe_c, &block_buff);
-..\user\LDR_v0.2\main.c: 0 warnings, 1 error
+..\user\LDR_v0.2\main.c(53): warning:  #177-D: variable "XYZ_C" was declared but never referenced
+      float XYZ_C[3];
+..\user\LDR_v0.2\main.c(54): warning:  #177-D: variable "XYZ_Home" was declared but never referenced
+      float XYZ_Home[3] = {0.0f,0.0f,50.0f};
+..\user\LDR_v0.2\main.c(55): warning:  #177-D: variable "XYZ_R" was declared but never referenced
+      float XYZ_R[3] = {0.0f,0.0f,300.0f};
+..\user\LDR_v0.2\main.c(56): warning:  #177-D: variable "dwell" was declared but never referenced
+      static float dwell;
+..\user\LDR_v0.2\main.c: 4 warnings, 0 errors
 compiling stm32f4xx_it.c...
 compiling system_stm32f4xx.c...
-".\Objects\Relta.axf" - 3 Error(s), 2 Warning(s).
+linking...
+Program Size: Code=14304 RO-data=492 RW-data=36 ZI-data=3076  
+".\Objects\Relta.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   D:\CodeStorage\Relta\mdk\RTE
   C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Target not created.
 </pre>
 </body>
 </html>

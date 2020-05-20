@@ -24,10 +24,6 @@
 #define TRUE 1
 #define FALSE 0
 
-#define FULL    2
-#define HALF    4
-#define QURT    8
-#define EIGH    16
 
 /****************************BUFF_TYPE************************/
 

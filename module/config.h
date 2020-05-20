@@ -72,31 +72,25 @@
 
 //steps per mm
 //use (360/1.8*16)/(2*20)
-#define STEPS_PER_UNIT 80
+#define STEPS_PER_UNIT      80
 
-#define MAX_FEEDRATE        300
-#define MAX_ACCELERATION    3000
-#define MAX_FREQ            6000
-#define JERK_FREQ           200
-#define STEPPER_RES         EIGH
-
-//the speed change that does not require acceleration
-//the acceleration or deceleration can be accomplished with in one step
-#define XYZJERK 200
-
-#define TIM_ARR 8400
-
-#define MONITOR_FREQ 200
-
-#define T_CLK 84000000//84mhz
+//carriage specification
+#define MAX_ACCELERATION    1000    //mm per sec per sec
+#define MAX_SPEED           1000    //mm per sec
+#define JERK_SPEED          200     //mm per sec
+#define STEPPER_RES         16      //1/x mm
+#define TIM_ARR             8400    //1-65536
+#define MONITOR_FREQ        200     //hz
+#define T_CLK               84000000//hz
 
 /*********************SELECT_MODE*********************/
 
+#define USE_SPEED_CONTROLLER    1
 
-//use gcode command -> the machine is controlled with gcode
-//else please preload the path
-#define COMPILE_YES 0
-#define COMPILE_NO  1
+#define USE_GCODE_COMMAND       1
+
+#define USE_FORWARD_KINEMATICS  1
+
 
 /****************GENERATE_AUTOMATICALLY****************/
 
@@ -110,7 +104,15 @@
 #define x3  (R-r)*cosf(n3)
 #define y3  (R-r)*sinf(n3)
 
-#define MONITOR_PSC MONITOR_FREQ*INV(ARR)
+#define MONITOR_PSC MONITOR_FREQ/(TIM_ARR)*T_CLK
+
+#define PSC_MIN     T_CLK/(MAX_SPEED*STEPS_PER_UNIT*TIM_ARR)
+
+#define PSC_ACC     T_CLK/(MAX_ACCELERATION*STEPS_PER_UNIT*TIM_ARR)
+
+#define PSC_JERK    T_CLK/(JERK_SPEED*STEPS_PER_UNIT*TIM_ARR)
+
+
 
 
 #endif

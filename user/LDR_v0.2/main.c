@@ -30,12 +30,25 @@ uart_buff_t  uart_buff;
 command_t    command_c;
 
 //observation variable
-volatile int32_t stepper_A_freq;
-volatile int32_t stepper_B_freq;
-volatile int32_t stepper_C_freq;
+volatile int32_t stepper_A_Psc;
+volatile int32_t stepper_B_Psc;
+volatile int32_t stepper_C_Psc;
+
+void Test_Path(void)
+{
+    float xyz_c[3] = {0,0,200};
+    float xyz_t[3] = {0,0,0};
+    Linear_Planner(xyz_t,xyz_c,10.0f,20.0f,&block_buff);
+    delay_ms(100);
+    stepper_A_Psc = stepperA.psc;
+    stepper_B_Psc = stepperB.psc;
+    stepper_C_Psc = stepperC.psc;
+}
+
 
 
 int main()
+{
 {
     float XYZ_C[3];
     float XYZ_Home[3] = {0.0f,0.0f,50.0f};
@@ -58,6 +71,7 @@ int main()
     stepperA.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOA;
     stepperA.GPIO_Pin_X_Dir = GPIO_Pin_15;
     stepperA.GPIOX_Dir = GPIOA;
+	stepperA.id = 0;
     Bsp_Stepper_Init(&stepperA);
 
     //stepper_B init
@@ -72,6 +86,7 @@ int main()
     stepperB.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOC;
     stepperB.GPIO_Pin_X_Dir = GPIO_Pin_7;
     stepperB.GPIOX_Dir = GPIOC;
+	stepperB.id = 1;
     Bsp_Stepper_Init(&stepperB);
 
     //stepper_C init
@@ -86,6 +101,7 @@ int main()
     stepperC.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOA;
     stepperC.GPIO_Pin_X_Dir = GPIO_Pin_6;
     stepperC.GPIOX_Dir = GPIOA;
+	stepperC.id = 2;
     Bsp_Stepper_Init(&stepperC);
 
 /*******************************SWITCH_KEY*******************************/
@@ -177,10 +193,14 @@ int main()
 
     //hardware init
     Bsp_UART_Init(115200);
+}
+    
 
 
     while (1)
     {
+
+        #if USE_GCODE_COMMAND
         //task 1: interprete g_code
         if (machine.interpret_flag == SET)
         {
@@ -221,11 +241,17 @@ int main()
             XYZ_C[2] = command_c.xyz[2];
             machine.traj_flag = RESET;
         }
+        #endif
+
+        #if USE_FORWARD_KINEMATICS
         //task 3: apply FK and report feedback
         if (machine.carriage_move[0]!=0)    machine.abc[0] = machine.abc[0] + machine.carriage_move[0]*INV(STEPS_PER_UNIT);
         if (machine.carriage_move[1]!=0)    machine.abc[1] = machine.abc[1] + machine.carriage_move[1]*INV(STEPS_PER_UNIT);
         if (machine.carriage_move[2]!=0)    machine.abc[2] = machine.abc[2] + machine.carriage_move[2]*INV(STEPS_PER_UNIT);
         Forward_Kinematics(machine.abc, machine.xyz);
+        #endif
+
+
     }
 }
 void USART1_IRQHandler(void)
@@ -281,9 +307,12 @@ void TIM5_IRQHandler()
         Bsp_Stepper_Update(&stepperA);
         Bsp_Stepper_Update(&stepperB);
         Bsp_Stepper_Update(&stepperC);
-	
-    TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
+
+        
+		TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
+	}
 }
+
 
 //switch A
 void EXTI2_IRQHandler(void)
@@ -305,7 +334,7 @@ void EXTI3_IRQHandler(void)
     machine.abc[1] = CARRIAGE_B_RESET;
     if (stepperB.dir==1)
     {
-        block_buff.content[block_buff.head]->step[0]step[1] = 0;
+        block_buff.content[block_buff.head]->step[1] = 0;
         stepperB.dir = stepper_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line1);
@@ -318,7 +347,7 @@ void EXTI4_IRQHandler(void)
     machine.abc[2] = CARRIAGE_C_RESET;
     if (stepperC.dir==1)
     {
-        block_buff.content[block_buff.head]->step[0]step[2] = 0;
+        block_buff.content[block_buff.head]->step[2] = 0;
         stepperC.dir = stepper_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line2);
@@ -354,8 +383,6 @@ void EXTI0_IRQHandler(void)
 		 
 	EXTI_ClearITPendingBit(EXTI_Line4);
 }
-
-
 
 
 

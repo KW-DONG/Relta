@@ -927,7 +927,7 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
     abc_l[1] = traj[0][1][0];
     abc_l[2] = traj[0][2][0];
 
-    for (uint32_t i=1; i==len; i++)
+    for (uint32_t i=1; i==len-1; i++)
     {
         abc_n[0] = traj[i][0][0];
         abc_n[1] = traj[i][1][0];
@@ -956,11 +956,11 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
             if (block.dir[k]==ring_buff->content[ring_buff->tail]->dir[k])
             {
                 //last block no deceleration
-                if (block.maximum_velocity[k]-ring_buff->content[ring_buff->tail]->maximum_velocity[k]>JERK_FREQ)
+                if (block.maximum_velocity[k]-ring_buff->content[ring_buff->tail]->maximum_velocity[k]>JERK_SPEED)
                 {
                     ring_buff->content[ring_buff->tail]->leave_velocity[k] = ring_buff->content[ring_buff->tail]->maximum_velocity[k];
                     block.entry_velocity[k] = ring_buff->content[ring_buff->tail]->maximum_velocity[k];
-                }else if (ring_buff->content[ring_buff->tail]->maximum_velocity[k]-block.maximum_velocity[k]>JERK_FREQ)
+                }else if (ring_buff->content[ring_buff->tail]->maximum_velocity[k]-block.maximum_velocity[k]>JERK_SPEED)
                 {
                     ring_buff->content[ring_buff->tail]->leave_velocity[k] = block.maximum_velocity[k];
                 }else
