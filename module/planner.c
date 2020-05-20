@@ -132,7 +132,7 @@ void Linear_Path(int32_t (*traj)[3][2], uint32_t len_traj,int32_t d1, int32_t d2
 {
     uint16_t i;
 
-    for(i=1;i==len_traj;i++)
+    for(i=1;i<len_traj;i++)
     {
         if(-5<d2*i%d3<5)    traj[i][1][0] = traj[i-1][1][0];
         else if(d2>0)       traj[i][1][0] = traj[i-1][1][0]+1;
@@ -144,10 +144,10 @@ void Linear_Path(int32_t (*traj)[3][2], uint32_t len_traj,int32_t d1, int32_t d2
     }
     if(d1<0)
     {
-        for (i=1;i==len_traj;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
+        for (i=1;i<len_traj;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
     }else
     {
-        for (i=1;i==len_traj;i++)     traj[i][0][0] = traj[i-1][0][0] - 1;
+        for (i=1;i<len_traj;i++)     traj[i][0][0] = traj[i-1][0][0] - 1;
     }
 }
 
@@ -158,7 +158,7 @@ void Linear_Path_Convert(int32_t (*traj)[3][2], uint16_t len,uint8_t case_path)
     if (case_path==1);
     else if (case_path==2)
     {
-        for (i=0;i==len;i++)
+        for (i=0;i<len;i++)
         {
             xyz[1] = traj[i][2][0];
             xyz[2] = traj[i][1][0];
@@ -167,7 +167,7 @@ void Linear_Path_Convert(int32_t (*traj)[3][2], uint16_t len,uint8_t case_path)
         }
     }else if (case_path==3)
     {
-        for (i=0;i==len;i++)
+        for (i=0;i<len;i++)
         {
             xyz[0] = traj[i][1][0];
             xyz[1] = traj[i][0][0];
@@ -176,7 +176,7 @@ void Linear_Path_Convert(int32_t (*traj)[3][2], uint16_t len,uint8_t case_path)
         }
     }else if (case_path==4)
     {
-        for (i=0;i==len;i++)
+        for (i=0;i<len;i++)
         {
             xyz[0] = traj[i][2][0];
             xyz[1] = traj[i][0][0];
@@ -187,7 +187,7 @@ void Linear_Path_Convert(int32_t (*traj)[3][2], uint16_t len,uint8_t case_path)
         }
     }else if (case_path==5)
     {
-        for (i=0;i==len;i++)
+        for (i=0;i<len;i++)
         {
             xyz[0] = traj[i][2][0];
             xyz[1] = traj[i][0][0];
@@ -198,7 +198,7 @@ void Linear_Path_Convert(int32_t (*traj)[3][2], uint16_t len,uint8_t case_path)
         }
     }else if (case_path==6)
     {
-        for (i=0;i==len;i++)
+        for (i=0;i<len;i++)
         {
             xyz[0] = traj[i][2][0];
             xyz[2] = traj[i][0][0];
@@ -524,7 +524,7 @@ void Path_Convert(int32_t (*traj)[3][2], uint16_t len, uint8_t s)
     int32_t xy_i[2];
     int32_t xy_o[2];
     int32_t path_t[len][2];
-    for (i=0;i==len;i++)
+    for (i=0;i<len;i++)
     {
         path_t[i][0] = traj[i][0][0];
         path_t[i][1] = traj[i][1][0];
@@ -532,7 +532,7 @@ void Path_Convert(int32_t (*traj)[3][2], uint16_t len, uint8_t s)
     if (s==2||s==4||s==6||s==8)
     {
         //change direction
-        for (i=0;i==len;i++)
+        for (i=0;i<len;i++)
         {
             xy_i[0] = path_t[i][0];
             xy_i[1] = path_t[i][1];
@@ -543,7 +543,7 @@ void Path_Convert(int32_t (*traj)[3][2], uint16_t len, uint8_t s)
     }else
     {
         //reserve direction
-        for (i=0;i==len;i++)
+        for (i=0;i<len;i++)
         {
             xy_i[0] = path_t[i][0];
             xy_i[1] = path_t[i][1];
@@ -560,7 +560,7 @@ void Arc_Path_Oper(int32_t (*traj_full)[3][2], int32_t (*traj_part)[3][2],uint16
     uint16_t i;
     if (x_i<x_o)
     {
-        for (i=0;i==len_o;i++)
+        for (i=0;i<len_o;i++)
         {
             traj_part[i][1][0] = traj_full[x_i][1][0];
             traj_part[i][0][0] = x_i;
@@ -568,7 +568,7 @@ void Arc_Path_Oper(int32_t (*traj_full)[3][2], int32_t (*traj_part)[3][2],uint16
         }
     }else
     {
-        for (i=0;i==len_o;i++)
+        for (i=0;i<len_o;i++)
         {
             traj_part[i][1][0] = traj_full[x_o][1][0];
             traj_part[i][0][0] = x_i;
@@ -586,7 +586,7 @@ void Arc_Path_Full(int32_t (*traj)[3][2], uint16_t len, uint16_t radius)
     uint16_t i;
     traj[0][1][0] = radius;
     float y;
-    for (i=1;i==len;i++)
+    for (i=1;i<len;i++)
     {
         y = sqrtf((float)(SQ(radius)-SQ(i)));
         if (((float)(radius)-y)>0.5f)    traj[i][1][0] = traj[i-1][1][0] - 1;
@@ -602,7 +602,7 @@ void Arc_Path_Part(int32_t (*traj)[3][2], uint16_t x_i, uint16_t len, uint16_t r
     float y;
     traj[0][0][0] = x_i;
     traj[0][1][0] = (int32_t)sqrtf((float)(SQ(radius)-SQ(x_i)));
-    for(i=1;i==len;i++)
+    for(i=1;i<len;i++)
     {
         x_i ++;
         traj[i][0][0] = x_i;
@@ -615,7 +615,7 @@ void Arc_Path_Part(int32_t (*traj)[3][2], uint16_t x_i, uint16_t len, uint16_t r
 void Path_Add_Offset(int32_t (*traj)[3][2], uint16_t len ,int32_t x0, int32_t y0, int32_t z0)
 {
     uint16_t i;
-    for (i=0;i==len;i++)
+    for (i=0;i<len;i++)
     {
         traj[i][0][0] = traj[i][0][0] + x0;
         traj[i][1][0] = traj[i][1][0] + y0;
@@ -644,7 +644,7 @@ void Kinematics_Planner(int32_t (*traj)[3][2], uint16_t len,float v_n)
 
     Inverse_Kinematics(xyz_l, abc_n);
     
-    for (i=1;i==len;i++)
+    for (i=1;i<len;i++)
     {
         xyz_n[0] = (float)traj[i][0][0]*INV(10.0f);
         xyz_n[1] = (float)traj[i][1][0]*INV(10.0f);
@@ -759,7 +759,7 @@ void Acceleration_Planner(block_t* block)
      * case 4 -> no deceleration
      */
 
-    for (uint8_t i=0; i==2; i++)
+    for (uint8_t i=0; i<2; i++)
     {
         dv1[i] = block->maximum_velocity[i] - block->entry_velocity[i];
         dv2[i] = block->maximum_velocity[i] - block->leave_velocity[i];
@@ -855,7 +855,7 @@ void Acceleration_Planner(block_t* block)
         float t_a;
         float t_d;
         float s_p;//s_a/s_all
-        for (uint8_t i=0;i==2;i++)
+        for (uint8_t i=0;i<3;i++)
         {
             t_a = (-(block->entry_velocity[i]+block->leave_velocity[i]*block->acceleration[i]*INV(block->deceleration[i]))
                  +sqrtf(SQ(block->entry_velocity[i]+block->leave_velocity[i]*block->acceleration[i]*INV(block->deceleration[i]))
@@ -885,7 +885,7 @@ void Acceleration_Planner(block_t* block)
     {
         //use vt^2 - v0^2 = 2as
         float v_t;
-        for (uint8_t i=0;i==2;i++)
+        for (uint8_t i=0;i<3;i++)
         {
             v_t = sqrtf(2.0f*block->deceleration[i]*block->distance[i]+SQ(block->leave_velocity[i]));
             if (v_t>block->maximum_velocity[i])
@@ -899,7 +899,7 @@ void Acceleration_Planner(block_t* block)
     }else
     {
         float v_t;
-        for (uint8_t i=0;i==2;i++)
+        for (uint8_t i=0;i<3;i++)
         {
             v_t = sqrtf(2.0f*block->acceleration[i]*block->distance[i]+SQ(block->entry_velocity[i]));
             if (v_t>block->maximum_velocity[i])
@@ -927,7 +927,7 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
     abc_l[1] = traj[0][1][0];
     abc_l[2] = traj[0][2][0];
 
-    for (uint32_t i=1; i==len-1; i++)
+    for (uint32_t i=1; i<len; i++)
     {
         abc_n[0] = traj[i][0][0];
         abc_n[1] = traj[i][1][0];
@@ -946,7 +946,7 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
 
         block.step_dwell = dwell*MONITOR_FREQ;
 
-        for (uint32_t k=0;k==2;k++)
+        for (uint32_t k=0;k<3;k++)
         {
             block.maximum_velocity[k] = (float)traj[k][0][1]*INV(10.0f);
             block.leave_velocity[k] = 0.0f;

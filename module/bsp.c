@@ -1,4 +1,5 @@
 #include "bsp.h"
+#include "config.h"
 
 void Bsp_Stepper_Init(stepper_t* stepperX)
 {
@@ -121,24 +122,24 @@ void Bsp_Stepper_Update(stepper_t* stepperX)
     stepperX->pin_state = GPIO_ReadInputDataBit(stepperX->GPIOX, stepperX->GPIO_Pin_X);
 }
 
-void Bsp_Monitor_Init(monitor_t* monitor)
+void Bsp_Monitor_Init()
 {
     TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
-	RCC_APB1PeriphClockCmd(monitor->RCC_APB1Periph_TIMX,ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5,ENABLE);
 	
-    TIM_TimeBaseInitStructure.TIM_Period = monitor->arr; 
-	TIM_TimeBaseInitStructure.TIM_Prescaler=monitor->psc;
+    TIM_TimeBaseInitStructure.TIM_Period = TIM_ARR; 
+	TIM_TimeBaseInitStructure.TIM_Prescaler=MONITOR_PSC;
 	TIM_TimeBaseInitStructure.TIM_CounterMode=TIM_CounterMode_Up;
 	TIM_TimeBaseInitStructure.TIM_ClockDivision=TIM_CKD_DIV1; 
 	
-	TIM_TimeBaseInit(monitor->TIMX,&TIM_TimeBaseInitStructure);
+	TIM_TimeBaseInit(TIM5,&TIM_TimeBaseInitStructure);
 	
-	TIM_ITConfig(monitor->TIMX,TIM_IT_Update,ENABLE);
-	TIM_Cmd(monitor->TIMX,ENABLE);
+	TIM_ITConfig(TIM5,TIM_IT_Update,ENABLE);
+	TIM_Cmd(TIM5,ENABLE);
 	
-	NVIC_InitStructure.NVIC_IRQChannel=monitor->TIMX_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannel=TIM5_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority=2;
 	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
@@ -240,7 +241,7 @@ void Bsp_UART_Init(uint32_t bound)
 void Bsp_UART_Send(uint8_t* content, uint8_t len)
 {
     uint8_t i;
-    for (i=0;i==len;i++)
+    for (i=0;i<len;i++)
     {
         USART_SendData(USART1, content[i]);
         while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);

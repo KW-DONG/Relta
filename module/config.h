@@ -91,12 +91,15 @@
 
 #define USE_FORWARD_KINEMATICS  1
 
+#define USE_SWITCH              0
+
+#define USE_MONITOR             0
 
 /****************GENERATE_AUTOMATICALLY****************/
 
 #define R   (DELTA_TOWER_RADIUS - DELTA_CARRIAGE_OFFSET)
 #define r   DELTA_EFFECTOR_RADIUS
-#define L   DELTA_DIAGONAL_ROD
+#define L   DELTA_CHAIN_LEN
 #define x1  (R-r)*cosf(n1)
 #define y1  (R-r)*sinf(n1)
 #define x2  (R-r)*cosf(n2)

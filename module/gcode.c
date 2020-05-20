@@ -27,7 +27,7 @@ void Gcode_Interpret(command_t* command, uart_buff_t* uart_buff)
     uint8_t type=0;
     uint8_t key;
     key = Uart_Buff_Read(uart_buff);
-    for(key;key==0x0d||uart_buff->length==0;key=Uart_Buff_Read(uart_buff))
+    for(key;key!=0x0d&&uart_buff->length>0;key=Uart_Buff_Read(uart_buff))
     {
         if (key=='G')
         {

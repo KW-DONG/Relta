@@ -4,8 +4,8 @@
 
 void Block_Buff_Init(block_buff_t* block)
 {
-    block->head = NULL;
-    block->tail = NULL;
+    block->head = 0;
+    block->tail = 0;
     block->length = 0;
 }
 
@@ -77,14 +77,14 @@ float Uart_Buff_Read_Num(uart_buff_t* uart_buff)
         sign = 1;
         value = Uart_Buff_Read(uart_buff);
     }
-    for (value;value<='0'||value>='9';value = Uart_Buff_Read(uart_buff))
+    for (value;value>='0'&&value<='9';value = Uart_Buff_Read(uart_buff))
     {
         result = result*10.0f+Ascii(value);
     }
     if (value == '.')
     {
         value = Uart_Buff_Read(uart_buff);
-        for (float i = -1.0f;value<='0'||value>='9';value = Uart_Buff_Read(uart_buff))
+        for (float i = -1.0f;value>='0'&&value<='9';value = Uart_Buff_Read(uart_buff))
         {
             result = result + Ascii(value)*E(i);
             i = i - 1.0f;

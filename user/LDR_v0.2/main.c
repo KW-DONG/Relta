@@ -43,6 +43,13 @@ void Test_Path(void)
 int main()
 {
 
+/*******************************BUFFER********************************/
+    Block_Buff_Init(&block_buff);
+    Bsp_UART_Init(115200);
+    delay_init(168);
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	
+	
+	
 /****************************STEPPER_MOTOR*******************************/
     //stepper_A init
     stepperA.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOB;
@@ -89,6 +96,8 @@ int main()
 	stepperC.id = 2;
     Bsp_Stepper_Init(&stepperC);
 
+
+#if USE_SWITCH
 /*******************************SWITCH_KEY*******************************/
     //stop_start_key
     stop_start_key.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
@@ -154,7 +163,7 @@ int main()
     switchC.NVIC_SP = 1;
     switchC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchC);
-
+#endif
 /*********************************LED*********************************/
     led_red.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOF;
     led_red.GPIOX = GPIOF;
@@ -166,30 +175,25 @@ int main()
     led_green.GPIO_Pin_X = GPIO_Pin_10;
     Bsp_LED_Init(&led_green);
 
-/*********************************MONITOR*****************************/
-    monitor.arr = TIM_ARR;
-    monitor.psc = MONITOR_PSC;
-    monitor.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM5;
-    monitor.TIMX = TIM5;
-    monitor.TIMX_IRQn = TIM5_IRQn;
-    
-    Bsp_Monitor_Init(&monitor);
-    
-/*******************************BUFFER********************************/
-    Block_Buff_Init(&block_buff);
-    Bsp_UART_Init(115200);
-    delay_init(168);
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    Bsp_Monitor_Init();
+
 
     float XYZ_C[3];
     float XYZ_Home[3] = {0.0f,0.0f,50.0f};
     float XYZ_R[3] = {0.0f,0.0f,300.0f};
     static float dwell;
 
-    machine.state = machine_OFF;
+    machine.state = machine_ON;
     machine.interpret_flag = RESET;
     machine.fk_flag = RESET;
     machine.traj_flag = RESET;
+
+    //create coordinate system
+    machine.abc[0] = CARRIAGE_A_RESET;
+    machine.abc[1] = CARRIAGE_B_RESET;
+    machine.abc[2] = CARRIAGE_C_RESET;
+
+    Forward_Kinematics(machine.abc, machine.xyz);
 
     stepperA.psc = 5000;
     stepperB.psc = 5000;
@@ -201,7 +205,7 @@ int main()
 
     while (1)
     {
-
+        Test_Path();
         #if USE_GCODE_COMMAND
         //task 1: interprete g_code
         if (machine.interpret_flag == SET)
@@ -253,6 +257,13 @@ int main()
         //Forward_Kinematics(machine.abc, machine.xyz);
         #endif
 
+        led_red.state = 0;
+        Bsp_LED_Update(&led_red);
+        delay_ms(100);
+        led_red.state = 1;
+        Bsp_LED_Update(&led_red);
+        delay_ms(100);
+
     }
 }
 void USART1_IRQHandler(void)
@@ -272,7 +283,18 @@ void TIM5_IRQHandler()
 {
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
-        Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
+        if(led_green.state == 0)
+		{
+			led_green.state = 1;
+		}else
+		{
+			led_green.state = 0;
+		}
+        Bsp_LED_Update(&led_green);
+      
+		
+        #if USE_MONITOR
+		Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
         if (block_buff.content[block_buff.head]->step[0]==0)    stepperA.state = stepper_OFF;
         if (block_buff.content[block_buff.head]->step[1]==0)    stepperB.state = stepper_OFF;
@@ -308,13 +330,13 @@ void TIM5_IRQHandler()
         Bsp_Stepper_Update(&stepperA);
         Bsp_Stepper_Update(&stepperB);
         Bsp_Stepper_Update(&stepperC);
-
-        
-		TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
+        #endif
+	
 	}
+    TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
 }
 
-
+#if USE_SWITCH
 //switch A
 void EXTI2_IRQHandler(void)
 {
@@ -385,7 +407,7 @@ void EXTI0_IRQHandler(void)
 	EXTI_ClearITPendingBit(EXTI_Line4);
 }
 
-
+#endif
 
 
 

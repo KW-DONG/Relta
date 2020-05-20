@@ -22,7 +22,7 @@ void Bsp_Stepper_Update(stepper_t* stepperX);
 
 /***************************************MONITOR*********************************/
 
-void Bsp_Monitor_Init(monitor_t* monitor);
+void Bsp_Monitor_Init(void);
 
 /**************************************SWITCH*********************************/
 
