@@ -30,7 +30,7 @@ uart_buff_t  uart_buff;
 command_t    command_c;
 
 //block
-block_t block_c;
+stepper_exe_t exe_c;
 
 //observation variable
 volatile int32_t stepper_A_freq;
@@ -252,24 +252,18 @@ void TIM5_IRQHandler()
         
         Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
-        if (block_c.step[0]==0) stepperA.state=STOP;
-        if (block_c.step[1]==0) stepperB.state=STOP;
-        if (block_c.step[2]==0) stepperC.state=STOP;
+        if (exe_c.step[0]==0) stepperA.state=STOP;
+        if (exe_c.step[1]==0) stepperB.state=STOP;
+        if (exe_c.step[2]==0) stepperC.state=STOP;
 
         if (machine.state==machine_ON)
         {
             //check whether the current block is executing
-            if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0)
+            if (exe_c.step[0]==0&&exe_c.step[1]==0&&exe_c.step[2]==0)
             {
                 machine.fk_flag = SET;
-                block_state = Block_Buff_Read(&block_c, &block_buff);
+                block_state = Block_Buff_Read(&exe_c, &block_buff);
                 if(block_state==TRUE)
-                {
-                    //always maximum acceleration
-                    stepperA.freq = block_c.maximum_freq[0];
-                    stepperB.freq = block_c.maximum_freq[1];
-                    stepperC.freq = block_c.maximum_freq[2];
-
                     stepperA.state = START;
                     stepperB.state = START;
                     stepperC.state = START;
@@ -277,12 +271,13 @@ void TIM5_IRQHandler()
             }
             else
             {
-                if(block_c.step_dwell!=0)
-                Dwell_Step_Update(&block_c);
+                if(exe_c.step_dwell!=0)
+                Dwell_Step_Update(&exe_c);
                 else
                 {
-                    Stepper_Count(&block_c, &machine, &stepperA, &stepperB, &stepperC);
-                    Acceleration_Count(&stepperA, &stepperB, &stepperC, &block_c);
+                    Stepper_Count(&exe_c, &machine, &stepperA);
+                    Stepper_Count(&exe_c, &machine, &stepperB);
+                    Stepper_Count(&exe_c, &machine, &stepperC);
                 }
             }
         }

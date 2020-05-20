@@ -7,61 +7,30 @@
 //the functions will be called in the interrupt
 //avoid using complex calulation and float calculation
 
-void Dwell_Step_Update(block_t* stepperX)
+void Dwell_Step_Update(stepper_exe_t* exe)
 {
-    if (stepperX->step_dwell!=0)
-    stepperX->step_dwell--;
+    if (exe->step_dwell!=0)
+    exe->step_dwell--;
 }
 
-uint8_t Block_Check(block_t* blockX, block_buff_t* list)
-{
-    uint8_t block_state;
-    //whether current block is compeleted
-    if (blockX->step[0]==0&&blockX->step[1]==0&&blockX->step[2]==0)
-    block_state = Block_Buff_Read(blockX, list);
-    if (block_state == TRUE) return 0;
-    else return 1;
-}
 
-void Acceleration_Count(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, block_t* block)
+void Stepper_Count(stepper_exe_t* exe, machine_t* machine,stepper_t* stepperX)
 {
-    //if acc
-    if (block->accelerate_until!=0)
+    if (stepperX->pin_state_last==0&&stepperX->pin_state==1)
     {
-        stepperI->freq = stepperI->freq + block->accelerate_rate[0];
-        stepperJ->freq = stepperJ->freq + block->accelerate_rate[1];
-        stepperK->freq = stepperK->freq + block->accelerate_rate[2];
-        block->accelerate_until--;
-    }else if(block->decelerate_after==0)
-    {
-        stepperI->freq = stepperI->freq - block->decelerate_rate[0];
-        stepperJ->freq = stepperJ->freq - block->decelerate_rate[1];
-        stepperK->freq = stepperK->freq - block->decelerate_rate[2];
-    }else
-    {
-        block->decelerate_after--;
-    }
-}
+        exe->step[stepperX->id]--;
+        if (stepperX->dir == 0) machine->carriage_move[stepperX->id]--;
+        else                    machine->carriage_move[stepperX->id]++;
 
-void Stepper_Count(block_t* block, machine_t* machine,stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
-{
-    if (stepperI->pin_state_last==0&&stepperI->pin_state==1)
-    {
-        block->step[0]--;
-        if (stepperI->dir == 0) machine->carriage_move[0]--;
-        else                    machine->carriage_move[0]++;
-    }
-    if (stepperJ->pin_state_last==0&&stepperJ->pin_state==1)
-    {
-        block->step[1]--;
-        if (stepperJ->dir == 0) machine->carriage_move[0]--;
-        else                    machine->carriage_move[0]++;
-    }
-    if (stepperK->pin_state_last==0&&stepperK->pin_state==1)    
-    {
-        block->step[2]--;
-        if (stepperK->dir == 0) machine->carriage_move[0]--;
-        else                    machine->carriage_move[0]++;
+        if (exe->accelerate_until[stepperX->id]!=0)
+        {
+            exe->accelerate_until[stepperX->id]--;
+            exe->decelerate_after[stepperX->id]--;
+            stepperX->psc = stepperX->psc * (1+exe->accelerate_psc[stepperX->id]*ARR*INV(T_CLK));
+        }else if (exe->decelerate_after[stepperX->id]==0)
+        {
+            stepperX->psc = stepperX->psc * (1-exe->decelerate_psc[stepperX->id]*ARR*INV(T_CLK));
+        }
     }
 }
 

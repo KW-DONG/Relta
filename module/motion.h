@@ -21,39 +21,19 @@ void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, 
 
 /**
  * @brief count dwell steps
- * @param stepperX
+ * @param exe
  * @note dwell before execute the stepper
  */
-void Dwell_Step_Update(block_t* stepperX);
+void Dwell_Step_Update(stepper_exe_t* exe);
 
-/**
- * @brief check whether the current block is executed
- * @param stepperX
- * @param list
- * @return 0 if the current block is executed
- *         1 if the current block is executing
- */
-uint8_t Block_Check(block_t* stepperX, block_buff_t* list);
-
-/**
- * @brief count the acceleration / deceleration steps
- * @param stepperI
- * @param stepperJ
- * @param stepperK
- * @param acc_step
- * @param dcc_step
- * @param block
- */
-void Acceleration_Count(stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK, block_t* block);
 
 /**
  * @brief count the steps (distance) that each stepper has executed
- * @param block
- * @param stepperI
- * @param stepperJ
- * @param stepperK
+ * @param exe
+ * @param machine
+ * @param stepperX
  * @note by detecting rising edge
  */
-void Stepper_Count(block_t* block, machine_t* machine,stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);
+void Stepper_Count(stepper_exe_t* exe, machine_t* machine,stepper_t* stepperX);
 
 #endif

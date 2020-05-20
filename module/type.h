@@ -94,7 +94,6 @@ typedef struct
     //update in ISR
     uint32_t    step[3];
     uint32_t    step_dwell;
-    uint8_t     flag;
 }stepper_exe_t;
 
 
@@ -177,6 +176,8 @@ typedef struct _stepper
     uint32_t        RCC_AHB1Periph_GPIOX_MS3;
     uint32_t        GPIO_Pin_X_MS3;
     GPIO_TypeDef*   GPIOX_MS3;
+
+    uint8_t         id;
 
     uint8_t         state;//compare
     uint8_t         pin_state;
