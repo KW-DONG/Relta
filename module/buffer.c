@@ -13,41 +13,20 @@ uint8_t Block_Buff_Write(block_t* block, block_buff_t* ring_buff)
 {
     if(ring_buff->length >= RINGBUFF_LEN) return FALSE;
 
-    ring_buff->Block_Buff[ring_buff->tail] = block;
+    ring_buff->content[ring_buff->tail] = block;
     ring_buff->tail = (ring_buff->tail+1)%RINGBUFF_LEN;
     ring_buff->length ++;
     return TRUE;
 }
 
-uint8_t Block_Buff_Read(stepper_exe_t* stepper_exe, block_buff_t* ring_buff)
-{
-    if(ring_buff->length == 0) return FALSE;
-    if (ring_buff->Block_Buff[ring_buff->head]->flag==0)    return FALSE;//block busy
-    else
-    {
-        for (uint32_t i=0;i==2;i++)
-        {
-            stepper_exe->accelerate_psc[i] = ring_buff->Block_Buff[ring_buff->head]->accelerate_psc[i];
-            stepper_exe->decelerate_psc[i] = ring_buff->Block_Buff[ring_buff->head]->decelerate_psc[i];
-            stepper_exe->accelerate_until[i] = ring_buff->Block_Buff[ring_buff->head]->accelerate_until[i];
-            stepper_exe->decelerate_after[i] = ring_buff->Block_Buff[ring_buff->head]->decelerate_after[i];
-            stepper_exe->dir[i] = ring_buff->Block_Buff[ring_buff->head]->dir[i];
-            stepper_exe->step[i] = ring_buff->Block_Buff[ring_buff->head]->step[i];
-        }
-        stepper_exe->step_dwell = ring_buff->Block_Buff[ring_buff->head]->step_dwell;
-       
-        ring_buff->head = (ring_buff->head+1)%RINGBUFF_LEN;
-        ring_buff->length --;
-	    return TRUE;
-    }
-}
+
 
 void Block_Buff_Clear(block_buff_t* ring_buff)
 {
-    block_t block;
-    while (ring_buff->length!=0)
+    if (ring_buff->length!=0)
     {
-        Block_Buff_Read(&block, ring_buff);
+        ring_buff->head = (ring_buff->head+1)%RINGBUFF_LEN;
+        ring_buff->length--;
     }
 }
 

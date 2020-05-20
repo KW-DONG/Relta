@@ -7,29 +7,29 @@
 //the functions will be called in the interrupt
 //avoid using complex calulation and float calculation
 
-void Dwell_Step_Update(stepper_exe_t* exe)
+void Dwell_Step_Update(block_buff_t* buffer)
 {
-    if (exe->step_dwell!=0)
-    exe->step_dwell--;
+    if (buffer->content[buffer->head]->step_dwell!=0)
+    buffer->content[buffer->head]->step_dwell--;
 }
 
 
-void Stepper_Count(stepper_exe_t* exe, machine_t* machine,stepper_t* stepperX)
+void Stepper_Count(block_buff_t* buffer, machine_t* machine,stepper_t* stepperX)
 {
     if (stepperX->pin_state_last==0&&stepperX->pin_state==1)
     {
-        exe->step[stepperX->id]--;
+        buffer->content[buffer->head]->step[stepperX->id];
         if (stepperX->dir == 0) machine->carriage_move[stepperX->id]--;
         else                    machine->carriage_move[stepperX->id]++;
 
-        if (exe->accelerate_until[stepperX->id]!=0)
+        if (buffer->content[buffer->head]->accelerate_until[stepperX->id]!=0)
         {
-            exe->accelerate_until[stepperX->id]--;
-            exe->decelerate_after[stepperX->id]--;
-            stepperX->psc = stepperX->psc * (1+exe->accelerate_psc[stepperX->id]*ARR*INV(T_CLK));
-        }else if (exe->decelerate_after[stepperX->id]==0)
+            buffer->content[buffer->head]->accelerate_until[stepperX->id]--;
+            buffer->content[buffer->head]->decelerate_after[stepperX->id]--;
+            stepperX->psc = stepperX->psc * (1+buffer->content[buffer->head]->accelerate_psc[stepperX->id]*ARR*INV(T_CLK));
+        }else if (buffer->content[buffer->head]->decelerate_after[stepperX->id]==0)
         {
-            stepperX->psc = stepperX->psc * (1-exe->decelerate_psc[stepperX->id]*ARR*INV(T_CLK));
+            stepperX->psc = stepperX->psc * (1-buffer->content[buffer->head]->decelerate_psc[stepperX->id]*ARR*INV(T_CLK));
         }
     }
 }

@@ -29,9 +29,6 @@ block_buff_t block_buff;
 uart_buff_t  uart_buff;
 command_t    command_c;
 
-//block
-stepper_exe_t exe_c;
-
 //observation variable
 volatile int32_t stepper_A_freq;
 volatile int32_t stepper_B_freq;
@@ -248,22 +245,22 @@ void TIM5_IRQHandler()
 {
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
-        static uint8_t block_state;
-        
         Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
-        if (exe_c.step[0]==0) stepperA.state=STOP;
-        if (exe_c.step[1]==0) stepperB.state=STOP;
-        if (exe_c.step[2]==0) stepperC.state=STOP;
+        if (block_buff.content[block_buff.head]->step[0]==0)    stepperA.state = STOP;
+        if (block_buff.content[block_buff.head]->step[1]==0)    stepperB.state = STOP;
+        if (block_buff.content[block_buff.head]->step[2]==0)    stepperC.state = STOP;
 
         if (machine.state==machine_ON)
         {
             //check whether the current block is executing
-            if (exe_c.step[0]==0&&exe_c.step[1]==0&&exe_c.step[2]==0)
+            if (block_buff.content[block_buff.head]->step[0]==0
+                &&block_buff.content[block_buff.head]->step[1]==0
+                &&block_buff.content[block_buff.head]->step[2]==0)
             {
                 machine.fk_flag = SET;
-                block_state = Block_Buff_Read(&exe_c, &block_buff);
-                if(block_state==TRUE)
+                if (block_buff.content[block_buff.head]->flag == 1)
+                {
                     stepperA.state = START;
                     stepperB.state = START;
                     stepperC.state = START;
@@ -271,20 +268,20 @@ void TIM5_IRQHandler()
             }
             else
             {
-                if(exe_c.step_dwell!=0)
-                Dwell_Step_Update(&exe_c);
+                if(block_buff.content[block_buff.head]->step_dwell!=0)
+                Dwell_Step_Update(&block_buff);
                 else
                 {
-                    Stepper_Count(&exe_c, &machine, &stepperA);
-                    Stepper_Count(&exe_c, &machine, &stepperB);
-                    Stepper_Count(&exe_c, &machine, &stepperC);
+                    Stepper_Count(&block_buff, &machine, &stepperA);
+                    Stepper_Count(&block_buff, &machine, &stepperB);
+                    Stepper_Count(&block_buff, &machine, &stepperC);
                 }
             }
         }
         Bsp_Stepper_Update(&stepperA);
         Bsp_Stepper_Update(&stepperB);
         Bsp_Stepper_Update(&stepperC);
-	}
+	
     TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
 }
 
@@ -295,7 +292,7 @@ void EXTI2_IRQHandler(void)
     machine.abc[0] = CARRIAGE_A_RESET;
     if (stepperA.dir==1)
     {
-        block_c.step[0] = 0;
+        block_buff.content[block_buff.head]->step[0] = 0;
         stepperA.dir = stepper_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line0);
@@ -308,7 +305,7 @@ void EXTI3_IRQHandler(void)
     machine.abc[1] = CARRIAGE_B_RESET;
     if (stepperB.dir==1)
     {
-        block_c.step[1] = 0;
+        block_buff.content[block_buff.head]->step[0]step[1] = 0;
         stepperB.dir = stepper_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line1);
@@ -321,7 +318,7 @@ void EXTI4_IRQHandler(void)
     machine.abc[2] = CARRIAGE_C_RESET;
     if (stepperC.dir==1)
     {
-        block_c.step[2] = 0;
+        block_buff.content[block_buff.head]->step[0]step[2] = 0;
         stepperC.dir = stepper_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line2);

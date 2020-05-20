@@ -82,27 +82,12 @@ typedef struct
 
 enum {block_ready, block_busy};
 
-typedef struct 
-{
-    //read by controller
-    uint8_t     dir[3];
-    uint32_t    accelerate_until[3];
-    uint32_t    decelerate_after[3];
-    uint32_t    accelerate_psc[3];
-    uint32_t    decelerate_psc[3];
-
-    //update in ISR
-    uint32_t    step[3];
-    uint32_t    step_dwell;
-}stepper_exe_t;
-
-
 typedef struct
 {
     uint16_t head;
     uint16_t tail;
     uint16_t length;
-    block_t* Block_Buff[RINGBUFF_LEN];
+    block_t* content[RINGBUFF_LEN];
 }block_buff_t;
 
 typedef struct 

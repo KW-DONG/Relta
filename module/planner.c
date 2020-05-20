@@ -953,20 +953,20 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
             block.step[k] = (uint32_t)abs(d_abc[k]*STEPS_PER_UNIT);
             
             //recalculate last block deceleration
-            if (block.dir[k]==ring_buff->Block_Buff[ring_buff->tail]->dir[k])
+            if (block.dir[k]==ring_buff->content[ring_buff->tail]->dir[k])
             {
                 //last block no deceleration
-                if (block.maximum_velocity[k]-ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k]>JERK_FREQ)
+                if (block.maximum_velocity[k]-ring_buff->content[ring_buff->tail]->maximum_velocity[k]>JERK_FREQ)
                 {
-                    ring_buff->Block_Buff[ring_buff->tail]->leave_velocity[k] = ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k];
-                    block.entry_velocity[k] = ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k];
-                }else if (ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k]-block.maximum_velocity[k]>JERK_FREQ)
+                    ring_buff->content[ring_buff->tail]->leave_velocity[k] = ring_buff->content[ring_buff->tail]->maximum_velocity[k];
+                    block.entry_velocity[k] = ring_buff->content[ring_buff->tail]->maximum_velocity[k];
+                }else if (ring_buff->content[ring_buff->tail]->maximum_velocity[k]-block.maximum_velocity[k]>JERK_FREQ)
                 {
-                    ring_buff->Block_Buff[ring_buff->tail]->leave_velocity[k] = block.maximum_velocity[k];
+                    ring_buff->content[ring_buff->tail]->leave_velocity[k] = block.maximum_velocity[k];
                 }else
                 {
                     //no acc or dcc
-                    ring_buff->Block_Buff[ring_buff->tail]->leave_velocity[k] = ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k];
+                    ring_buff->content[ring_buff->tail]->leave_velocity[k] = ring_buff->content[ring_buff->tail]->maximum_velocity[k];
                     block.entry_velocity[k] = block.maximum_velocity[k];
                 }
             }
@@ -975,9 +975,9 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
         Acceleration_Planner(&block);
         block.flag = block_ready;
 
-        ring_buff->Block_Buff[ring_buff->tail]->flag = block_busy;
-        Acceleration_Planner(ring_buff->Block_Buff[ring_buff->tail]);
-        ring_buff->Block_Buff[ring_buff->tail]->flag = block_ready;
+        ring_buff->content[ring_buff->tail]->flag = block_busy;
+        Acceleration_Planner(ring_buff->content[ring_buff->tail]);
+        ring_buff->content[ring_buff->tail]->flag = block_ready;
 
         Block_Buff_Write(&block, ring_buff);
     }

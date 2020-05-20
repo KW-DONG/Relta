@@ -24,7 +24,7 @@ void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, 
  * @param exe
  * @note dwell before execute the stepper
  */
-void Dwell_Step_Update(stepper_exe_t* exe);
+void Dwell_Step_Update(block_buff_t* buffer);
 
 
 /**
@@ -34,6 +34,6 @@ void Dwell_Step_Update(stepper_exe_t* exe);
  * @param stepperX
  * @note by detecting rising edge
  */
-void Stepper_Count(stepper_exe_t* exe, machine_t* machine,stepper_t* stepperX);
+void Stepper_Count(block_buff_t* buffer, machine_t* machine,stepper_t* stepperX);
 
 #endif
