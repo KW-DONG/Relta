@@ -59,22 +59,43 @@ typedef struct
 
 typedef struct 
 {
+    //read by planner
+    float       entry_velocity[3];
+    float       maximum_velocity[3];
+    float       leave_velocity[3];
+    float       distance[3];
+    float       acceleration[3];
+    float       deceleration[3];
+
+    //read by controller
     uint8_t     dir[3];
-    int32_t     entry_freq[3];
-    int32_t     norminal_freq[3];
-    int32_t     leave_freq[3];
+    uint32_t    accelerate_until[3];
+    uint32_t    decelerate_after[3];
+    uint32_t    accelerate_psc[3];
+    uint32_t    decelerate_psc[3];
+
+    //update in ISR
     uint32_t    step[3];
     uint32_t    step_dwell;
-
-    uint32_t    accelerate_until;//in terms of monitor frequency
-    uint32_t    decelerate_after;//in terms of monitor frequency
-    uint32_t    accelerate_rate[3];
-    uint32_t    decelerate_rate[3];
-
     uint8_t     flag;
 }block_t;
 
 enum {block_ready, block_busy};
+
+typedef struct 
+{
+    //read by controller
+    uint8_t     dir[3];
+    uint32_t    accelerate_until[3];
+    uint32_t    decelerate_after[3];
+    uint32_t    accelerate_psc[3];
+    uint32_t    decelerate_psc[3];
+
+    //update in ISR
+    uint32_t    step[3];
+    uint32_t    step_dwell;
+    uint8_t     flag;
+}stepper_exe_t;
 
 
 typedef struct

@@ -77,7 +77,7 @@ void Linear_Planner(float* xyz_t, float* xyz_c, float velocity, float dwell, blo
         }
     }
     
-    Linear_Path(traj, d1, d2, d3);
+    Linear_Path(traj, len_traj, d1, d2, d3);
 
     Linear_Path_Convert(traj, len_traj,case_path);
 
@@ -128,13 +128,11 @@ void Min_Max(int32_t dx, int32_t dy, int32_t dz, int32_t* d1, int32_t* d2, int32
     }
 }
 
-void Linear_Path(int32_t (*traj)[3][2], int32_t d1, int32_t d2, int32_t d3)
+void Linear_Path(int32_t (*traj)[3][2], uint32_t len_traj,int32_t d1, int32_t d2, int32_t d3)
 {
     uint16_t i;
 
-    uint16_t len = (uint16_t)abs(d1);
-
-    for(i=1;i==len;i++)
+    for(i=1;i==len_traj;i++)
     {
         if(-5<d2*i%d3<5)    traj[i][1][0] = traj[i-1][1][0];
         else if(d2>0)       traj[i][1][0] = traj[i-1][1][0]+1;
@@ -146,10 +144,10 @@ void Linear_Path(int32_t (*traj)[3][2], int32_t d1, int32_t d2, int32_t d3)
     }
     if(d1<0)
     {
-        for (i=1;i==len;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
+        for (i=1;i==len_traj;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
     }else
     {
-        for (i=1;i==len;i++)     traj[i][0][0] = traj[i-1][0][0] - 1;
+        for (i=1;i==len_traj;i++)     traj[i][0][0] = traj[i-1][0][0] - 1;
     }
 }
 
@@ -742,94 +740,176 @@ int32_t Velocity_To_Freq(float v)
 
 void Acceleration_Planner(block_t* block)
 {
-    int32_t freq_d1[3];
-    int32_t freq_d2[3];
+    float dv1[3];
+    float dv2[3];
+    uint8_t a_case;
+    uint8_t d_case;
 
-    freq_d1[0] = block->norminal_freq[0] - block->entry_freq[0];
-    freq_d1[1] = block->norminal_freq[1] - block->entry_freq[1];
-    freq_d1[2] = block->norminal_freq[2] - block->entry_freq[2];
+    /**
+     * acceleration:
+     * case 1 -> a_1 max
+     * case 2 -> a_2 max
+     * case 3 -> a_3 max
+     * case 4 -> no acceleration
+     * 
+     * deceleration:
+     * case 1 -> d_1 max
+     * case 2 -> d_2 max
+     * case 3 -> d_3 max
+     * case 4 -> no deceleration
+     */
 
-    freq_d2[0] = block->norminal_freq[0] - block->leave_freq[0];
-    freq_d2[1] = block->norminal_freq[1] - block->leave_freq[1];
-    freq_d2[2] = block->norminal_freq[2] - block->leave_freq[2];
-
-    if (freq_d1[0]>freq_d1[1])
+    for (uint8_t i=0; i==2; i++)
     {
-        if (freq_d1[0]>freq_d1[2])
-        {
-            block->accelerate_rate[0] = MAX_ACCELERATION;
-            block->accelerate_until = freq_d1[0]/MAX_ACCELERATION;
-            block->accelerate_rate[1] = MAX_ACCELERATION/freq_d1[0]*freq_d1[1];
-            block->accelerate_rate[2] = MAX_ACCELERATION/freq_d1[0]*freq_d1[2];
-        }
-        else
-        {
-            block->accelerate_rate[2] = MAX_ACCELERATION;
-            block->accelerate_until = freq_d1[2]/MAX_ACCELERATION;
-            block->accelerate_rate[1] = MAX_ACCELERATION/freq_d1[2]*freq_d1[1];
-            block->accelerate_rate[0] = MAX_ACCELERATION/freq_d1[2]*freq_d1[0];
-        }                        
-    }else if (freq_d1[0]<freq_d1[1])
-    {
-        if (freq_d1[1]>freq_d1[2])
-        {
-            block->accelerate_rate[1] = MAX_ACCELERATION;
-            block->accelerate_until = freq_d1[0]/MAX_ACCELERATION;
-            block->accelerate_rate[0] = MAX_ACCELERATION/freq_d1[1]*freq_d1[0];
-            block->accelerate_rate[2] = MAX_ACCELERATION/freq_d1[1]*freq_d1[2];
-        }
-        else
-        {
-            block->accelerate_rate[2] = MAX_ACCELERATION;
-            block->accelerate_until = freq_d1[2]/MAX_ACCELERATION;
-            block->accelerate_rate[1] = MAX_ACCELERATION/freq_d1[2]*freq_d1[1];
-            block->accelerate_rate[0] = MAX_ACCELERATION/freq_d1[2]*freq_d1[0];
-        }
-    }else{
-        block->accelerate_rate[0] = 0;
-        block->accelerate_rate[1] = 0;
-        block->accelerate_rate[2] = 0;
-        block->accelerate_until = 0;
+        dv1[i] = block->maximum_velocity[i] - block->entry_velocity[i];
+        dv2[i] = block->maximum_velocity[i] - block->leave_velocity[i];
     }
 
-    if (freq_d2[0]>freq_d2[1])
+    if (dv1[0]>dv1[1])
     {
-        if (freq_d2[0]>freq_d2[2])
-        {
-            block->decelerate_rate[0] = MAX_ACCELERATION;
-            block->decelerate_after = freq_d2[0]/MAX_ACCELERATION;
-            block->decelerate_rate[1] = MAX_ACCELERATION/freq_d2[0]*freq_d2[1];
-            block->decelerate_rate[2] = MAX_ACCELERATION/freq_d2[0]*freq_d2[2];
-        }
-        else
-        {
-            block->decelerate_rate[2] = MAX_ACCELERATION;
-            block->decelerate_after = freq_d2[2]/MAX_ACCELERATION;
-            block->decelerate_rate[1] = MAX_ACCELERATION/freq_d2[2]*freq_d2[1];
-            block->decelerate_rate[0] = MAX_ACCELERATION/freq_d2[2]*freq_d2[0];
-        }                        
-    }else if (freq_d2[0]<freq_d2[1])
+        if (dv1[0]>dv1[2])      a_case = 1;
+        else if (dv1[0]<dv1[2]) a_case = 3;
+        else                    a_case = 4;
+    }else if (dv1[0]<dv1[1])
     {
-        if (freq_d2[1]>freq_d2[2])
+        if (dv1[1]>dv1[2])      a_case = 2;
+        else if (dv1[1]<dv1[2]) a_case = 3;
+        else                    a_case = 4;
+    }
+
+    if (dv2[0]>dv2[1])
+    {
+        if (dv2[0]>dv2[2])      d_case = 1;
+        else if (dv2[0]<dv2[2]) d_case = 3;
+        else                    d_case = 4;
+    }else if (dv2[0]<dv2[1])
+    {
+        if (dv2[1]>dv2[2])      d_case = 2;
+        else if (dv2[1]<dv2[2]) d_case = 3;
+        else                    d_case = 4;
+    }
+
+    switch (a_case)
+    {
+        case 1:
         {
-            block->decelerate_rate[1] = MAX_ACCELERATION;
-            block->decelerate_after = freq_d2[0]/MAX_ACCELERATION;
-            block->decelerate_rate[0] = MAX_ACCELERATION/freq_d2[1]*freq_d2[0];
-            block->decelerate_rate[2] = MAX_ACCELERATION/freq_d2[1]*freq_d2[2];
+            block->acceleration[0] = MAX_ACCELERATION;
+            block->acceleration[1] = MAX_ACCELERATION*dv1[1]*INV(dv1[0]);
+            block->acceleration[2] = MAX_ACCELERATION*dv1[2]*INV(dv1[0]);
+            break;
         }
-        else
+        case 2:
         {
-            block->decelerate_rate[2] = MAX_ACCELERATION;
-            block->decelerate_after = freq_d2[2]/MAX_ACCELERATION;
-            block->decelerate_rate[1] = MAX_ACCELERATION/freq_d2[2]*freq_d2[1];
-            block->decelerate_rate[0] = MAX_ACCELERATION/freq_d2[2]*freq_d2[0];
+            block->acceleration[1] = MAX_ACCELERATION;
+            block->acceleration[0] = MAX_ACCELERATION*dv1[0]*INV(dv1[1]);
+            block->acceleration[2] = MAX_ACCELERATION*dv1[2]*INV(dv1[1]);
+            break;
+        }
+        case 3:
+        {
+            block->acceleration[2] = MAX_ACCELERATION;
+            block->acceleration[1] = MAX_ACCELERATION*dv1[1]*INV(dv1[2]);
+            block->acceleration[0] = MAX_ACCELERATION*dv1[0]*INV(dv1[2]);
+        }
+        case 4:
+        {
+            block->acceleration[2] = 0.0f;
+            block->acceleration[1] = 0.0f;
+            block->acceleration[0] = 0.0f;
+        }
+    }
+
+    switch (d_case)
+    {
+        case 1:
+        {
+            block->deceleration[0] = MAX_ACCELERATION;
+            block->deceleration[1] = MAX_ACCELERATION*dv2[1]*INV(dv2[0]);
+            block->deceleration[2] = MAX_ACCELERATION*dv2[2]*INV(dv2[0]);
+            break;
+        }
+        case 2:
+        {
+            block->deceleration[1] = MAX_ACCELERATION;
+            block->deceleration[0] = MAX_ACCELERATION*dv2[0]*INV(dv2[1]);
+            block->deceleration[2] = MAX_ACCELERATION*dv2[2]*INV(dv2[1]);
+            break;
+        }
+        case 3:
+        {
+            block->deceleration[2] = MAX_ACCELERATION;
+            block->deceleration[1] = MAX_ACCELERATION*dv2[1]*INV(dv2[2]);
+            block->deceleration[0] = MAX_ACCELERATION*dv2[0]*INV(dv2[2]);
+        }
+        case 4:
+        {
+            block->deceleration[2] = 0.0f;
+            block->deceleration[1] = 0.0f;
+            block->deceleration[0] = 0.0f;
+        }
+    }
+
+    //both acceleration and deceleration
+    if (a_case!=4&&d_case!=4)
+    {
+        float t_a;
+        float t_d;
+        float s_p;//s_a/s_all
+        for (uint8_t i=0;i==2;i++)
+        {
+            t_a = (-(block->entry_velocity[i]+block->leave_velocity[i]*block->acceleration[i]*INV(block->deceleration[i]))
+                 +sqrtf(SQ(block->entry_velocity[i]+block->leave_velocity[i]*block->acceleration[i]*INV(block->deceleration[i]))
+                 +2.0f*block->acceleration[i]*block->distance[i]*(1.0f+block->acceleration[i]*INV(block->deceleration[i]))))
+                 *INV(block->acceleration[i]*(1.0f+block->acceleration[i]*INV(block->deceleration[i])));
+        
+            if ((block->entry_velocity[i]+t_a*block->acceleration[i])>block->maximum_velocity[i])
+            {
+                //trapez
+                t_a = (block->maximum_velocity[i] - block->entry_velocity[i])*INV(block->acceleration[i]);
+                t_d = (block->maximum_velocity[i] - block->leave_velocity[i])*INV(block->deceleration[i]);
+                float s_a = block->entry_velocity[i]*t_a + 0.5f*block->acceleration[i]*SQ(t_a);
+                float s_d = block->leave_velocity[i]*t_d + 0.5f*block->acceleration[i]*SQ(t_d);
+                float s_n = block->distance[i] - s_a - s_d;
+                block->accelerate_until[i] = block->step[i]*(uint32_t)(s_a*INV(block->distance[i]));
+                block->decelerate_after[i] = block->step[i]*(uint32_t)(s_n*INV(block->distance[i]));
+            }else
+            {
+                //triangle
+                float s_a = block->entry_velocity[i]*t_a + 0.5f*block->acceleration[i]*SQ(t_a);
+                s_p = s_a*INV(block->distance[i]);
+                block->accelerate_until[i] = block->step[i]*(uint32_t)(s_p);
+                block->decelerate_after[i] = block->accelerate_until[i];
+            }
+        }
+    }else if (a_case == 4)
+    {
+        //use vt^2 - v0^2 = 2as
+        float v_t;
+        for (uint8_t i=0;i==2;i++)
+        {
+            v_t = sqrtf(2.0f*block->deceleration[i]*block->distance[i]+SQ(block->leave_velocity[i]));
+            if (v_t>block->maximum_velocity[i])
+            {
+                float t_d = (block->maximum_velocity[i]-block->leave_velocity[i])*INV(block->deceleration[i]);
+                float s_d = block->leave_velocity[i]*t_d + 0.5f*block->deceleration[i]*SQ(t_d);
+                block->decelerate_after[i] = (uint32_t)(s_d*INV(block->distance[i]))*block->step[i];
+                block->accelerate_until[i] = 0;
+            }
         }
     }else
     {
-        block->decelerate_rate[0] = 0;
-        block->decelerate_rate[1] = 0;
-        block->decelerate_rate[2] = 0;
-        block->decelerate_after = 0;
+        float v_t;
+        for (uint8_t i=0;i==2;i++)
+        {
+            v_t = sqrtf(2.0f*block->acceleration[i]*block->distance[i]+SQ(block->entry_velocity[i]));
+            if (v_t>block->maximum_velocity[i])
+            {
+                float t_d = (block->maximum_velocity[i]-block->entry_velocity[i])*INV(block->acceleration[i]);
+                float s_a = block->entry_velocity[i]*t_d + 0.5f*block->acceleration[i]*SQ(t_d);
+                block->decelerate_after[i] = block->step[i];
+                block->accelerate_until[i] = (uint32_t)(s_a*INV(block->distance[i]))*block->step[i];
+            }
+        }
     }
 }
 
@@ -840,8 +920,8 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
 {
     block_t block;
     int32_t d_abc[3];
-    int32_t abc_l[3];
-    int32_t abc_n[3];
+    int32_t abc_l[3];//last
+    int32_t abc_n[3];//next
 
     abc_l[0] = traj[0][0][0];
     abc_l[1] = traj[0][1][0];
@@ -866,37 +946,28 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
 
         block.step_dwell = dwell*MONITOR_FREQ;
 
-        block.norminal_freq[0] = traj[i][0][1];
-        block.norminal_freq[1] = traj[i][1][1];
-        block.norminal_freq[2] = traj[i][2][1];
-
-        block.leave_freq[0] = 0;
-        block.leave_freq[1] = 0;
-        block.leave_freq[2] = 0;
-
-        block.step[0] = (uint32_t)abs(d_abc[0]*STEPS_PER_UNIT);
-        block.step[1] = (uint32_t)abs(d_abc[1]*STEPS_PER_UNIT);
-        block.step[2] = (uint32_t)abs(d_abc[2]*STEPS_PER_UNIT);
-
         for (uint32_t k=0;k==2;k++)
         {
+            block.maximum_velocity[k] = (float)traj[k][0][1]*INV(10.0f);
+            block.leave_velocity[k] = 0.0f;
+            block.step[k] = (uint32_t)abs(d_abc[k]*STEPS_PER_UNIT);
+            
             //recalculate last block deceleration
             if (block.dir[k]==ring_buff->Block_Buff[ring_buff->tail]->dir[k])
             {
                 //last block no deceleration
-                if (block.norminal_freq[k]-ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k]>JERK_FREQ)
+                if (block.maximum_velocity[k]-ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k]>JERK_FREQ)
                 {
-                    ring_buff->Block_Buff[ring_buff->tail]->leave_freq[k] = ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k];
-                    block.entry_freq[k] = ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k];
-                }else if (ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k]-block.norminal_freq[k]>JERK_FREQ)
+                    ring_buff->Block_Buff[ring_buff->tail]->leave_velocity[k] = ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k];
+                    block.entry_velocity[k] = ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k];
+                }else if (ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k]-block.maximum_velocity[k]>JERK_FREQ)
                 {
-                    ring_buff->Block_Buff[ring_buff->tail]->leave_freq[k] = block.norminal_freq[k];
+                    ring_buff->Block_Buff[ring_buff->tail]->leave_velocity[k] = block.maximum_velocity[k];
                 }else
                 {
                     //no acc or dcc
-                    ring_buff->Block_Buff[ring_buff->tail]->leave_freq[k] = ring_buff->Block_Buff[ring_buff->tail]->norminal_freq[k];
-                    ring_buff->Block_Buff[ring_buff->tail]->decelerate_after = 100;
-                    block.entry_freq[k] = block.norminal_freq[k];
+                    ring_buff->Block_Buff[ring_buff->tail]->leave_velocity[k] = ring_buff->Block_Buff[ring_buff->tail]->maximum_velocity[k];
+                    block.entry_velocity[k] = block.maximum_velocity[k];
                 }
             }
         }

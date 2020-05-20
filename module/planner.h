@@ -53,7 +53,7 @@ void Min_Max(int32_t dx, int32_t dy, int32_t dz, int32_t* da, int32_t* db, int32
  *      path[i][1] = db
  *      path[i][2] = dc
  */
-void Linear_Path(int32_t (*traj)[3][2], int32_t da, int32_t db, int32_t dc);
+void Linear_Path(int32_t (*traj)[3][2], uint32_t len_traj, int32_t da, int32_t db, int32_t dc);
 
 /**
  * @brief rearrange the path to x->y->z order

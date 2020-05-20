@@ -32,6 +32,12 @@ command_t    command_c;
 //block
 block_t block_c;
 
+//observation variable
+volatile int32_t stepper_A_freq;
+volatile int32_t stepper_B_freq;
+volatile int32_t stepper_C_freq;
+
+
 int main()
 {
     float XYZ_C[3];
@@ -260,9 +266,9 @@ void TIM5_IRQHandler()
                 if(block_state==TRUE)
                 {
                     //always maximum acceleration
-                    stepperA.freq = block_c.norminal_freq[0];
-                    stepperB.freq = block_c.norminal_freq[1];
-                    stepperC.freq = block_c.norminal_freq[2];
+                    stepperA.freq = block_c.maximum_freq[0];
+                    stepperB.freq = block_c.maximum_freq[1];
+                    stepperC.freq = block_c.maximum_freq[2];
 
                     stepperA.state = START;
                     stepperB.state = START;

@@ -31,7 +31,7 @@ uint8_t Block_Buff_Read(block_t* block, block_buff_t* ring_buff)
             block->decelerate_rate[i] = ring_buff->Block_Buff[ring_buff->head]->decelerate_rate[i];
             block->dir[i] = ring_buff->Block_Buff[ring_buff->head]->dir[i];
             block->entry_freq[i] = ring_buff->Block_Buff[ring_buff->head]->entry_freq[i];
-            block->norminal_freq[i] = ring_buff->Block_Buff[ring_buff->head]->norminal_freq[i];
+            block->maximum_freq[i] = ring_buff->Block_Buff[ring_buff->head]->maximum_freq[i];
             block->leave_freq[i] = ring_buff->Block_Buff[ring_buff->head]->leave_freq[i];
             block->step[i] = ring_buff->Block_Buff[ring_buff->head]->step[i];
         }
