@@ -4,15 +4,6 @@
 #include "type.h"
 #include "config.h"
 
-#define CLOCKWISE       0
-#define ANTICLOCKWISE   1
-
-//machine status
-#define WORK            0
-#define SLEEP           1
-
-#define START    TIM_ARR/2
-#define STOP   0
 
 
 void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK);

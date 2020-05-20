@@ -139,8 +139,8 @@ void Bsp_Monitor_Init(monitor_t* monitor)
 	TIM_Cmd(monitor->TIMX,ENABLE);
 	
 	NVIC_InitStructure.NVIC_IRQChannel=monitor->TIMX_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0x01;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority=0x02;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority=2;
 	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }

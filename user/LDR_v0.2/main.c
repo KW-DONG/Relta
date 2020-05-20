@@ -29,10 +29,6 @@ block_buff_t block_buff;
 uart_buff_t  uart_buff;
 command_t    command_c;
 
-//observation variable
-volatile int32_t stepper_A_Psc;
-volatile int32_t stepper_B_Psc;
-volatile int32_t stepper_C_Psc;
 
 void Test_Path(void)
 {
@@ -40,23 +36,12 @@ void Test_Path(void)
     float xyz_t[3] = {0,0,0};
     Linear_Planner(xyz_t,xyz_c,10.0f,20.0f,&block_buff);
     delay_ms(100);
-    stepper_A_Psc = stepperA.psc;
-    stepper_B_Psc = stepperB.psc;
-    stepper_C_Psc = stepperC.psc;
 }
 
 
 
 int main()
 {
-{
-    float XYZ_C[3];
-    float XYZ_Home[3] = {0.0f,0.0f,50.0f};
-    float XYZ_R[3] = {0.0f,0.0f,300.0f};
-    static float dwell;
-
-    delay_init(168);
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
 /****************************STEPPER_MOTOR*******************************/
     //stepper_A init
@@ -139,7 +124,7 @@ int main()
     switchA.GPIO_PinX = GPIO_Pin_2;
     switchA.GPIOX = GPIOC;
     switchA.mode = NC;
-    switchA.NVIC_PP = 1;
+    switchA.NVIC_PP = 2;
     switchA.NVIC_SP = 1;
     switchA.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchA);
@@ -152,7 +137,7 @@ int main()
     switchB.GPIO_PinX = GPIO_Pin_3;
     switchB.GPIOX = GPIOC;
     switchB.mode = NC;
-    switchB.NVIC_PP = 1;
+    switchB.NVIC_PP = 2;
     switchB.NVIC_SP = 1;
     switchB.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchB);
@@ -165,7 +150,7 @@ int main()
     switchC.GPIO_PinX = GPIO_Pin_3;
     switchC.GPIOX = GPIOC;
     switchC.mode = NC;
-    switchC.NVIC_PP = 1;
+    switchC.NVIC_PP = 2;
     switchC.NVIC_SP = 1;
     switchC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchC);
@@ -187,15 +172,32 @@ int main()
     monitor.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM5;
     monitor.TIMX = TIM5;
     monitor.TIMX_IRQn = TIM5_IRQn;
+    
     Bsp_Monitor_Init(&monitor);
     
+/*******************************BUFFER********************************/
     Block_Buff_Init(&block_buff);
-
-    //hardware init
     Bsp_UART_Init(115200);
-}
-    
+    delay_init(168);
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
+    float XYZ_C[3];
+    float XYZ_Home[3] = {0.0f,0.0f,50.0f};
+    float XYZ_R[3] = {0.0f,0.0f,300.0f};
+    static float dwell;
+
+    machine.state = machine_OFF;
+    machine.interpret_flag = RESET;
+    machine.fk_flag = RESET;
+    machine.traj_flag = RESET;
+
+    stepperA.psc = 5000;
+    stepperB.psc = 5000;
+    stepperC.psc = 5000;
+
+    stepperA.state = stepper_OFF;
+    stepperB.state = stepper_OFF;
+    stepperC.state = stepper_OFF;
 
     while (1)
     {
@@ -248,9 +250,8 @@ int main()
         if (machine.carriage_move[0]!=0)    machine.abc[0] = machine.abc[0] + machine.carriage_move[0]*INV(STEPS_PER_UNIT);
         if (machine.carriage_move[1]!=0)    machine.abc[1] = machine.abc[1] + machine.carriage_move[1]*INV(STEPS_PER_UNIT);
         if (machine.carriage_move[2]!=0)    machine.abc[2] = machine.abc[2] + machine.carriage_move[2]*INV(STEPS_PER_UNIT);
-        Forward_Kinematics(machine.abc, machine.xyz);
+        //Forward_Kinematics(machine.abc, machine.xyz);
         #endif
-
 
     }
 }
@@ -273,9 +274,9 @@ void TIM5_IRQHandler()
 	{
         Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
-        if (block_buff.content[block_buff.head]->step[0]==0)    stepperA.state = STOP;
-        if (block_buff.content[block_buff.head]->step[1]==0)    stepperB.state = STOP;
-        if (block_buff.content[block_buff.head]->step[2]==0)    stepperC.state = STOP;
+        if (block_buff.content[block_buff.head]->step[0]==0)    stepperA.state = stepper_OFF;
+        if (block_buff.content[block_buff.head]->step[1]==0)    stepperB.state = stepper_OFF;
+        if (block_buff.content[block_buff.head]->step[2]==0)    stepperC.state = stepper_OFF;
 
         if (machine.state==machine_ON)
         {
@@ -287,9 +288,9 @@ void TIM5_IRQHandler()
                 machine.fk_flag = SET;
                 if (block_buff.content[block_buff.head]->flag == 1)
                 {
-                    stepperA.state = START;
-                    stepperB.state = START;
-                    stepperC.state = START;
+                    stepperA.state = stepper_ON;
+                    stepperB.state = stepper_ON;
+                    stepperC.state = stepper_ON;
                 }
             }
             else
@@ -322,7 +323,7 @@ void EXTI2_IRQHandler(void)
     if (stepperA.dir==1)
     {
         block_buff.content[block_buff.head]->step[0] = 0;
-        stepperA.dir = stepper_DOWN;
+        stepperA.dir = carriage_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line0);
 }
@@ -335,7 +336,7 @@ void EXTI3_IRQHandler(void)
     if (stepperB.dir==1)
     {
         block_buff.content[block_buff.head]->step[1] = 0;
-        stepperB.dir = stepper_DOWN;
+        stepperB.dir = carriage_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line1);
 }
@@ -348,7 +349,7 @@ void EXTI4_IRQHandler(void)
     if (stepperC.dir==1)
     {
         block_buff.content[block_buff.head]->step[2] = 0;
-        stepperC.dir = stepper_DOWN;
+        stepperC.dir = carriage_DOWN;
     }
     EXTI_ClearITPendingBit(EXTI_Line2);
 }
@@ -361,9 +362,9 @@ void EXTI1_IRQHandler(void)
     machine.xyz_v[0] = 0.0f;
     machine.xyz_v[1] = 0.0f;
     machine.xyz_v[2] = 0.0f;
-    stepperA.state = STOP;
-    stepperB.state = STOP;
-    stepperC.state = STOP;
+    stepperA.state = stepper_OFF;
+    stepperB.state = stepper_OFF;
+    stepperC.state = stepper_OFF;
 
     Block_Buff_Clear(&block_buff);
     Block_Buff_Init(&block_buff);

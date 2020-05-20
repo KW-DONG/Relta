@@ -37,21 +37,21 @@ void Stepper_Count(block_buff_t* buffer, machine_t* machine,stepper_t* stepperX)
 void Motion_Check(machine_t* machine, stepper_t* stepperI, stepper_t* stepperJ, stepper_t* stepperK)
 {
     //check carriage reset point and motor direction
-    if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==1)
+    if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==carriage_UP)
     {
-        stepperI->dir=stepper_DOWN;
+        stepperI->dir=carriage_DOWN;
         stepperI->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_A_FAIL",15);
     }
     if (machine->abc[1]==CARRIAGE_B_RESET&&stepperJ->dir==1)
     {
-        stepperJ->dir=stepper_DOWN;
+        stepperJ->dir=carriage_DOWN;
         stepperJ->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_B_FAIL",15);
     }
     if (machine->abc[0]==CARRIAGE_A_RESET&&stepperI->dir==1)
     {
-        stepperK->dir=stepper_DOWN;
+        stepperK->dir=carriage_DOWN;
         stepperK->state=stepper_OFF;
         Bsp_UART_Send("STEPPER_C_FAIL",15);
     }

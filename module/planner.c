@@ -937,12 +937,12 @@ void Trej_Apply(int32_t (*traj)[3][2], uint32_t len, float dwell, block_buff_t* 
         d_abc[1] = abc_n[1] - abc_l[1];
         d_abc[2] = abc_n[2] - abc_l[2];
 
-        if (d_abc[0]>0) block.dir[0] = stepper_UP;
-        else            block.dir[0] = stepper_DOWN;
-        if (d_abc[1]>0) block.dir[1] = stepper_UP;
-        else            block.dir[1] = stepper_DOWN;
-        if (d_abc[2]>0) block.dir[2] = stepper_UP;
-        else            block.dir[2] = stepper_DOWN;
+        if (d_abc[0]>0) block.dir[0] = carriage_UP;
+        else            block.dir[0] = carriage_DOWN;
+        if (d_abc[1]>0) block.dir[1] = carriage_UP;
+        else            block.dir[1] = carriage_DOWN;
+        if (d_abc[2]>0) block.dir[2] = carriage_UP;
+        else            block.dir[2] = carriage_DOWN;
 
         block.step_dwell = dwell*MONITOR_FREQ;
 

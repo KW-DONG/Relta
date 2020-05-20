@@ -114,13 +114,9 @@ enum machine_state
 };
 
 /**************************BSP_BUFF*************************/
-enum stepper_state
-{
-    stepper_ON,
-    stepper_OFF,
-    stepper_UP,
-    stepper_DOWN
-};
+
+enum{stepper_ON, stepper_OFF, carriage_UP,carriage_DOWN};
+
 
 typedef struct _stepper
 {
