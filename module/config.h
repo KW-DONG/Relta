@@ -49,7 +49,7 @@
 #define DELTA_EFFECTOR_RADIUS 37.15f
 #define DELTA_EFFECTOR_HEIGHT 20.0f
 #define DELTA_CARRIAGE_OFFSET 16.0f
-#define n1 PI*INV(2.0f)
+#define n1 0.0f
 #define n2 PI
 #define n3 PI*3.0f*INV(2.0f)
 #define RESOLUTION 0.1f    //mm

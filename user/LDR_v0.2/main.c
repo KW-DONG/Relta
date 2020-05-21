@@ -205,7 +205,7 @@ int main()
 
     while (1)
     {
-        Test_Path();
+        //Test_Path();
         #if USE_GCODE_COMMAND
         //task 1: interprete g_code
         if (machine.interpret_flag == SET)
