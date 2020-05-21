@@ -9,6 +9,7 @@
                 "D:\\CodeStorage\\Relta\\user\\LDR_v0.2",
                 "D:\\CodeStorage\\Relta\\library\\atom\\delay",
                 "D:\\CodeStorage\\Relta\\library\\atom\\sys",
+                "D:\\CodeStorage\\Relta\\test",
                 "${workspaceFolder}/core"
             ],
             "defines": [
