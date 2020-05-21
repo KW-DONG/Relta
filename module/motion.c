@@ -26,10 +26,10 @@ void Stepper_Count(block_buff_t* buffer, machine_t* machine,stepper_t* stepperX)
         {
             buffer->content[buffer->head]->accelerate_until[stepperX->id]--;
             buffer->content[buffer->head]->decelerate_after[stepperX->id]--;
-            stepperX->psc = stepperX->psc * (1+buffer->content[buffer->head]->accelerate_psc[stepperX->id]*TIM_ARR*INV(T_CLK));
+            stepperX->psc = stepperX->psc * (1+buffer->content[buffer->head]->accelerate_psc[stepperX->id]*TIM_ARR/T_CLK);
         }else if (buffer->content[buffer->head]->decelerate_after[stepperX->id]==0)
         {
-            stepperX->psc = stepperX->psc * (1-buffer->content[buffer->head]->decelerate_psc[stepperX->id]*TIM_ARR*INV(T_CLK));
+            stepperX->psc = stepperX->psc * (1-buffer->content[buffer->head]->decelerate_psc[stepperX->id]*TIM_ARR/T_CLK);
         }
     }
 }

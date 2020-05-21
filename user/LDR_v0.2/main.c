@@ -41,13 +41,20 @@ void Test_Path(void)
 void Test_Block(void)
 {
     block_t new_block;
-    for (uint8_t i=0;i<3;i++)
+    new_block.flag = block_ready;
+    new_block.step_dwell = 200;
+
+    for (uint8_t i=0; i<3;i++)
     {
-        new_block.step[i] = 1000;
-        new_block.step_dwell = 200;
-        new_block.
+        new_block.step[i] = 200;
+        new_block.accelerate_psc[i] = 20;
+        new_block.accelerate_until[i] = 20;
+        new_block.decelerate_psc[i] = 20;
+        new_block.decelerate_after[i] = new_block.step[i];
+        new_block.dir[i] = carriage_DOWN;
     }
 
+    Block_Buff_Write(&new_block, &block_buff);
 }
 
 
@@ -217,6 +224,7 @@ int main()
     while (1)
     {
         //Test_Path();
+        Test_Block();
         #if USE_GCODE_COMMAND
         //task 1: interprete g_code
         if (machine.interpret_flag == SET)
@@ -270,10 +278,10 @@ int main()
 
         led_red.state = 0;
         Bsp_LED_Update(&led_red);
-        delay_ms(100);
+        delay_ms(50);
         led_red.state = 1;
         Bsp_LED_Update(&led_red);
-        delay_ms(100);
+        delay_ms(50);
 
     }
 }
@@ -303,8 +311,6 @@ void TIM5_IRQHandler()
 		}
         Bsp_LED_Update(&led_green);
       
-		
-        #if USE_MONITOR
 		Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
         if (block_buff.content[block_buff.head]->step[0]==0)    stepperA.state = stepper_OFF;
@@ -313,20 +319,22 @@ void TIM5_IRQHandler()
 
         if (machine.state==machine_ON)
         {
-            //check whether the current block is executing
+            //current block is executed, need to read another block
             if (block_buff.content[block_buff.head]->step[0]==0
                 &&block_buff.content[block_buff.head]->step[1]==0
                 &&block_buff.content[block_buff.head]->step[2]==0)
             {
                 machine.fk_flag = SET;
-                if (block_buff.content[block_buff.head]->flag == 1)
+                Block_Buff_Clear(&block_buff);
+                if (block_buff.length>0&&block_buff.content[block_buff.head]->flag == block_ready)
                 {
+                    block_buff.content[block_buff.head]->flag == block_busy;
                     stepperA.state = stepper_ON;
                     stepperB.state = stepper_ON;
                     stepperC.state = stepper_ON;
                 }
             }
-            else
+            else//current block is still executing
             {
                 if(block_buff.content[block_buff.head]->step_dwell!=0)
                 Dwell_Step_Update(&block_buff);
@@ -341,8 +349,7 @@ void TIM5_IRQHandler()
         Bsp_Stepper_Update(&stepperA);
         Bsp_Stepper_Update(&stepperB);
         Bsp_Stepper_Update(&stepperC);
-        #endif
-	
+
 	}
     TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
 }

@@ -85,9 +85,9 @@
 
 /*********************SELECT_MODE*********************/
 
-#define USE_SPEED_CONTROLLER    1
+#define USE_SPEED_CONTROLLER    0
 
-#define USE_GCODE_COMMAND       1
+#define USE_GCODE_COMMAND       0
 
 #define USE_FORWARD_KINEMATICS  1
 
