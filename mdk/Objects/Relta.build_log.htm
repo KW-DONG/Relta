@@ -26,18 +26,10 @@ Project File Date:  05/21/2020
 
 <h2>Output:</h2>
 Build target 'RELTA'
-compiling bsp.c...
 compiling buffer.c...
-..\module\buffer.c(79): warning:  #174-D: expression has no effect
+..\module\buffer.c(85): warning:  #174-D: expression has no effect
       for (value;value>='0'&&value<='9';value = Uart_Buff_Read(uart_buff))
 ..\module\buffer.c: 1 warning, 0 errors
-compiling delta.c...
-compiling gcode.c...
-..\module\gcode.c(30): warning:  #174-D: expression has no effect
-      for(key;key!=0x0d&&uart_buff->length>0;key=Uart_Buff_Read(uart_buff))
-..\module\gcode.c: 1 warning, 0 errors
-compiling motion.c...
-compiling planner.c...
 compiling main.c...
 ..\user\LDR_v0.2\main.c(199): warning:  #177-D: variable "XYZ_C" was declared but never referenced
       float XYZ_C[3];
@@ -47,12 +39,12 @@ compiling main.c...
       float XYZ_R[3] = {0.0f,0.0f,300.0f};
 ..\user\LDR_v0.2\main.c(202): warning:  #177-D: variable "dwell" was declared but never referenced
       static float dwell;
-..\user\LDR_v0.2\main.c(333): warning:  #174-D: expression has no effect
+..\user\LDR_v0.2\main.c(331): warning:  #174-D: expression has no effect
                       block_buff.content[block_buff.head]->flag == block_busy;
 ..\user\LDR_v0.2\main.c: 5 warnings, 0 errors
 linking...
-Program Size: Code=8144 RO-data=492 RW-data=20 ZI-data=3076  
-".\Objects\Relta.axf" - 0 Error(s), 7 Warning(s).
+Program Size: Code=7672 RO-data=492 RW-data=20 ZI-data=3076  
+".\Objects\Relta.axf" - 0 Error(s), 6 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   D:\CodeStorage\Relta\mdk\RTE

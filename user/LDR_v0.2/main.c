@@ -42,7 +42,7 @@ void Test_Block(void)
 {
     block_t new_block;
     new_block.flag = block_ready;
-    new_block.step_dwell = 200;
+    new_block.step_dwell = 0;
 
     for (uint8_t i=0; i<3;i++)
     {
@@ -311,13 +311,13 @@ void TIM5_IRQHandler()
 		}
         Bsp_LED_Update(&led_green);
       
-		Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
+		//Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
 
         if (block_buff.content[block_buff.head]->step[0]==0)    stepperA.state = stepper_OFF;
         if (block_buff.content[block_buff.head]->step[1]==0)    stepperB.state = stepper_OFF;
         if (block_buff.content[block_buff.head]->step[2]==0)    stepperC.state = stepper_OFF;
 
-        if (machine.state==machine_ON)
+        if (machine.state==machine_ON&&block_buff.length>0)
         {
             //current block is executed, need to read another block
             if (block_buff.content[block_buff.head]->step[0]==0

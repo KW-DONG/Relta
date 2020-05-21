@@ -5,8 +5,14 @@
 void Block_Buff_Init(block_buff_t* block)
 {
     block->head = 0;
-    block->tail = 0;
+    block->tail = 1;
     block->length = 0;
+
+
+
+
+
+    
 }
 
 uint8_t Block_Buff_Write(block_t* block, block_buff_t* ring_buff)
