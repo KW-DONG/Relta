@@ -38,6 +38,17 @@ void Test_Path(void)
     delay_ms(100);
 }
 
+void Test_Block(void)
+{
+    block_t new_block;
+    for (uint8_t i=0;i<3;i++)
+    {
+        new_block.step[i] = 1000;
+        new_block.step_dwell = 200;
+        new_block.
+    }
+
+}
 
 
 int main()

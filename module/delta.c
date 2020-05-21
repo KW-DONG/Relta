@@ -3,13 +3,6 @@
 #include <math.h>
 #include "config.h"
 
-void Inverse_Kinematics(float xyz[], float abc[])
-{
-    abc[0] = sqrtf(SQ(R)-SQ(xyz[0]-x1)-SQ(xyz[1]-y1)+xyz[2]);
-    abc[1] = sqrtf(SQ(R)-SQ(xyz[0]-x2)-SQ(xyz[1]-y2)+xyz[2]);
-    abc[2] = sqrtf(SQ(R)-SQ(xyz[0]-x3)-SQ(xyz[1]-y3)+xyz[2]);
-}
-
 void Forward_Kinematics(float* abc, float* xyz)
 {
     float vz32[3] = {x2-x3, y2-y3, abc[1]-abc[2]};
@@ -35,7 +28,7 @@ void Forward_Kinematics(float* abc, float* xyz)
                 vX[0]*vY[1]-vX[1]*vY[0]};//cross product
     
     float xe = d*0.5f;
-    float ye = (SQ(xe))+SQ(xe-i)+SQ(j)*INV(2.0f*j);
+    float ye = (-SQ(xe)+SQ(xe-i)+SQ(j))*INV(2.0f*j);
     float ze = sqrtf(SQ(xe)+SQ(ye)+SQ(R));
 
     float vxe_N[3] = {xe*vX[0],xe*vX[1],xe*vX[2]};
@@ -50,6 +43,13 @@ void Forward_Kinematics(float* abc, float* xyz)
     xyz[1] = y3+vze_O[1];
     xyz[2] = abc[2]+vze_O[2];
 
+}
+
+void Inverse_Kinematics(float* xyz, float* abc)
+{
+    abc[0] = sqrtf(SQ(L)-SQ(xyz[0]-x1)-SQ(xyz[1]-y1))+xyz[2];
+    abc[1] = sqrtf(SQ(L)-SQ(xyz[0]-x2)-SQ(xyz[1]-y2))+xyz[2];
+    abc[2] = sqrtf(SQ(L)-SQ(xyz[0]-x3)-SQ(xyz[1]-y3))+xyz[2];
 }
 
 void Jacobian_Matrix(float* xyz_v, float* xyz, 

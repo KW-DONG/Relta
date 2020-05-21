@@ -93,7 +93,7 @@
 
 #define USE_SWITCH              0
 
-#define USE_MONITOR             0
+#define USE_MONITOR             1
 
 /****************GENERATE_AUTOMATICALLY****************/
 

@@ -363,7 +363,7 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
+              <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER, STM32F4XX, __FPU_PRESENT=1, __FPU_USED =1, ARM_MATH_CM4, __CC_ARM</Define>
               <Undefine></Undefine>
               <IncludePath>..\library\atom\delay;..\library\atom\sys;..\library\std\inc;..\module;..\user\LDR_v0.2;..\core</IncludePath>
             </VariousControls>
