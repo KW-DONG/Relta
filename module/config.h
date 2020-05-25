@@ -4,10 +4,10 @@
 
 /**
  * IO Table
- * 				Set 	Dir
- * Stepper_A: 	PB11	PA15
- * Stepper_B:	PC6		PC7
- * Stepper_C:	PB6		PA6
+ * 				Set 	Dir     Detect
+ * Stepper_A: 	PB11	PA15    PD2
+ * Stepper_B:	PC6		PC7     PC11
+ * Stepper_C:	PB6		PA6     PC10
  * 
  * MS1:         PF6
  * MS2:         PF7
@@ -80,7 +80,7 @@
 #define JERK_SPEED          200     //mm per sec
 #define STEPPER_RES         16      //1/x mm
 #define TIM_ARR             8400    //1-65536
-#define MONITOR_FREQ        200     //hz
+#define MONITOR_FREQ        20      //hz
 #define T_CLK               84000000//hz
 
 /*********************SELECT_MODE*********************/
@@ -114,6 +114,22 @@
 #define PSC_ACC     T_CLK/(MAX_ACCELERATION*STEPS_PER_UNIT*TIM_ARR)
 
 #define PSC_JERK    T_CLK/(JERK_SPEED*STEPS_PER_UNIT*TIM_ARR)
+
+//fast command
+#define STEPPER_A_ON        TIMSetCompare4(TIM2,TIM_ARR/2)
+#define STEPPER_A_OFF       TIMSetCompare4(TIM2,0)
+#define STEPPER_A_FREQ(f)   TIM_PrescalerConfig(TIM2,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
+#define DIR_A_UP            GPIO_SetBits(stepperX->GPIOX_Dir, stepperX->GPIO_Pin_X_Dir);
+
+#define STEPPER_B_ON        TIMSetCompare1(TIM3,TIM_ARR/2)
+#define STEPPER_B_OFF       TIMSetCompare1(TIM3,0)
+#define STEPPER_B_FREQ(f)   TIM_PrescalerConfig(TIM3,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
+
+#define STEPPER_C_ON        TIMSetCompare1(TIM4,TIM_ARR/2)
+#define STEPPER_C_OFF       TIMSetCompare1(TIM4,0)
+#define STEPPER_C_FREQ(f)   TIM_PrescalerConfig(TIM4,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
+
+
 
 
 

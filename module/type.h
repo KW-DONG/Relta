@@ -67,8 +67,8 @@ typedef struct
     uint8_t     dir[3];
     uint32_t    accelerate_until[3];
     uint32_t    decelerate_after[3];
-    uint32_t    accelerate_psc[3];
-    uint32_t    decelerate_psc[3];
+    uint32_t    accelerate_freq[3];
+    uint32_t    decelerate_freq[3];
 
     //update in ISR
     uint32_t    step[3];
@@ -121,9 +121,9 @@ enum{stepper_ON, stepper_OFF, carriage_UP,carriage_DOWN};
 typedef struct _stepper
 {
     //A4988 set pin
-    uint32_t        RCC_AHB1Periph_GPIOX;
-    uint32_t        GPIO_Pin_X;
-    GPIO_TypeDef*   GPIOX;
+    uint32_t        RCC_AHB1Periph_GPIOX_Set;
+    uint32_t        GPIO_Pin_X_Set;
+    GPIO_TypeDef*   GPIOX_Set;
 
     //pwm
     uint32_t        arr;
@@ -154,6 +154,11 @@ typedef struct _stepper
     uint32_t        GPIO_Pin_X_MS3;
     GPIO_TypeDef*   GPIOX_MS3;
 
+    //PWM detect
+    uint32_t        RCC_AHB1Periph_GPIOX_PWM;
+    uint32_t        GPIO_Pin_X_PWM;
+    GPIO_TypeDef*   GPIOX_PWM;
+
     uint8_t         id;
 
     uint8_t         state;//compare
@@ -161,7 +166,6 @@ typedef struct _stepper
     uint8_t         pin_state_last;
     uint8_t         dir;
     int32_t         freq;//steps per second
-    uint16_t        psc;
 
 }stepper_t;
 
@@ -173,14 +177,19 @@ typedef struct _monitor
     uint32_t        arr;
     uint16_t        psc;
 
+    uint8_t         state;
+
 }monitor_t;
+
+enum {read_block, exe_block, exe_dwell, update};
+
 
 typedef struct _switch
 {
     //gpio
-    uint32_t        RCC_AHB1Periph_GPIOX;
+    uint32_t        RCC_AHB1Periph_GPIOX_Set;
     uint32_t        GPIO_PinX;
-    GPIO_TypeDef*   GPIOX;
+    GPIO_TypeDef*   GPIOX_Set;
 
     //exti
     uint32_t        EXTI_LineX;
@@ -200,9 +209,9 @@ typedef struct _switch
 
 typedef struct _led
 {
-    uint32_t        RCC_AHB1Periph_GPIOX;
-    uint32_t        GPIO_Pin_X;
-    GPIO_TypeDef*   GPIOX;
+    uint32_t        RCC_AHB1Periph_GPIOX_Set;
+    uint32_t        GPIO_Pin_X_Set;
+    GPIO_TypeDef*   GPIOX_Set;
 
     uint8_t         state;
 }led_t;

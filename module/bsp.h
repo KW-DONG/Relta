@@ -2,6 +2,11 @@
 
 #include "type.h"
 
+extern uint8_t pulse_A;
+
+extern uint8_t pulse_B;
+
+extern uint8_t pulse_C;
 
 /******************************STEPPER***********************************/
 
@@ -18,7 +23,7 @@ void Bsp_Stepper_Init(stepper_t* stepperX);
  * @param stepperX
  * @note set the motor state and speed as well as detecting the IO state
  */
-void Bsp_Stepper_Update(stepper_t* stepperX);
+uint8_t Bsp_Stepper_Update(stepper_t* stepperX);
 
 /***************************************MONITOR*********************************/
 

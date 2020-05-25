@@ -9,15 +9,26 @@ void Bsp_Stepper_Init(stepper_t* stepperX)
 	TIM_OCInitTypeDef  TIM_OCInitStructure;
 
 	//Enables or disables the AHB1 peripheral clock.
-	RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX,ENABLE);
+	RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_Set,ENABLE);
+    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_Dir,ENABLE);
+    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_MS1,ENABLE);
+    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_MS2,ENABLE);
+    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_MS3,ENABLE);
+    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_PWM,ENABLE);
+    //Enables the Low Speed APB (APB1) peripheral clock.
+	RCC_APB1PeriphClockCmd(stepperX->RCC_APB1Periph_TIMX, ENABLE);
+
+    //Changes the mapping of the specified pin.
+	GPIO_PinAFConfig(stepperX->GPIOX_Set,stepperX->GPIO_PinSourceX,stepperX->GPIO_AF_TIMX);
 	
-	GPIO_InitStructure.GPIO_Pin 	= stepperX->GPIO_Pin_X;
+	GPIO_InitStructure.GPIO_Pin 	= stepperX->GPIO_Pin_X_Set;
 	GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_100MHz;
-	GPIO_InitStructure.GPIO_OType 	= GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_OType 	= GPIO_OType_OD;
 	GPIO_InitStructure.GPIO_PuPd 	= GPIO_PuPd_UP;
-	GPIO_Init(stepperX->GPIOX,&GPIO_InitStructure);
+	GPIO_Init(stepperX->GPIOX_Set,&GPIO_InitStructure);
 
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_Dir;
     GPIO_Init(stepperX->GPIOX_Dir,&GPIO_InitStructure);
 
@@ -30,14 +41,12 @@ void Bsp_Stepper_Init(stepper_t* stepperX)
     GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_MS3;
     GPIO_Init(stepperX->GPIOX_MS3,&GPIO_InitStructure);
 
-	//Enables the Low Speed APB (APB1) peripheral clock.
-	RCC_APB1PeriphClockCmd(stepperX->RCC_APB1Periph_TIMX, ENABLE);
-	
-	//Changes the mapping of the specified pin.
-	GPIO_PinAFConfig(stepperX->GPIOX,stepperX->GPIO_PinSourceX,stepperX->GPIO_AF_TIMX);
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_PWM;
+    GPIO_Init(stepperX->GPIOX_PWM,&GPIO_InitStructure);
 
 	TIM_TimeBaseInitStructure.TIM_Period        = stepperX->arr;
-    TIM_TimeBaseInitStructure.TIM_Prescaler     = stepperX->psc;
+    TIM_TimeBaseInitStructure.TIM_Prescaler     = T_CLK/(stepperX->freq*stepperX->arr);
     TIM_TimeBaseInitStructure.TIM_CounterMode   = TIM_CounterMode_Down;
     TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 
@@ -45,44 +54,45 @@ void Bsp_Stepper_Init(stepper_t* stepperX)
     //the specified parameters in the TIM_TimeBaseInitStruct.
 	TIM_TimeBaseInit(stepperX->TIMX, &TIM_TimeBaseInitStructure);
     
-	//Enables the specified TIM peripheral.
-	TIM_Cmd(stepperX->TIMX, ENABLE);
-
 	//Timer output compare
 	TIM_OCInitStructure.TIM_OCMode      = TIM_OCMode_PWM2;        // 选择定时器模式:TIM脉冲宽度调制模式2
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; // 比较输出使能
-    TIM_OCInitStructure.TIM_OCPolarity  = TIM_OCPolarity_Low;               // 输出极性:TIM输出比较极性低
+    TIM_OCInitStructure.TIM_OCPolarity  = TIM_OCPolarity_High;               // 输出极性:TIM输出比较极性低
     
 	//Initializes the TIMx Channel1 according to the specified parameters in
 	//the TIM_OCInitStruct.
-	TIM_OCInitStructure.TIM_Pulse       = 0;//0 or arr/2, CCRx_Val
+	TIM_OCInitStructure.TIM_Pulse       = stepperX->arr/2;//0 or arr/2, CCRx_Val
 
     if (stepperX->PWM_Ch==1)
     {
         TIM_OC1Init(stepperX->TIMX, &TIM_OCInitStructure);
-        TIM_OC1PreloadConfig(stepperX->TIMX, TIM_OCPreload_Disable);
+        TIM_OC1PreloadConfig(stepperX->TIMX, TIM_OCPreload_Enable);
     }else if (stepperX->PWM_Ch==2)
     {
         TIM_OC2Init(stepperX->TIMX, &TIM_OCInitStructure);
-        TIM_OC2PreloadConfig(stepperX->TIMX, TIM_OCPreload_Disable);
+        TIM_OC2PreloadConfig(stepperX->TIMX, TIM_OCPreload_Enable);
     }else if (stepperX->PWM_Ch==3)
     {
         TIM_OC3Init(stepperX->TIMX, &TIM_OCInitStructure);
-        TIM_OC3PreloadConfig(stepperX->TIMX, TIM_OCPreload_Disable);
+        TIM_OC3PreloadConfig(stepperX->TIMX, TIM_OCPreload_Enable);
     }else
     {
         TIM_OC4Init(stepperX->TIMX, &TIM_OCInitStructure);
-        TIM_OC4PreloadConfig(stepperX->TIMX, TIM_OCPreload_Disable);
+        TIM_OC4PreloadConfig(stepperX->TIMX, TIM_OCPreload_Enable);
     }
-	//Enables the TIMx peripheral Preload register on CCR1.
+
+    //Enables the TIMx peripheral Preload register on CCR1.
 	//Enables the specified TIM peripheral.
 	TIM_Cmd(stepperX->TIMX, ENABLE);
-    
+
+    stepperX->pin_state = 0;
+    stepperX->pin_state_last = 0;
 }
 
-void Bsp_Stepper_Update(stepper_t* stepperX)
+uint8_t Bsp_Stepper_Update(stepper_t* stepperX)
 {
     //update stepper state
+    uint8_t pulse = 0;
     if (stepperX->PWM_Ch==1)
     {
         if (stepperX->state==stepper_ON)
@@ -110,16 +120,22 @@ void Bsp_Stepper_Update(stepper_t* stepperX)
     }
 
     //update speed
-    uint16_t psc = 84000000/(stepperX->freq*stepperX->arr);
-    TIM_PrescalerConfig(stepperX->TIMX,psc,TIM_PSCReloadMode_Update);
+    uint16_t psc = T_CLK/(stepperX->freq*stepperX->arr);
+    TIM_PrescalerConfig(stepperX->TIMX,psc,TIM_PSCReloadMode_Immediate);
 
     //update direction
     if (stepperX->dir==0)   GPIO_SetBits(stepperX->GPIOX_Dir, stepperX->GPIO_Pin_X_Dir);
     else                    GPIO_ResetBits(stepperX->GPIOX_Dir, stepperX->GPIO_Pin_X_Dir);
 
     //update IO state
+    stepperX->pin_state = GPIO_ReadInputDataBit(stepperX->GPIOX_PWM, stepperX->GPIO_Pin_X_PWM);
+    if (stepperX->pin_state==1&&stepperX->pin_state_last==0)
+    pulse = 1;
+    else
+    pulse = 0;
     stepperX->pin_state_last = stepperX->pin_state;
-    stepperX->pin_state = GPIO_ReadInputDataBit(stepperX->GPIOX, stepperX->GPIO_Pin_X);
+    
+    return pulse;
 }
 
 void Bsp_Monitor_Init()
@@ -179,23 +195,23 @@ void Bsp_LED_Init(led_t* LEDX)
 {    	 
     GPIO_InitTypeDef  GPIO_InitStructure;
 
-    RCC_AHB1PeriphClockCmd(LEDX->RCC_AHB1Periph_GPIOX, ENABLE);
+    RCC_AHB1PeriphClockCmd(LEDX->RCC_AHB1Periph_GPIOX_Set, ENABLE);
 
-    GPIO_InitStructure.GPIO_Pin = LEDX->GPIO_Pin_X;
+    GPIO_InitStructure.GPIO_Pin = LEDX->GPIO_Pin_X_Set;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-    GPIO_Init(LEDX->GPIOX, &GPIO_InitStructure);
-    GPIO_SetBits(LEDX->GPIOX,LEDX->GPIO_Pin_X);
+    GPIO_Init(LEDX->GPIOX_Set, &GPIO_InitStructure);
+    GPIO_SetBits(LEDX->GPIOX_Set,LEDX->GPIO_Pin_X_Set);
 }
 
 void Bsp_LED_Update(led_t* LEDX)
 {
     if (LEDX->state==0)
-    GPIO_SetBits(LEDX->GPIOX,LEDX->GPIO_Pin_X);
+    GPIO_SetBits(LEDX->GPIOX_Set,LEDX->GPIO_Pin_X_Set);
     else
-    GPIO_ResetBits(LEDX->GPIOX, LEDX->GPIO_Pin_X);
+    GPIO_ResetBits(LEDX->GPIOX_Set, LEDX->GPIO_Pin_X_Set);
 }
 
 void Bsp_UART_Init(uint32_t bound)

@@ -23,6 +23,6 @@ void Dwell_Step_Update(block_buff_t* buffer);
  * @param stepperX
  * @note by detecting rising edge
  */
-void Stepper_Count(block_buff_t* buffer, machine_t* machine,stepper_t* stepperX);
+void Stepper_Count(block_t* block, machine_t* machine,stepper_t* stepperX);
 
 #endif

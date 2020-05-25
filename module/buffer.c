@@ -8,11 +8,6 @@ void Block_Buff_Init(block_buff_t* block)
     block->tail = 1;
     block->length = 0;
 
-
-
-
-
-    
 }
 
 uint8_t Block_Buff_Write(block_t* block, block_buff_t* ring_buff)
@@ -25,6 +20,30 @@ uint8_t Block_Buff_Write(block_t* block, block_buff_t* ring_buff)
     return TRUE;
 }
 
+uint8_t Block_Buff_Read(block_t* block, block_buff_t* buff)
+{
+    if (buff->length>0&&buff->content[buff->head]->flag==block_ready)
+    {
+        for (uint8_t i=0;i<3;i++)
+        {
+            block->accelerate_until[i] = buff->content[buff->head]->accelerate_until[i];
+            block->accelerate_freq[i] = buff->content[buff->head]->accelerate_freq[i];
+            block->decelerate_after[i] = buff->content[buff->head]->decelerate_after[i];
+            block->decelerate_freq[i] = buff->content[buff->head]->decelerate_freq[i];
+            block->dir[i] = buff->content[buff->head]->dir[i];
+            block->step[i] = buff->content[buff->head]->step[i];
+        }
+        block->step_dwell = buff->content[buff->head]->step_dwell;
+        buff->head = (buff->head+1)%RINGBUFF_LEN;
+        buff->length--;
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+    
+}
 
 void Block_Buff_Clear(block_buff_t* ring_buff)
 {

@@ -28,6 +28,11 @@ monitor_t   monitor;
 block_buff_t block_buff;
 uart_buff_t  uart_buff;
 command_t    command_c;
+block_t      block_c;
+
+uint8_t pulse_A;
+uint8_t pulse_B;
+uint8_t pulse_C;
 
 
 void Test_Path(void)
@@ -47,13 +52,12 @@ void Test_Block(void)
     for (uint8_t i=0; i<3;i++)
     {
         new_block.step[i] = 200;
-        new_block.accelerate_psc[i] = 20;
+        new_block.accelerate_freq[i] = 1;
         new_block.accelerate_until[i] = 20;
-        new_block.decelerate_psc[i] = 20;
+        new_block.decelerate_freq[i] = 1;
         new_block.decelerate_after[i] = new_block.step[i];
         new_block.dir[i] = carriage_DOWN;
     }
-
     Block_Buff_Write(&new_block, &block_buff);
 }
 
@@ -70,56 +74,121 @@ int main()
 	
 /****************************STEPPER_MOTOR*******************************/
     //stepper_A init
-    stepperA.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOB;
-    stepperA.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM2;
-    stepperA.GPIO_Pin_X = GPIO_Pin_11;
-    stepperA.GPIO_PinSourceX = GPIO_PinSource11;
-    stepperA.GPIOX = GPIOB;
-    stepperA.TIMX = TIM2;
-    stepperA.PWM_Ch = 4;
-    stepperA.arr = TIM_ARR;
+    //set
+    stepperA.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOB;
+    stepperA.GPIO_Pin_X_Set = GPIO_Pin_11;
+    stepperA.GPIOX_Set = GPIOB;
+    //dir
     stepperA.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOA;
     stepperA.GPIO_Pin_X_Dir = GPIO_Pin_15;
     stepperA.GPIOX_Dir = GPIOA;
+    //ms1
+    stepperA.RCC_AHB1Periph_GPIOX_MS1 = RCC_AHB1Periph_GPIOF;
+    stepperA.GPIO_Pin_X_MS1 = GPIO_Pin_6;
+    stepperA.GPIOX_MS1 = GPIOF;
+    //ms2
+    stepperA.RCC_AHB1Periph_GPIOX_MS2 = RCC_AHB1Periph_GPIOF;
+    stepperA.GPIO_Pin_X_MS2 = GPIO_Pin_7;
+    stepperA.GPIOX_MS2 = GPIOF;
+    //ms3
+    stepperA.RCC_AHB1Periph_GPIOX_MS3 = RCC_AHB1Periph_GPIOF;
+    stepperA.GPIO_Pin_X_MS3 = GPIO_Pin_8;
+    stepperA.GPIOX_MS3 = GPIOF;
+    //pwm_cnt
+    stepperA.RCC_AHB1Periph_GPIOX_PWM = RCC_AHB1Periph_GPIOD;
+    stepperA.GPIO_Pin_X_PWM = GPIO_Pin_2;
+    stepperA.GPIOX_PWM = GPIOD;
+    //TIM
+    stepperA.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM2;
+    stepperA.GPIO_PinSourceX = GPIO_PinSource11;
+    stepperA.TIMX = TIM2;
+    stepperA.PWM_Ch = 4;
+    stepperA.arr = TIM_ARR;
+    stepperA.GPIO_AF_TIMX = GPIO_AF_TIM2;
+    //other
 	stepperA.id = 0;
+    stepperA.freq = 10;
     Bsp_Stepper_Init(&stepperA);
 
     //stepper_B init
-    stepperB.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
-    stepperB.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM3;
-    stepperB.GPIO_Pin_X = GPIO_Pin_6;
-    stepperB.GPIO_PinSourceX = GPIO_PinSource6;
-    stepperB.GPIOX = GPIOC;
-    stepperB.TIMX = TIM3;
-    stepperB.PWM_Ch = 1;
-    stepperB.arr = TIM_ARR;
+    //set
+    stepperB.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOC;
+    stepperB.GPIO_Pin_X_Set = GPIO_Pin_6;
+    stepperB.GPIOX_Set = GPIOC;
+    //dir
     stepperB.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOC;
     stepperB.GPIO_Pin_X_Dir = GPIO_Pin_7;
     stepperB.GPIOX_Dir = GPIOC;
+    //ms1
+    stepperB.RCC_AHB1Periph_GPIOX_MS1 = RCC_AHB1Periph_GPIOF;
+    stepperB.GPIO_Pin_X_MS1 = GPIO_Pin_6;
+    stepperB.GPIOX_MS1 = GPIOF;
+    //ms2
+    stepperB.RCC_AHB1Periph_GPIOX_MS2 = RCC_AHB1Periph_GPIOF;
+    stepperB.GPIO_Pin_X_MS2 = GPIO_Pin_7;
+    stepperB.GPIOX_MS2 = GPIOF;
+    //ms3
+    stepperB.RCC_AHB1Periph_GPIOX_MS3 = RCC_AHB1Periph_GPIOF;
+    stepperB.GPIO_Pin_X_MS3 = GPIO_Pin_8;
+    stepperB.GPIOX_MS3 = GPIOF;
+    //pwm_cnt
+    stepperB.RCC_AHB1Periph_GPIOX_PWM = RCC_AHB1Periph_GPIOC;
+    stepperB.GPIO_Pin_X_PWM = GPIO_Pin_11;
+    stepperB.GPIOX_PWM = GPIOC;
+    //TIM
+    stepperB.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM3;
+    stepperB.GPIO_PinSourceX = GPIO_PinSource6;
+    stepperB.TIMX = TIM3;
+    stepperB.PWM_Ch = 1;
+    stepperB.arr = TIM_ARR;
+    stepperB.GPIO_AF_TIMX = GPIO_AF_TIM3;
+    //other
 	stepperB.id = 1;
+    stepperB.freq = 10;
     Bsp_Stepper_Init(&stepperB);
 
     //stepper_C init
-    stepperC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOB;
-    stepperC.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM4;
-    stepperC.GPIO_Pin_X = GPIO_Pin_6;
-    stepperC.GPIO_PinSourceX = GPIO_PinSource6;
-    stepperC.GPIOX = GPIOB;
-    stepperC.TIMX = TIM4;
-    stepperC.PWM_Ch = 1;
-    stepperC.arr = TIM_ARR;
+    //set
+    stepperC.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOB;
+    stepperC.GPIO_Pin_X_Set = GPIO_Pin_6;
+    stepperC.GPIOX_Set = GPIOB;
+    //dir
     stepperC.RCC_AHB1Periph_GPIOX_Dir = RCC_AHB1Periph_GPIOA;
     stepperC.GPIO_Pin_X_Dir = GPIO_Pin_6;
     stepperC.GPIOX_Dir = GPIOA;
+    //ms1
+    stepperC.RCC_AHB1Periph_GPIOX_MS1 = RCC_AHB1Periph_GPIOF;
+    stepperC.GPIO_Pin_X_MS1 = GPIO_Pin_6;
+    stepperC.GPIOX_MS1 = GPIOF;
+    //ms2
+    stepperC.RCC_AHB1Periph_GPIOX_MS2 = RCC_AHB1Periph_GPIOF;
+    stepperC.GPIO_Pin_X_MS2 = GPIO_Pin_7;
+    stepperC.GPIOX_MS2 = GPIOF;
+    //ms3
+    stepperC.RCC_AHB1Periph_GPIOX_MS3 = RCC_AHB1Periph_GPIOF;
+    stepperC.GPIO_Pin_X_MS3 = GPIO_Pin_8;
+    stepperC.GPIOX_MS3 = GPIOF;
+    //pwm_cnt
+    stepperC.RCC_AHB1Periph_GPIOX_PWM = RCC_AHB1Periph_GPIOC;
+    stepperC.GPIO_Pin_X_PWM = GPIO_Pin_10;
+    stepperC.GPIOX_PWM = GPIOC;
+    //TIM
+    stepperC.RCC_APB1Periph_TIMX = RCC_APB1Periph_TIM4;
+    stepperC.GPIO_PinSourceX = GPIO_PinSource6;
+    stepperC.TIMX = TIM4;
+    stepperC.PWM_Ch = 1;
+    stepperC.arr = TIM_ARR;
+    stepperC.GPIO_AF_TIMX = GPIO_AF_TIM4;
+    //other
 	stepperC.id = 2;
+    stepperC.freq = 10;
     Bsp_Stepper_Init(&stepperC);
-
 
 #if USE_SWITCH
 /*******************************SWITCH_KEY*******************************/
     //stop_start_key
-    stop_start_key.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
-    stop_start_key.GPIOX = GPIOC;
+    stop_start_key.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOC;
+    stop_start_key.GPIOX_Set = GPIOC;
     stop_start_key.GPIO_PinX = GPIO_Pin_0;
     stop_start_key.EXTI_LineX = EXTI_Line0;
     stop_start_key.EXTI_PinSourceX = EXTI_PinSource0;
@@ -136,11 +205,11 @@ int main()
     reset_key.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
     reset_key.EXTIX_IRQn = EXTI1_IRQn;
     reset_key.GPIO_PinX = GPIO_Pin_1;
-    reset_key.GPIOX = GPIOC;
+    reset_key.GPIOX_Set = GPIOC;
     reset_key.mode = NC;
     reset_key.NVIC_PP = 1;
     reset_key.NVIC_SP = 1;
-    reset_key.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
+    reset_key.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&reset_key);
 
     //switch A
@@ -149,11 +218,11 @@ int main()
     switchA.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
     switchA.EXTIX_IRQn = EXTI2_IRQn;
     switchA.GPIO_PinX = GPIO_Pin_2;
-    switchA.GPIOX = GPIOC;
+    switchA.GPIOX_Set = GPIOC;
     switchA.mode = NC;
     switchA.NVIC_PP = 2;
     switchA.NVIC_SP = 1;
-    switchA.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
+    switchA.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchA);
 
     //switch B
@@ -162,11 +231,11 @@ int main()
     switchB.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
     switchB.EXTIX_IRQn = EXTI3_IRQn;
     switchB.GPIO_PinX = GPIO_Pin_3;
-    switchB.GPIOX = GPIOC;
+    switchB.GPIOX_Set = GPIOC;
     switchB.mode = NC;
     switchB.NVIC_PP = 2;
     switchB.NVIC_SP = 1;
-    switchB.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
+    switchB.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchB);
 
     //switch C
@@ -175,26 +244,25 @@ int main()
     switchC.EXTI_PortSourceGPIOX = EXTI_PortSourceGPIOC;
     switchC.EXTIX_IRQn = EXTI3_IRQn;
     switchC.GPIO_PinX = GPIO_Pin_3;
-    switchC.GPIOX = GPIOC;
+    switchC.GPIOX_Set = GPIOC;
     switchC.mode = NC;
     switchC.NVIC_PP = 2;
     switchC.NVIC_SP = 1;
-    switchC.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOC;
+    switchC.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOC;
     Bsp_Switch_Init(&switchC);
 #endif
 /*********************************LED*********************************/
-    led_red.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOF;
-    led_red.GPIOX = GPIOF;
-    led_red.GPIO_Pin_X = GPIO_Pin_9;
+    led_red.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOF;
+    led_red.GPIOX_Set = GPIOF;
+    led_red.GPIO_Pin_X_Set = GPIO_Pin_9;
     Bsp_LED_Init(&led_red);
 
-    led_green.RCC_AHB1Periph_GPIOX = RCC_AHB1Periph_GPIOF;
-    led_green.GPIOX = GPIOF;
-    led_green.GPIO_Pin_X = GPIO_Pin_10;
+    led_green.RCC_AHB1Periph_GPIOX_Set = RCC_AHB1Periph_GPIOF;
+    led_green.GPIOX_Set = GPIOF;
+    led_green.GPIO_Pin_X_Set = GPIO_Pin_10;
     Bsp_LED_Init(&led_green);
 
     Bsp_Monitor_Init();
-
 
     float XYZ_C[3];
     float XYZ_Home[3] = {0.0f,0.0f,50.0f};
@@ -213,13 +281,23 @@ int main()
 
     Forward_Kinematics(machine.abc, machine.xyz);
 
-    stepperA.psc = 5000;
-    stepperB.psc = 5000;
-    stepperC.psc = 5000;
+    stepperA.state = stepper_ON;
+    stepperB.state = stepper_ON;
+    stepperC.state = stepper_ON;
 
-    stepperA.state = stepper_OFF;
-    stepperB.state = stepper_OFF;
-    stepperC.state = stepper_OFF;
+    for (uint8_t i=0; i<3;i++)
+    {
+        block_c.step[i] = 2000;
+        block_c.accelerate_freq[i] = 2;
+        block_c.accelerate_until[i] = 200;
+        block_c.decelerate_freq[i] = 2;
+        block_c.decelerate_after[i] = block_c.step[i];
+        block_c.dir[i] = carriage_DOWN;
+    }
+
+    TIM_SetCompare4(TIM2,TIM_ARR/2);
+	TIM_SetCompare1(TIM3,TIM_ARR/2);
+	TIM_SetCompare1(TIM4,TIM_ARR/2);
 
     while (1)
     {
@@ -302,54 +380,61 @@ void TIM5_IRQHandler()
 {
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
-        if(led_green.state == 0)
-		{
-			led_green.state = 1;
-		}else
-		{
-			led_green.state = 0;
-		}
-        Bsp_LED_Update(&led_green);
-      
-		//Motion_Check(&machine, &stepperA, &stepperB, &stepperC);
+        pulse_A = Bsp_Stepper_Update(&stepperA);
+        pulse_B = Bsp_Stepper_Update(&stepperB);
+        pulse_C = Bsp_Stepper_Update(&stepperC);
+        // stepperA.pin_state = GPIO_ReadInputDataBit(stepperA.GPIOX_PWM, stepperA.GPIO_Pin_X_PWM);
+        // if (stepperA.pin_state==1&&stepperA.pin_state_last==0)  block_c.step[0]--;
+        // stepperA.pin_state_last = stepperA.pin_state;
 
-        if (block_buff.content[block_buff.head]->step[0]==0)    stepperA.state = stepper_OFF;
-        if (block_buff.content[block_buff.head]->step[1]==0)    stepperB.state = stepper_OFF;
-        if (block_buff.content[block_buff.head]->step[2]==0)    stepperC.state = stepper_OFF;
+        // stepperB.pin_state = GPIO_ReadInputDataBit(stepperB.GPIOX_PWM, stepperB.GPIO_Pin_X_PWM);
+        // if (stepperB.pin_state==1&&stepperB.pin_state_last==0)  block_c.step[1]--;
+        // stepperB.pin_state_last = stepperB.pin_state;
 
-        if (machine.state==machine_ON&&block_buff.length>0)
-        {
-            //current block is executed, need to read another block
-            if (block_buff.content[block_buff.head]->step[0]==0
-                &&block_buff.content[block_buff.head]->step[1]==0
-                &&block_buff.content[block_buff.head]->step[2]==0)
-            {
-                machine.fk_flag = SET;
-                Block_Buff_Clear(&block_buff);
-                if (block_buff.length>0&&block_buff.content[block_buff.head]->flag == block_ready)
-                {
-                    block_buff.content[block_buff.head]->flag == block_busy;
-                    stepperA.state = stepper_ON;
-                    stepperB.state = stepper_ON;
-                    stepperC.state = stepper_ON;
-                }
-            }
-            else//current block is still executing
-            {
-                if(block_buff.content[block_buff.head]->step_dwell!=0)
-                Dwell_Step_Update(&block_buff);
-                else
-                {
-                    Stepper_Count(&block_buff, &machine, &stepperA);
-                    Stepper_Count(&block_buff, &machine, &stepperB);
-                    Stepper_Count(&block_buff, &machine, &stepperC);
-                }
-            }
-        }
-        Bsp_Stepper_Update(&stepperA);
-        Bsp_Stepper_Update(&stepperB);
-        Bsp_Stepper_Update(&stepperC);
+        // stepperC.pin_state = GPIO_ReadInputDataBit(stepperC.GPIOX_PWM, stepperC.GPIO_Pin_X_PWM);
+        // if (stepperC.pin_state==1&&stepperC.pin_state_last==0)  block_c.step[2]--;
+        // stepperC.pin_state_last = stepperC.pin_state;
 
+        // if (block_c.step[0]==0)    stepperA.state = stepper_OFF;
+        // if (block_c.step[1]==0)    stepperB.state = stepper_OFF;
+        // if (block_c.step[2]==0)    stepperC.state = stepper_OFF;
+
+        // if (machine.state==machine_ON)
+        // {
+        //     //current block is executed, need to read another block
+        //     if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0)
+        //     {
+        //         machine.fk_flag = SET;
+        //         uint8_t temp;
+        //         temp = Block_Buff_Read(&block_c,&block_buff);
+        //         if (temp==0)
+        //         {
+        //             stepperA.state = stepper_ON;
+        //             stepperB.state = stepper_ON;
+        //             stepperC.state = stepper_ON;
+        //             monitor.state = read_block;
+        //         }
+        //     }
+        //     else//current block is still executing
+        //     {
+        //         // if(block_c.step_dwell!=0)
+        //         // {
+        //         //      Dwell_Step_Update(&block_buff);
+        //         //      monitor.state = exe_dwell;
+        //         // }
+        //         //else
+        //         {
+        //             Stepper_Count(&block_c, &machine, &stepperA);
+        //             Stepper_Count(&block_c, &machine, &stepperB);
+        //             Stepper_Count(&block_c, &machine, &stepperC);
+        //             monitor.state = exe_block;
+        //         }
+        //     }
+        // }
+        // Bsp_Stepper_Update(&stepperA);
+        // Bsp_Stepper_Update(&stepperB);
+        // Bsp_Stepper_Update(&stepperC);
+        // monitor.state = update;
 	}
     TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
 }

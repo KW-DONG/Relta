@@ -14,22 +14,22 @@ void Dwell_Step_Update(block_buff_t* buffer)
 }
 
 
-void Stepper_Count(block_buff_t* buffer, machine_t* machine,stepper_t* stepperX)
+void Stepper_Count(block_t* block, machine_t* machine,stepper_t* stepperX)
 {
     if (stepperX->pin_state_last==0&&stepperX->pin_state==1)
     {
-        buffer->content[buffer->head]->step[stepperX->id]--;
+        block->step[stepperX->id]--;
         if (stepperX->dir == 0) machine->carriage_move[stepperX->id]--;
         else                    machine->carriage_move[stepperX->id]++;
 
-        if (buffer->content[buffer->head]->accelerate_until[stepperX->id]!=0)
+        if (block->accelerate_until[stepperX->id]!=0)
         {
-            buffer->content[buffer->head]->accelerate_until[stepperX->id]--;
-            buffer->content[buffer->head]->decelerate_after[stepperX->id]--;
-            stepperX->psc = stepperX->psc * (1+buffer->content[buffer->head]->accelerate_psc[stepperX->id]*TIM_ARR/T_CLK);
-        }else if (buffer->content[buffer->head]->decelerate_after[stepperX->id]==0)
+            block->accelerate_until[stepperX->id]--;
+            block->decelerate_after[stepperX->id]--;
+            stepperX->freq = stepperX->freq * (1+block->accelerate_freq[stepperX->id]);
+        }else if (block->decelerate_after[stepperX->id]==0)
         {
-            stepperX->psc = stepperX->psc * (1-buffer->content[buffer->head]->decelerate_psc[stepperX->id]*TIM_ARR/T_CLK);
+            stepperX->freq = stepperX->freq * (1-block->decelerate_freq[stepperX->id]);
         }
     }
 }
