@@ -380,9 +380,31 @@ void TIM5_IRQHandler()
 {
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
-        pulse_A = Bsp_Stepper_Update(&stepperA);
-        pulse_B = Bsp_Stepper_Update(&stepperB);
-        pulse_C = Bsp_Stepper_Update(&stepperC);
+        stepperA.pin_state = STEPPER_A_SCAN;
+        if (stepperA.pin_state==1&&stepperA.pin_state_last==0)
+        pulse_A = 1;
+        else
+        pulse_A = 0;
+        stepperA.pin_state_last = stepperA.pin_state;
+
+        stepperB.pin_state = STEPPER_B_SCAN;
+        if (stepperB.pin_state==1&&stepperB.pin_state_last==0)
+        pulse_B = 1;
+        else
+        pulse_B = 0;
+        stepperB.pin_state_last = stepperB.pin_state;
+
+        stepperC.pin_state = STEPPER_C_SCAN;
+        if (stepperC.pin_state==1&&stepperC.pin_state_last==0)
+        pulse_C = 1;
+        else
+        pulse_C = 0;
+        stepperC.pin_state_last = stepperC.pin_state;
+
+        if (pulse_A==1) block_c.step[0]--;
+        if (pulse_B==1) block_c.step[1]--;
+        if (pulse_C==1) block_c.step[2]--;
+
         // stepperA.pin_state = GPIO_ReadInputDataBit(stepperA.GPIOX_PWM, stepperA.GPIO_Pin_X_PWM);
         // if (stepperA.pin_state==1&&stepperA.pin_state_last==0)  block_c.step[0]--;
         // stepperA.pin_state_last = stepperA.pin_state;
