@@ -83,6 +83,7 @@
 #define MONITOR_FREQ        20      //hz
 #define T_CLK               84000000//hz
 
+
 /*********************SELECT_MODE*********************/
 
 #define USE_SPEED_CONTROLLER    0
@@ -115,28 +116,30 @@
 
 #define PSC_JERK    T_CLK/(JERK_SPEED*STEPS_PER_UNIT*TIM_ARR)
 
-//fast command
-#define STEPPER_A_ON        TIMSetCompare4(TIM2,TIM_ARR/2)
-#define STEPPER_A_OFF       TIMSetCompare4(TIM2,0)
-#define STEPPER_A_FREQ(f)   TIM_PrescalerConfig(TIM2,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
+//shortcut command
+#define STEPPER_A_ON        TIM_SetCompare4(TIM2,TIM_ARR/2)
+#define STEPPER_A_OFF       TIM_SetCompare4(TIM2,0)
+#define STEPPER_A_FREQ_UPDATE(f)   TIM_PrescalerConfig(TIM2,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
 #define DIR_A_UP            GPIO_SetBits(GPIOA, GPIO_Pin_15);
 #define DIR_A_DOWN          GPIO_ResetBits(GPIOA, GPIO_Pin_15);
 #define STEPPER_A_SCAN      GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_2)
+#define STEPPER_A_FREQ      T_CLK/(TIM2->PSC*TIM2->ARR)
 
-#define STEPPER_B_ON        TIMSetCompare1(TIM3,TIM_ARR/2)
-#define STEPPER_B_OFF       TIMSetCompare1(TIM3,0)
-#define STEPPER_B_FREQ(f)   TIM_PrescalerConfig(TIM3,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
+#define STEPPER_B_ON        TIM_SetCompare1(TIM3,TIM_ARR/2)
+#define STEPPER_B_OFF       TIM_SetCompare1(TIM3,0)
+#define STEPPER_B_FREQ_UPDATE(f)   TIM_PrescalerConfig(TIM3,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
 #define DIR_B_UP            GPIO_SetBits(GPIOC, GPIO_Pin_7);
 #define DIR_B_DOWN          GPIO_ResetBits(GPIOC, GPIO_Pin_7);
 #define STEPPER_B_SCAN      GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11)
+#define STEPPER_B_FREQ      T_CLK/(TIM3->PSC*TIM3->ARR)
 
-#define STEPPER_C_ON        TIMSetCompare1(TIM4,TIM_ARR/2)
-#define STEPPER_C_OFF       TIMSetCompare1(TIM4,0)
-#define STEPPER_C_FREQ(f)   TIM_PrescalerConfig(TIM4,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
+#define STEPPER_C_ON        TIM_SetCompare1(TIM4,TIM_ARR/2)
+#define STEPPER_C_OFF       TIM_SetCompare1(TIM4,0)
+#define STEPPER_C_FREQ_UPDATE(f)   TIM_PrescalerConfig(TIM4,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Immediate)
 #define DIR_C_UP            GPIO_SetBits(GPIOA, GPIO_Pin_6);
 #define DIR_C_DOWN          GPIO_ResetBits(GPIOA, GPIO_Pin_6);
 #define STEPPER_C_SCAN      GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_10)
-
+#define STEPPER_C_FREQ      T_CLK/(TIM4->PSC*TIM4->ARR)
 
 
 

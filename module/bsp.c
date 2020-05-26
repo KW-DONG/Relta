@@ -57,7 +57,7 @@ void Bsp_Stepper_Init(stepper_t* stepperX)
 	//Timer output compare
 	TIM_OCInitStructure.TIM_OCMode      = TIM_OCMode_PWM2;        // 选择定时器模式:TIM脉冲宽度调制模式2
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; // 比较输出使能
-    TIM_OCInitStructure.TIM_OCPolarity  = TIM_OCPolarity_High;               // 输出极性:TIM输出比较极性低
+    TIM_OCInitStructure.TIM_OCPolarity  = TIM_OCPolarity_Low;               // 输出极性:TIM输出比较极性低
     
 	//Initializes the TIMx Channel1 according to the specified parameters in
 	//the TIM_OCInitStruct.
@@ -134,7 +134,7 @@ uint8_t Bsp_Stepper_Update(stepper_t* stepperX)
     else
     pulse = 0;
     stepperX->pin_state_last = stepperX->pin_state;
-    
+
     return pulse;
 }
 

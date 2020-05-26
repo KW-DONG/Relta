@@ -52,9 +52,9 @@ void Test_Block(void)
     for (uint8_t i=0; i<3;i++)
     {
         new_block.step[i] = 200;
-        new_block.accelerate_freq[i] = 1;
-        new_block.accelerate_until[i] = 20;
-        new_block.decelerate_freq[i] = 1;
+        new_block.accelerate_freq[i] = 0;
+        new_block.accelerate_until[i] = 0;
+        new_block.decelerate_freq[i] = 0;
         new_block.decelerate_after[i] = new_block.step[i];
         new_block.dir[i] = carriage_DOWN;
     }
@@ -287,7 +287,7 @@ int main()
 
     for (uint8_t i=0; i<3;i++)
     {
-        block_c.step[i] = 2000;
+        block_c.step[i] = 500;
         block_c.accelerate_freq[i] = 2;
         block_c.accelerate_until[i] = 200;
         block_c.decelerate_freq[i] = 2;
@@ -354,12 +354,16 @@ int main()
         //Forward_Kinematics(machine.abc, machine.xyz);
         #endif
 
-        led_red.state = 0;
-        Bsp_LED_Update(&led_red);
-        delay_ms(50);
-        led_red.state = 1;
-        Bsp_LED_Update(&led_red);
-        delay_ms(50);
+        // led_red.state = 0;
+        // Bsp_LED_Update(&led_red);
+        // delay_ms(50);
+        // led_red.state = 1;
+        // Bsp_LED_Update(&led_red);
+        // delay_ms(50);
+
+        stepperA.freq = STEPPER_A_FREQ;
+        stepperB.freq = STEPPER_B_FREQ;
+        stepperC.freq = STEPPER_C_FREQ;
 
     }
 }
@@ -380,63 +384,106 @@ void TIM5_IRQHandler()
 {
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
-        stepperA.pin_state = STEPPER_A_SCAN;
-        if (stepperA.pin_state==1&&stepperA.pin_state_last==0)
-        pulse_A = 1;
-        else
-        pulse_A = 0;
-        stepperA.pin_state_last = stepperA.pin_state;
+        if (machine.state==machine_OFF)
+        {
+            STEPPER_A_OFF;
+            STEPPER_B_OFF;
+            STEPPER_C_OFF;
+        }else
+        {
+            //check current clock
+            if (block_c.step[0]==0)    STEPPER_A_OFF;
+            if (block_c.step[1]==0)    STEPPER_B_OFF;
+            if (block_c.step[2]==0)    STEPPER_C_OFF;
 
-        stepperB.pin_state = STEPPER_B_SCAN;
-        if (stepperB.pin_state==1&&stepperB.pin_state_last==0)
-        pulse_B = 1;
-        else
-        pulse_B = 0;
-        stepperB.pin_state_last = stepperB.pin_state;
+            //scan pwm
+            stepperA.pin_state = STEPPER_A_SCAN;
+            if (stepperA.pin_state==1&&stepperA.pin_state_last==0)
+            pulse_A = 1;
+            else
+            pulse_A = 0;
+            stepperA.pin_state_last = stepperA.pin_state;
 
-        stepperC.pin_state = STEPPER_C_SCAN;
-        if (stepperC.pin_state==1&&stepperC.pin_state_last==0)
-        pulse_C = 1;
-        else
-        pulse_C = 0;
-        stepperC.pin_state_last = stepperC.pin_state;
+            stepperB.pin_state = STEPPER_B_SCAN;
+            if (stepperB.pin_state==1&&stepperB.pin_state_last==0)
+            pulse_B = 1;
+            else
+            pulse_B = 0;
+            stepperB.pin_state_last = stepperB.pin_state;
 
-        if (pulse_A==1) block_c.step[0]--;
-        if (pulse_B==1) block_c.step[1]--;
-        if (pulse_C==1) block_c.step[2]--;
+            stepperC.pin_state = STEPPER_C_SCAN;
+            if (stepperC.pin_state==1&&stepperC.pin_state_last==0)
+            pulse_C = 1;
+            else
+            pulse_C = 0;
+            stepperC.pin_state_last = stepperC.pin_state;
 
-        // stepperA.pin_state = GPIO_ReadInputDataBit(stepperA.GPIOX_PWM, stepperA.GPIO_Pin_X_PWM);
-        // if (stepperA.pin_state==1&&stepperA.pin_state_last==0)  block_c.step[0]--;
-        // stepperA.pin_state_last = stepperA.pin_state;
+            if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0)
+            {
+                uint8_t temp;
+                temp = Block_Buff_Read(&block_c,&block_buff);
+                if (temp==0)
+                {
+                    if (block_c.dir[0]==carriage_UP)    {DIR_A_UP;}
+                    else                                {DIR_A_DOWN;}
+                    if (block_c.dir[0]==carriage_UP)    {DIR_B_UP;}
+                    else                                {DIR_B_DOWN;}
+                    if (block_c.dir[0]==carriage_UP)    {DIR_C_UP;}
+                    else                                {DIR_C_DOWN;}
 
-        // stepperB.pin_state = GPIO_ReadInputDataBit(stepperB.GPIOX_PWM, stepperB.GPIO_Pin_X_PWM);
-        // if (stepperB.pin_state==1&&stepperB.pin_state_last==0)  block_c.step[1]--;
-        // stepperB.pin_state_last = stepperB.pin_state;
+                    STEPPER_A_ON;
+                    STEPPER_B_ON;
+                    STEPPER_C_ON;
+                }
+            }else if (block_c.step_dwell!=0)
+            {
+                block_c.step_dwell--;
+            }else
+            {
+                //update current block
+                if (pulse_A==1)
+                {
+                    block_c.step[0]--;
+                    if (block_c.accelerate_until[0]!=0)
+                    {
+                         block_c.accelerate_until[0]--;
+                         block_c.decelerate_after[0]--;
+                         STEPPER_A_FREQ_UPDATE(STEPPER_A_FREQ*(1-block_c.accelerate_freq[0]));
+                     }else if (block_c.decelerate_after[0]==0)
+                     {
+                         STEPPER_A_FREQ_UPDATE(STEPPER_A_FREQ*(1+block_c.accelerate_freq[0]));
+                     }
+                }
+                
+                if (pulse_B==1)
+                {
+                    block_c.step[1]--;
+                    // if (block_c.accelerate_until[1]!=0)
+                    // {
+                    //     block_c.accelerate_until[1]--;
+                    //     block_c.decelerate_after[1]--;
+                    //     STEPPER_B_FREQ_UPDATE(STEPPER_B_FREQ*(1-block_c.accelerate_freq[1]));
+                    // }else if (block_c.decelerate_after[1]==0)
+                    // {
+                    //     STEPPER_B_FREQ_UPDATE(STEPPER_B_FREQ*(1+block_c.accelerate_freq[1]));
+                    // }
+                }
 
-        // stepperC.pin_state = GPIO_ReadInputDataBit(stepperC.GPIOX_PWM, stepperC.GPIO_Pin_X_PWM);
-        // if (stepperC.pin_state==1&&stepperC.pin_state_last==0)  block_c.step[2]--;
-        // stepperC.pin_state_last = stepperC.pin_state;
-
-        // if (block_c.step[0]==0)    stepperA.state = stepper_OFF;
-        // if (block_c.step[1]==0)    stepperB.state = stepper_OFF;
-        // if (block_c.step[2]==0)    stepperC.state = stepper_OFF;
-
-        // if (machine.state==machine_ON)
-        // {
-        //     //current block is executed, need to read another block
-        //     if (block_c.step[0]==0&&block_c.step[1]==0&&block_c.step[2]==0)
-        //     {
-        //         machine.fk_flag = SET;
-        //         uint8_t temp;
-        //         temp = Block_Buff_Read(&block_c,&block_buff);
-        //         if (temp==0)
-        //         {
-        //             stepperA.state = stepper_ON;
-        //             stepperB.state = stepper_ON;
-        //             stepperC.state = stepper_ON;
-        //             monitor.state = read_block;
-        //         }
-        //     }
+                if (pulse_C==1)
+                {
+                    block_c.step[2]--;
+                    // if (block_c.accelerate_until[2]!=0)
+                    // {
+                    //     block_c.accelerate_until[2]--;
+                    //     block_c.decelerate_after[2]--;
+                    //     STEPPER_C_FREQ_UPDATE(STEPPER_C_FREQ*(1-block_c.accelerate_freq[2]));
+                    // }else if (block_c.decelerate_after[2]==0)
+                    // {
+                    //     STEPPER_C_FREQ_UPDATE(STEPPER_C_FREQ*(1+block_c.accelerate_freq[2]));
+                    // }
+                }
+            }
+        }
         //     else//current block is still executing
         //     {
         //         // if(block_c.step_dwell!=0)

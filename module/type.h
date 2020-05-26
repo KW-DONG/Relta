@@ -18,8 +18,7 @@
 #define E(x)    (powf(10.0f,x))
 #define PI      3.14f
 
-#define RINGBUFF_LEN 200
-#define LINKED_LIST_LEN 200
+#define RINGBUFF_LEN 10
 
 #define TRUE 1
 #define FALSE 0
