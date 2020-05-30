@@ -128,6 +128,7 @@ void Min_Max(int32_t dx, int32_t dy, int32_t dz, int32_t* d1, int32_t* d2, int32
     }
 }
 
+//
 void Linear_Path(int32_t (*traj)[3][2], uint32_t len_traj,int32_t d1, int32_t d2, int32_t d3)
 {
     uint16_t i;
@@ -142,7 +143,7 @@ void Linear_Path(int32_t (*traj)[3][2], uint32_t len_traj,int32_t d1, int32_t d2
         else if(d3>0)       traj[i][2][0] = traj[i-1][2][0]+1;
         else                traj[i][2][0] = traj[i-1][2][0]-1;
     }
-    if(d1<0)
+    if(d1>0)
     {
         for (i=1;i<len_traj;i++)     traj[i][0][0] = traj[i-1][0][0] + 1;
     }else
