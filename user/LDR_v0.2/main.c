@@ -354,13 +354,6 @@ int main()
         //Forward_Kinematics(machine.abc, machine.xyz);
         #endif
 
-        // led_red.state = 0;
-        // Bsp_LED_Update(&led_red);
-        // delay_ms(50);
-        // led_red.state = 1;
-        // Bsp_LED_Update(&led_red);
-        // delay_ms(50);
-
         stepperA.freq = STEPPER_A_FREQ;
         stepperB.freq = STEPPER_B_FREQ;
         stepperC.freq = STEPPER_C_FREQ;
@@ -458,52 +451,32 @@ void TIM5_IRQHandler()
                 if (pulse_B==1)
                 {
                     block_c.step[1]--;
-                    // if (block_c.accelerate_until[1]!=0)
-                    // {
-                    //     block_c.accelerate_until[1]--;
-                    //     block_c.decelerate_after[1]--;
-                    //     STEPPER_B_FREQ_UPDATE(STEPPER_B_FREQ*(1-block_c.accelerate_freq[1]));
-                    // }else if (block_c.decelerate_after[1]==0)
-                    // {
-                    //     STEPPER_B_FREQ_UPDATE(STEPPER_B_FREQ*(1+block_c.accelerate_freq[1]));
-                    // }
+                    if (block_c.accelerate_until[1]!=0)
+                    {
+                        block_c.accelerate_until[1]--;
+                        block_c.decelerate_after[1]--;
+                        STEPPER_B_FREQ_UPDATE(STEPPER_B_FREQ*(1-block_c.accelerate_freq[1]));
+                    }else if (block_c.decelerate_after[1]==0)
+                    {
+                        STEPPER_B_FREQ_UPDATE(STEPPER_B_FREQ*(1+block_c.accelerate_freq[1]));
+                    }
                 }
 
                 if (pulse_C==1)
                 {
                     block_c.step[2]--;
-                    // if (block_c.accelerate_until[2]!=0)
-                    // {
-                    //     block_c.accelerate_until[2]--;
-                    //     block_c.decelerate_after[2]--;
-                    //     STEPPER_C_FREQ_UPDATE(STEPPER_C_FREQ*(1-block_c.accelerate_freq[2]));
-                    // }else if (block_c.decelerate_after[2]==0)
-                    // {
-                    //     STEPPER_C_FREQ_UPDATE(STEPPER_C_FREQ*(1+block_c.accelerate_freq[2]));
-                    // }
+                    if (block_c.accelerate_until[2]!=0)
+                    {
+                         block_c.accelerate_until[2]--;
+                         block_c.decelerate_after[2]--;
+                         STEPPER_C_FREQ_UPDATE(STEPPER_C_FREQ*(1-block_c.accelerate_freq[2]));
+                    }else if (block_c.decelerate_after[2]==0)
+                    {
+                         STEPPER_C_FREQ_UPDATE(STEPPER_C_FREQ*(1+block_c.accelerate_freq[2]));
+                    }
                 }
             }
         }
-        //     else//current block is still executing
-        //     {
-        //         // if(block_c.step_dwell!=0)
-        //         // {
-        //         //      Dwell_Step_Update(&block_buff);
-        //         //      monitor.state = exe_dwell;
-        //         // }
-        //         //else
-        //         {
-        //             Stepper_Count(&block_c, &machine, &stepperA);
-        //             Stepper_Count(&block_c, &machine, &stepperB);
-        //             Stepper_Count(&block_c, &machine, &stepperC);
-        //             monitor.state = exe_block;
-        //         }
-        //     }
-        // }
-        // Bsp_Stepper_Update(&stepperA);
-        // Bsp_Stepper_Update(&stepperB);
-        // Bsp_Stepper_Update(&stepperC);
-        // monitor.state = update;
 	}
     TIM_ClearITPendingBit(TIM5,TIM_IT_Update);
 }
