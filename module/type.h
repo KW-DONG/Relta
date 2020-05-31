@@ -82,7 +82,7 @@ typedef struct
     uint16_t head;
     uint16_t tail;
     uint16_t length;
-    block_t* content[RINGBUFF_LEN];
+    block_t content[RINGBUFF_LEN];
 }block_buff_t;
 
 typedef struct 

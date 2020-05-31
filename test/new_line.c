@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
+#include <stdlib.h>
 
 #define SQ(x)   ((x)*(x))
 #define COS(x)  (cosf(x))
@@ -9,7 +10,7 @@
 #define E(x)    (powf(10.0f,x))
 #define PI      3.14f
 
-#define DELTA_CHAIN_LEN 185.0f
+#define DELTA_CHAIN_LEN 264.0f
 #define DELTA_TOWER_RADIUS 145.0f
 #define DELTA_EFFECTOR_RADIUS 37.15f
 #define DELTA_EFFECTOR_HEIGHT 20.0f
@@ -42,12 +43,14 @@
 #define R   (DELTA_TOWER_RADIUS - DELTA_CARRIAGE_OFFSET)
 #define r   DELTA_EFFECTOR_RADIUS
 #define L   DELTA_CHAIN_LEN
-#define x1  (R-r)*cosf(n1)
-#define y1  (R-r)*sinf(n1)
-#define x2  (R-r)*cosf(n2)
-#define y2  (R-r)*sinf(n2)
-#define x3  (R-r)*cosf(n3)
-#define y3  (R-r)*sinf(n3)
+#define x1  (R-r)*cosf(n1)//91.85
+#define y1  (R-r)*sinf(n1)//0
+#define x2  (R-r)*cosf(n2)//-91.85
+#define y2  (R-r)*sinf(n2)//0
+#define x3  (R-r)*cosf(n3)//0
+#define y3  (R-r)*sinf(n3)//-91.85
+
+#define BUFF_LEN    2000
 
 typedef struct 
 {
@@ -79,8 +82,10 @@ typedef struct
     uint16_t head;
     uint16_t tail;
     uint16_t length;
-    block_t* content[100];
+    block_t content[BUFF_LEN];
 }block_buff_t;
+
+block_buff_t block_buffer;
 
 void Velocity_Decouple(float* xyz_c, float* xyz_t, float* xyz_v, float v_n)
 {
@@ -97,19 +102,37 @@ void Inverse_Kinematics(float* xyz, float* abc)
 
 void Jacobian_Matrix(float* xyz_v, float* xyz, float* abc, float* abc_v)
 {
-    abc_v[0] = ((xyz[0]-x1)*INV(xyz[2]-abc[0])
-             + (xyz[0]-x2)*INV(xyz[2]-abc[1])
-             + (xyz[0]-x3)*INV(xyz[2]-abc[2]))*xyz_v[0];
+    abc_v[0] = ((xyz[0]-x1)*INV(-xyz[2]+abc[0])
+             + (xyz[0]-x2)*INV(-xyz[2]+abc[1])
+             + (xyz[0]-x3)*INV(-xyz[2]+abc[2]))*xyz_v[0];
     
-    abc_v[1] = ((xyz[1]-y1)*INV(xyz[2]-abc[0])
-             + (xyz[1]-y2)*INV(xyz[2]-abc[1])
-             + (xyz[1]-y3)*INV(xyz[2]-abc[2]))*xyz_v[1];
+    abc_v[1] = ((xyz[1]-y1)*INV(-xyz[2]+abc[0])
+             + (xyz[1]-y2)*INV(-xyz[2]+abc[1])
+             + (xyz[1]-y3)*INV(-xyz[2]+abc[2]))*xyz_v[1];
 
-    abc_v[2] = ((xyz[2]-y1)*INV(xyz[2]-abc[0])
-             + (xyz[2]-y2)*INV(xyz[2]-abc[1])
-             + (xyz[2]-y3)*INV(xyz[2]-abc[2]))*xyz_v[2];
+    abc_v[2] = ((xyz[2]-y1)*INV(-xyz[2]+abc[0])
+             + (xyz[2]-y2)*INV(-xyz[2]+abc[1])
+             + (xyz[2]-y3)*INV(-xyz[2]+abc[2]))*xyz_v[2];
 }
 
+uint8_t Block_Buff_Write(block_t block, block_buff_t* ring_buff)
+{
+    if(ring_buff->length >= BUFF_LEN) return 0;
+
+    ring_buff->content[ring_buff->tail] = block;
+    ring_buff->tail = (ring_buff->tail+1)%BUFF_LEN;
+    ring_buff->length ++;
+    return 1;
+}
+
+void Block_Buff_Clear(block_buff_t* ring_buff)
+{
+    if (ring_buff->length!=0)
+    {
+        ring_buff->head = (ring_buff->head+1)%BUFF_LEN;
+        ring_buff->length--;
+    }
+}
 
 void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 {
@@ -117,9 +140,9 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
     static float abc[3];
     static float xyz_v[3];
     static float abc_v[3];
-    float x_new;
     float d_x;
     uint8_t xy_single = 2;
+    uint8_t pulse = 0;
 
     Velocity_Decouple(xyz_c,xyz_t,xyz_v,feedrate);
     Inverse_Kinematics(xyz_c,abc_l);
@@ -127,9 +150,9 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
     if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f)         xy_single = 1;
     else if ((xyz_c[0]-xyz_t[0])!=0.f&&(xyz_c[1]-xyz_t[1])==0.f)    xy_single = 0;
     else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])==0.f)    return;
-    else if (fabsf(xyz_c[1]-xyz_t[1])>fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[1]-xyz_t[1])>fabsf(xyz_c[2]-xyz_t[2]))
+    else if (fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[2]-xyz_t[2]))
             d_x = 0.1f*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[1]-xyz_t[1]));
-    else if (fabsf(xyz_c[2]-xyz_t[2])>fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[2]-xyz_t[2])>fabsf(xyz_c[1]-xyz_t[1]))
+    else if (fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[1]-xyz_t[1]))
             d_x = 0.1f*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[2]-xyz_t[2]));
     
     if (xy_single!=2)
@@ -147,42 +170,80 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
                 else                    new_block.dir[i] = 0;
                 abc_l[i] = abc[i];
             }
-            //Block_Buff_Write(&new_block, &block_buffer);
+            Block_Buff_Write(new_block, &block_buffer);
         }
     }else
     {
         float m_y = (xyz_t[1] - xyz_c[1])*INV(xyz_t[0] - xyz_c[0]);
         float m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[0] - xyz_c[0]);
-        for (;xyz_t[0]!=xyz_c[0]&&xyz_t[1]!=xyz_c[1];)
+        float x_new = xyz_c[0];
+        for (;fabsf(xyz_t[0]-xyz_c[0])>0.01;)//error
         {
             Inverse_Kinematics(xyz_c,abc);
             Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
-            block_t new_block;
-            
             ///B's method
             x_new = x_new + d_x;
-            if (fabsf(xyz_c[0] - x_new)>GRID_LEN)               xyz_c[0] += GRID_LEN*fabsf(xyz_t[0]-xyz_c[0])*INV(xyz_t[0]-xyz_c[0]);
-            if (fabsf(m_y*x_new - xyz_c[1])>(0.5f*GRID_LEN))    xyz_c[1] += GRID_LEN*fabsf(xyz_t[1]-xyz_c[1])*INV(xyz_t[1]-xyz_c[1]);
-            if (fabsf(m_y*x_new - xyz_c[1])>(0.5f*GRID_LEN))    xyz_c[2] += GRID_LEN*fabsf(xyz_t[2]-xyz_c[2])*INV(xyz_t[2]-xyz_c[2]);
-
-            for (uint8_t i=0;i<3;i++)
+            if ((fabsf(m_y*x_new - xyz_c[1])>=(0.5f*GRID_LEN))&&(xyz_c[1]!=xyz_t[1]))
             {
-                new_block.step[i] = (uint32_t)(fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT);
-                new_block.maximum_velocity[i] = abc_v[i];
-                if (abc[i]>abc_l[i])    new_block.dir[i] = 1;
-                else                    new_block.dir[i] = 0;
-                abc_l[i] = abc[i];
+                pulse = 1;
+                xyz_c[1] += GRID_LEN*fabsf(xyz_t[1]-xyz_c[1])*INV(xyz_t[1]-xyz_c[1]);
             }
-            //Block_Buff_Write(&new_block, &block_buffer);
+            if ((fabsf(m_z*x_new - xyz_c[2])>=(0.5f*GRID_LEN))&&(xyz_c[2]!=xyz_t[2]))
+            {
+                pulse = 1;
+                xyz_c[2] += GRID_LEN*fabsf(xyz_t[2]-xyz_c[2])*INV(xyz_t[2]-xyz_c[2]);
+            }
+            if (fabsf(xyz_c[0] - x_new)>=GRID_LEN)
+            {
+                pulse = 1;
+                xyz_c[0] += GRID_LEN*fabsf(xyz_t[0]-xyz_c[0])*INV(xyz_t[0]-xyz_c[0]);
+            }
+            if (pulse == 1)
+            {
+                block_t new_block;
+                
+                 for (uint8_t i=0;i<3;i++)
+                {
+                    new_block.step[i] = (uint32_t)(fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT);
+                    new_block.maximum_velocity[i] = abc_v[i];
+                    if (abc[i]>abc_l[i])    new_block.dir[i] = 1;
+                    else                    new_block.dir[i] = 0;
+                    abc_l[i] = abc[i];
+                }
+                Block_Buff_Write(new_block, &block_buffer);
+            }
+            pulse = 0;
         }
+        printf("number:%d\n", block_buffer.length);
     }
 }
 
 
 int main (void)
 {
-    float xyz_c[3] = {0.f,0.f,0.f};
-    float xyz_t[3] = {5.f,8.f,9.f};
+    float xyz_c[3] = {-90.f,-90.f,0.f};
+    float xyz_t[3] = {90.f,90.f,0.f};
+    block_buffer.head = 0;
+    block_buffer.length = 0;
+    block_buffer.tail = 0;
     Line_XYZ_Planner(xyz_c,xyz_t,20.f);
+    
+    printf("number:%d\n", block_buffer.length);
+    
+    for (;block_buffer.length>0;)
+    {
+        printf("maximum_velocity:%f %f %f\n", block_buffer.content[block_buffer.head].maximum_velocity[0]
+                                            , block_buffer.content[block_buffer.head].maximum_velocity[1]
+                                            , block_buffer.content[block_buffer.head].maximum_velocity[2]);
+        printf("dir:%d %d %d\n"             , block_buffer.content[block_buffer.head].dir[0]
+                                            , block_buffer.content[block_buffer.head].dir[1]
+                                            , block_buffer.content[block_buffer.head].dir[2]);
+        printf("step:%d %d %d\n"            , block_buffer.content[block_buffer.head].step[0]
+                                            , block_buffer.content[block_buffer.head].step[1]
+                                            , block_buffer.content[block_buffer.head].step[2]);
+        Block_Buff_Clear(&block_buffer);
+    }
+
     return 0;
+
 }

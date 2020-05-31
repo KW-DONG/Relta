@@ -44,7 +44,7 @@
 
 //DELTA properties
 //length in mm
-#define DELTA_CHAIN_LEN 185.0f
+#define DELTA_CHAIN_LEN 264.0f
 #define DELTA_TOWER_RADIUS 145.0f
 #define DELTA_EFFECTOR_RADIUS 37.15f
 #define DELTA_EFFECTOR_HEIGHT 20.0f
