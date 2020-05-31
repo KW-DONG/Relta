@@ -4,10 +4,10 @@
 
 /**
  * IO Table
- * 				Set 	Dir     Detect
- * Stepper_A: 	PB11	PA15    PD2
- * Stepper_B:	PC6		PC7     PC11
- * Stepper_C:	PB6		PA6     PC9
+ * 				Set 	Dir     Detect  TIM
+ * Stepper_A: 	PB11	PA15    PD2     TIM2
+ * Stepper_B:	PC6		PC7     PC11    TIM3
+ * Stepper_C:	PB6		PA6     PC9     TIM4
  * 
  * MS1:         PF6
  * MS2:         PF7
@@ -15,9 +15,7 @@
  * 
  * Switch_A:    PC2
  * Switch_B:    PC3
- * Switch_C:    PC4
- * Switch_R:    PC1
- * Switch_S:    PC0
+ * Switch_C:    PC1
  * 
  * LED_G:       PF9
  * LED_R:       PF10
@@ -77,7 +75,7 @@
 //carriage specification
 #define MAX_ACCELERATION    1000    //mm per sec per sec
 #define MAX_SPEED           1000    //mm per sec
-#define JERK_SPEED          200     //mm per sec
+#define JERK_SPEED          20.f     //mm per sec
 #define STEPPER_RES         16      //1/x mm
 #define TIM_ARR             8400    //1-65536
 #define MONITOR_FREQ        20      //hz
@@ -86,15 +84,15 @@
 
 /*********************SELECT_MODE*********************/
 
-#define USE_SPEED_CONTROLLER    0
+#define USE_TRAPEZOID_SPEED_PROFILE 0
 
-#define USE_GCODE_COMMAND       0
+#define USE_GCODE_COMMAND           0
 
-#define USE_FORWARD_KINEMATICS  1
+#define USE_FORWARD_KINEMATICS      1
 
-#define USE_SWITCH              0
+#define USE_SWITCH                  0
 
-#define USE_MONITOR             1
+#define USE_MONITOR                 1
 
 /****************GENERATE_AUTOMATICALLY****************/
 
@@ -120,28 +118,38 @@
 #define STEPPER_A_ON        TIM_SetCompare4(TIM2,TIM_ARR/2)
 #define STEPPER_A_OFF       TIM_SetCompare4(TIM2,0)
 #define STEPPER_A_FREQ_UPDATE(f)   TIM_PrescalerConfig(TIM2,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Update)
-#define DIR_A_UP            GPIO_SetBits(GPIOA, GPIO_Pin_15);
-#define DIR_A_DOWN          GPIO_ResetBits(GPIOA, GPIO_Pin_15);
+#define DIR_A_UP            GPIO_SetBits(GPIOA, GPIO_Pin_15)
+#define DIR_A_DOWN          GPIO_ResetBits(GPIOA, GPIO_Pin_15)
 #define STEPPER_A_SCAN      GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_2)
 #define STEPPER_A_FREQ      T_CLK/(TIM2->PSC*TIM2->ARR)
+#define STEPPER_A_CCR       TIM2->CCR4
+#define STEPPER_A_DIR       GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_15)
 
 #define STEPPER_B_ON        TIM_SetCompare1(TIM3,TIM_ARR/2)
 #define STEPPER_B_OFF       TIM_SetCompare1(TIM3,0)
 #define STEPPER_B_FREQ_UPDATE(f)   TIM_PrescalerConfig(TIM3,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Update)
-#define DIR_B_UP            GPIO_SetBits(GPIOC, GPIO_Pin_7);
-#define DIR_B_DOWN          GPIO_ResetBits(GPIOC, GPIO_Pin_7);
+#define DIR_B_UP            GPIO_SetBits(GPIOC, GPIO_Pin_7)
+#define DIR_B_DOWN          GPIO_ResetBits(GPIOC, GPIO_Pin_7)
 #define STEPPER_B_SCAN      GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11)
 #define STEPPER_B_FREQ      T_CLK/(TIM3->PSC*TIM3->ARR)
+#define STEPPER_B_CCR       TIM3->CCR1
+#define STEPPER_B_DIR       GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_7)
 
 #define STEPPER_C_ON        TIM_SetCompare1(TIM4,TIM_ARR/2)
 #define STEPPER_C_OFF       TIM_SetCompare1(TIM4,0)
 #define STEPPER_C_FREQ_UPDATE(f)   TIM_PrescalerConfig(TIM4,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Update)
-#define DIR_C_UP            GPIO_SetBits(GPIOA, GPIO_Pin_6);
-#define DIR_C_DOWN          GPIO_ResetBits(GPIOA, GPIO_Pin_6);
+#define DIR_C_UP            GPIO_SetBits(GPIOA, GPIO_Pin_6)
+#define DIR_C_DOWN          GPIO_ResetBits(GPIOA, GPIO_Pin_6)
 #define STEPPER_C_SCAN      GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_10)
 #define STEPPER_C_FREQ      T_CLK/(TIM4->PSC*TIM4->ARR)
+#define STEPPER_C_CCR       TIM4->CCR1
+#define STEPPER_C_DIR       GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_6)
 
 #define FREQ2PSC(x)			T_CLK/(x*TIM_ARR)
 
+#define LED_RED_OFF         GPIO_SetBits(GPIOF,GPIO_Pin_9)
+#define LED_RED_ON          GPIO_ResetBits(GPIOF,GPIO_Pin_9)
+#define LED_GREEN_OFF       GPIO_SetBits(GPIOF,GPIO_Pin_10)
+#define LED_GREEN_ON        GPIO_ResetBits(GPIOF,GPIO_Pin_10)
 
 #endif

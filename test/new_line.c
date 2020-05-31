@@ -68,6 +68,7 @@ typedef struct
     uint32_t    decelerate_after[3];
     uint32_t    accelerate_freq[3];
     uint32_t    decelerate_freq[3];
+    uint32_t    maximum_freq[3];
 
     //update in ISR
     uint32_t    step[3];
@@ -134,6 +135,25 @@ void Block_Buff_Clear(block_buff_t* ring_buff)
     }
 }
 
+void Line_Z_Planner(float dz, float feedrate)
+{
+    uint32_t step = dz * STEPS_PER_UNIT;
+    
+    static block_t new_block;
+    uint8_t dir;
+    if (dz>0)   dir = 1;
+    else        dir = 0;
+
+    for (uint8_t i=0;i<3;i++)
+    {
+        new_block.step[i] = step;
+        new_block.dir[i] = dir;
+        new_block.maximum_velocity[i] = feedrate;
+        new_block.maximum_freq[i] = (uint32_t)(feedrate*(float)STEPS_PER_UNIT);
+    }
+    Block_Buff_Write(new_block,&block_buffer);
+}
+
 void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 {
     static float abc_l[3];
@@ -149,7 +169,11 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 
     if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f)         xy_single = 1;
     else if ((xyz_c[0]-xyz_t[0])!=0.f&&(xyz_c[1]-xyz_t[1])==0.f)    xy_single = 0;
-    else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])==0.f)    return;
+    else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])==0.f)
+    {
+        Line_Z_Planner(xyz_t[2]-xyz_c[2],feedrate);
+        return;
+    }
     else if (fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[2]-xyz_t[2]))
             d_x = 0.1f*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[1]-xyz_t[1]));
     else if (fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[1]-xyz_t[1]))
@@ -221,8 +245,8 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 
 int main (void)
 {
-    float xyz_c[3] = {-90.f,-90.f,0.f};
-    float xyz_t[3] = {90.f,90.f,0.f};
+    float xyz_c[3] = {90.f,90.f,0.f};
+    float xyz_t[3] = {90.f,90.f,30.f};
     block_buffer.head = 0;
     block_buffer.length = 0;
     block_buffer.tail = 0;
@@ -241,6 +265,7 @@ int main (void)
         printf("step:%d %d %d\n"            , block_buffer.content[block_buffer.head].step[0]
                                             , block_buffer.content[block_buffer.head].step[1]
                                             , block_buffer.content[block_buffer.head].step[2]);
+        printf("number:%d\n", block_buffer.length);
         Block_Buff_Clear(&block_buffer);
     }
 

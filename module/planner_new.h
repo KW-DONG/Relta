@@ -5,9 +5,9 @@
 extern block_buff_t block_buffer;
 extern machine_t machine;
 
-void Line_Z_Planner(float dz);
+void Line_Z_Planner(float dz, float feedrate);
 
-void Line_XY_Planner(float* xy_c, float* xy_t, float feedrate);
+void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate);
 
 void Arc_Planner(float* xy_c, float* xy_t, float radius, float feedrate);
 

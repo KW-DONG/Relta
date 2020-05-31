@@ -2,12 +2,18 @@
 #include "stdlib.h"
 #include "gcode.h"
 
-void Block_Buff_Init(block_buff_t* block)
+void Block_Buff_Init(block_buff_t* buff)
 {
-    block->head = 0;
-    block->tail = 1;
-    block->length = 0;
-
+    buff->head = 0;
+    buff->tail = 1;
+    buff->length = 0;
+    
+    for (uint32_t i=0;i<RINGBUFF_LEN;i++)
+    {
+        buff->content[i].step[0] = 0;
+        buff->content[i].step[1] = 0;
+        buff->content[i].step[2] = 0;
+    }
 }
 
 uint8_t Block_Buff_Write(block_t block, block_buff_t* ring_buff)

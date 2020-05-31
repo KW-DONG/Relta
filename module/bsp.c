@@ -1,7 +1,7 @@
 #include "bsp.h"
 #include "config.h"
 
-void Bsp_Stepper_Init(stepper_t* stepperX)
+void Bsp_Stepper_Init(void)
 {
     // NVIC_InitTypeDef NVIC_InitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -9,136 +9,144 @@ void Bsp_Stepper_Init(stepper_t* stepperX)
 	TIM_OCInitTypeDef  TIM_OCInitStructure;
 
 	//Enables or disables the AHB1 peripheral clock.
-	RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_Set,ENABLE);
-    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_Dir,ENABLE);
-    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_MS1,ENABLE);
-    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_MS2,ENABLE);
-    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_MS3,ENABLE);
-    RCC_AHB1PeriphClockCmd(stepperX->RCC_AHB1Periph_GPIOX_PWM,ENABLE);
-    //Enables the Low Speed APB (APB1) peripheral clock.
-	RCC_APB1PeriphClockCmd(stepperX->RCC_APB1Periph_TIMX, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOD|RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOF,ENABLE);
 
     //Changes the mapping of the specified pin.
-	GPIO_PinAFConfig(stepperX->GPIOX_Set,stepperX->GPIO_PinSourceX,stepperX->GPIO_AF_TIMX);
 	
-	GPIO_InitStructure.GPIO_Pin 	= stepperX->GPIO_Pin_X_Set;
-	GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_15|GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_100MHz;
-	GPIO_InitStructure.GPIO_OType 	= GPIO_OType_OD;
+	GPIO_InitStructure.GPIO_OType 	= GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd 	= GPIO_PuPd_UP;
-	GPIO_Init(stepperX->GPIOX_Set,&GPIO_InitStructure);
+	GPIO_Init(GPIOA,&GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_Dir;
-    GPIO_Init(stepperX->GPIOX_Dir,&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_7;
+    GPIO_Init(GPIOC,&GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_MS1;
-    GPIO_Init(stepperX->GPIOX_MS1,&GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_MS2;
-    GPIO_Init(stepperX->GPIOX_MS2,&GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_MS3;
-    GPIO_Init(stepperX->GPIOX_MS3,&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8;
+    GPIO_Init(GPIOF,&GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-    GPIO_InitStructure.GPIO_Pin     = stepperX->GPIO_Pin_X_PWM;
-    GPIO_Init(stepperX->GPIOX_PWM,&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_11;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	TIM_TimeBaseInitStructure.TIM_Period        = stepperX->arr;
-    TIM_TimeBaseInitStructure.TIM_Prescaler     = T_CLK/(stepperX->freq*stepperX->arr);
-    TIM_TimeBaseInitStructure.TIM_CounterMode   = TIM_CounterMode_Down;
-    TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-
-	//Initializes the TIMx Time Base Unit peripheral according to 
-    //the specified parameters in the TIM_TimeBaseInitStruct.
-	TIM_TimeBaseInit(stepperX->TIMX, &TIM_TimeBaseInitStructure);
-    
-	//Timer output compare
-	TIM_OCInitStructure.TIM_OCMode      = TIM_OCMode_PWM2;        // 
-    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; // 
-    TIM_OCInitStructure.TIM_OCPolarity  = TIM_OCPolarity_Low;               // 
-    
-	//Initializes the TIMx Channel1 according to the specified parameters in
-	//the TIM_OCInitStruct.
-	TIM_OCInitStructure.TIM_Pulse       = stepperX->arr/2;//0 or arr/2, CCRx_Val
-
-    if (stepperX->PWM_Ch==1)
-    {
-        TIM_OC1Init(stepperX->TIMX, &TIM_OCInitStructure);
-        TIM_OC1PreloadConfig(stepperX->TIMX, TIM_OCPreload_Enable);
-    }else if (stepperX->PWM_Ch==2)
-    {
-        TIM_OC2Init(stepperX->TIMX, &TIM_OCInitStructure);
-        TIM_OC2PreloadConfig(stepperX->TIMX, TIM_OCPreload_Enable);
-    }else if (stepperX->PWM_Ch==3)
-    {
-        TIM_OC3Init(stepperX->TIMX, &TIM_OCInitStructure);
-        TIM_OC3PreloadConfig(stepperX->TIMX, TIM_OCPreload_Enable);
-    }else
-    {
-        TIM_OC4Init(stepperX->TIMX, &TIM_OCInitStructure);
-        TIM_OC4PreloadConfig(stepperX->TIMX, TIM_OCPreload_Enable);
-    }
-
-    //Enables the TIMx peripheral Preload register on CCR1.
-	//Enables the specified TIM peripheral.
-	TIM_Cmd(stepperX->TIMX, ENABLE);
-
-    stepperX->pin_state = 0;
-    stepperX->pin_state_last = 0;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_Init(GPIOD, &GPIO_InitStructure);
 }
 
-uint8_t Bsp_Stepper_Update(stepper_t* stepperX)
-{
-    //update stepper state
-    uint8_t pulse = 0;
-    if (stepperX->PWM_Ch==1)
-    {
-        if (stepperX->state==stepper_ON)
-        TIM_SetCompare1(stepperX->TIMX, stepperX->arr/2);
-        else
-        TIM_SetCompare1(stepperX->TIMX,0);
-    }else if (stepperX->PWM_Ch==2)
-    {
-        if (stepperX->state==stepper_ON)
-        TIM_SetCompare2(stepperX->TIMX, stepperX->arr/2);
-        else
-        TIM_SetCompare2(stepperX->TIMX,0);
-    }else if (stepperX->PWM_Ch==3)
-    {
-        if (stepperX->state==stepper_ON)
-        TIM_SetCompare3(stepperX->TIMX, stepperX->arr/2);
-        else
-        TIM_SetCompare3(stepperX->TIMX,0);
-    }else
-    {
-        if (stepperX->state==stepper_ON)
-        TIM_SetCompare4(stepperX->TIMX, stepperX->arr/2);
-        else
-        TIM_SetCompare4(stepperX->TIMX,0);
-    }
+void Bsp_TIM2_PWM_Init(uint32_t psc)
+{		 					 
+	GPIO_InitTypeDef GPIO_InitStructure;
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	
+	GPIO_PinAFConfig(GPIOB,GPIO_PinSource11,GPIO_AF_TIM2);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOB,&GPIO_InitStructure);
+	  
+	TIM_TimeBaseStructure.TIM_Prescaler=psc;
+	TIM_TimeBaseStructure.TIM_CounterMode=TIM_CounterMode_Down;
+	TIM_TimeBaseStructure.TIM_Period=TIM_ARR;   //自动重装载值
+	TIM_TimeBaseStructure.TIM_ClockDivision=TIM_CKD_DIV1; 
+	
+	TIM_TimeBaseInit(TIM2,&TIM_TimeBaseStructure);//初始化定时器14
+	 
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;
+ 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
+	TIM_OC4Init(TIM2, &TIM_OCInitStructure);
 
-    //update speed
-    uint16_t psc = T_CLK/(stepperX->freq*stepperX->arr);
-    TIM_PrescalerConfig(stepperX->TIMX,psc,TIM_PSCReloadMode_Immediate);
+	TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable);
+ 
+    TIM_ARRPreloadConfig(TIM2,ENABLE); 
 
-    //update direction
-    if (stepperX->dir==0)   GPIO_SetBits(stepperX->GPIOX_Dir, stepperX->GPIO_Pin_X_Dir);
-    else                    GPIO_ResetBits(stepperX->GPIOX_Dir, stepperX->GPIO_Pin_X_Dir);
+	TIM_Cmd(TIM2, ENABLE);
+}  
 
-    //update IO state
-    stepperX->pin_state = GPIO_ReadInputDataBit(stepperX->GPIOX_PWM, stepperX->GPIO_Pin_X_PWM);
-    if (stepperX->pin_state==1&&stepperX->pin_state_last==0)
-    pulse = 1;
-    else
-    pulse = 0;
-    stepperX->pin_state_last = stepperX->pin_state;
+void Bsp_TIM3_PWM_Init(uint32_t psc)
+{		 					 
+	GPIO_InitTypeDef GPIO_InitStructure;
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+	
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource6,GPIO_AF_TIM3);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOC,&GPIO_InitStructure);
+	  
+	TIM_TimeBaseStructure.TIM_Prescaler=psc;
+	TIM_TimeBaseStructure.TIM_CounterMode=TIM_CounterMode_Down;
+	TIM_TimeBaseStructure.TIM_Period=TIM_ARR;   //自动重装载值
+	TIM_TimeBaseStructure.TIM_ClockDivision=TIM_CKD_DIV1; 
+	
+	TIM_TimeBaseInit(TIM3,&TIM_TimeBaseStructure);//初始化定时器14
+	 
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;
+ 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
+	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
 
-    return pulse;
+	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+ 
+    TIM_ARRPreloadConfig(TIM3,ENABLE); 
+
+	TIM_Cmd(TIM3, ENABLE);
 }
 
-void Bsp_Monitor_Init()
+void Bsp_TIM4_PWM_Init(uint32_t psc)
+{		 					 
+	GPIO_InitTypeDef GPIO_InitStructure;
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	
+	GPIO_PinAFConfig(GPIOB,GPIO_PinSource6,GPIO_AF_TIM4);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOB,&GPIO_InitStructure);
+	  
+	TIM_TimeBaseStructure.TIM_Prescaler=psc;
+	TIM_TimeBaseStructure.TIM_CounterMode=TIM_CounterMode_Down;
+	TIM_TimeBaseStructure.TIM_Period=TIM_ARR;   //自动重装载值
+	TIM_TimeBaseStructure.TIM_ClockDivision=TIM_CKD_DIV1; 
+	
+	TIM_TimeBaseInit(TIM4,&TIM_TimeBaseStructure);//初始化定时器14
+	 
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;
+ 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
+	TIM_OC4Init(TIM4, &TIM_OCInitStructure);
+
+	TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Enable);
+ 
+    TIM_ARRPreloadConfig(TIM4,ENABLE); 
+
+	TIM_Cmd(TIM4, ENABLE);
+}  
+
+void Bsp_TIM5_Init(uint32_t psc)
 {
     TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -146,7 +154,7 @@ void Bsp_Monitor_Init()
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5,ENABLE);
 	
     TIM_TimeBaseInitStructure.TIM_Period = TIM_ARR; 
-	TIM_TimeBaseInitStructure.TIM_Prescaler=MONITOR_PSC;
+	TIM_TimeBaseInitStructure.TIM_Prescaler=psc;
 	TIM_TimeBaseInitStructure.TIM_CounterMode=TIM_CounterMode_Up;
 	TIM_TimeBaseInitStructure.TIM_ClockDivision=TIM_CKD_DIV1; 
 	
@@ -162,56 +170,18 @@ void Bsp_Monitor_Init()
 	NVIC_Init(&NVIC_InitStructure);
 }
 
-void Bsp_Switch_Init(switch_t* switchX)
-{
-    NVIC_InitTypeDef   NVIC_InitStructure;
-	EXTI_InitTypeDef   EXTI_InitStructure;
-
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-
-	SYSCFG_EXTILineConfig(switchX->EXTI_PortSourceGPIOX, switchX->EXTI_PinSourceX);
-
-	EXTI_InitStructure.EXTI_Line = switchX->EXTI_LineX;
-	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-
-    if (switchX->mode==NO)
-    {
-        EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-    }else
-    {
-        EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-    }
-	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-	EXTI_Init(&EXTI_InitStructure);
-
-    NVIC_InitStructure.NVIC_IRQChannel = switchX->EXTIX_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = switchX->NVIC_PP;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = switchX->NVIC_SP;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-}
-
-void Bsp_LED_Init(led_t* LEDX)
+void Bsp_LED_Init(void)
 {    	 
     GPIO_InitTypeDef  GPIO_InitStructure;
 
-    RCC_AHB1PeriphClockCmd(LEDX->RCC_AHB1Periph_GPIOX_Set, ENABLE);
+    RCC_AHB1PeriphClockCmd(GPIOF, ENABLE);
 
-    GPIO_InitStructure.GPIO_Pin = LEDX->GPIO_Pin_X_Set;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-    GPIO_Init(LEDX->GPIOX_Set, &GPIO_InitStructure);
-    GPIO_SetBits(LEDX->GPIOX_Set,LEDX->GPIO_Pin_X_Set);
-}
-
-void Bsp_LED_Update(led_t* LEDX)
-{
-    if (LEDX->state==0)
-    GPIO_SetBits(LEDX->GPIOX_Set,LEDX->GPIO_Pin_X_Set);
-    else
-    GPIO_ResetBits(LEDX->GPIOX_Set, LEDX->GPIO_Pin_X_Set);
+    GPIO_Init(GPIOF, &GPIO_InitStructure);
 }
 
 void Bsp_UART_Init(uint32_t bound)
@@ -263,3 +233,142 @@ void Bsp_UART_Send(uint8_t* content, uint8_t len)
         while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);
     }
 }
+
+void Bsp_Switch_Init(void)
+{
+    GPIO_InitTypeDef  GPIO_InitStructure;
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN ;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+}
+
+void Bsp_KEY_Init(void)
+{
+	GPIO_InitTypeDef  GPIO_InitStructure;
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOE, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN ;
+	GPIO_Init(GPIOE, &GPIO_InitStructure);
+	 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN ;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+} 
+
+//key
+void Bsp_EXTI0_Init(void)
+{
+    NVIC_InitTypeDef   NVIC_InitStructure;
+	EXTI_InitTypeDef   EXTI_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
+
+	EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+void Bsp_EXTI4_Init(void)
+{
+    NVIC_InitTypeDef   NVIC_InitStructure;
+	EXTI_InitTypeDef   EXTI_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOE, EXTI_PinSource4);
+
+	EXTI_InitStructure.EXTI_Line = EXTI_Line4;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+//limit switch
+void Bsp_EXTI1_Init(void)
+{
+    NVIC_InitTypeDef   NVIC_InitStructure;
+	EXTI_InitTypeDef   EXTI_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource1);
+
+	EXTI_InitStructure.EXTI_Line = EXTI_Line1;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+void Bsp_EXTI2_Init(void)
+{
+    NVIC_InitTypeDef   NVIC_InitStructure;
+	EXTI_InitTypeDef   EXTI_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource2);
+
+	EXTI_InitStructure.EXTI_Line = EXTI_Line2;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+void Bsp_EXTI3_Init(void)
+{
+    NVIC_InitTypeDef   NVIC_InitStructure;
+	EXTI_InitTypeDef   EXTI_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource3);
+
+	EXTI_InitStructure.EXTI_Line = EXTI_Line3;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+
+
+
+
+

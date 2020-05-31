@@ -2,45 +2,31 @@
 
 #include "type.h"
 
-extern uint8_t pulse_A;
+void Bsp_Stepper_Init(void);
 
-extern uint8_t pulse_B;
+void Bsp_Switch_Init(void);
 
-extern uint8_t pulse_C;
+void Bsp_EXTI0_Init();
 
-/******************************STEPPER***********************************/
+void Bsp_EXTI1_Init();
 
-/**
- * @brief Init the stepper motor
- * @param stepperX
- * @param arr
- * @note allocate IO, clock and corresponding pwm channel
- */
-void Bsp_Stepper_Init(stepper_t* stepperX);
+void Bsp_EXTI2_Init();
 
-/**
- * @brief Update the motor
- * @param stepperX
- * @note set the motor state and speed as well as detecting the IO state
- */
-uint8_t Bsp_Stepper_Update(stepper_t* stepperX);
+void Bsp_EXTI3_Init();
 
-/***************************************MONITOR*********************************/
+void Bsp_EXTI4_Init();
 
-void Bsp_Monitor_Init(void);
+void Bsp_TIM2_PWM_Init(uint32_t psc);
 
-/**************************************SWITCH*********************************/
+void Bsp_TIM3_PWM_Init(uint32_t psc);
 
-#define NO  0
-#define NC  1
+void Bsp_TIM4_PWM_Init(uint32_t psc);
 
-void Bsp_Switch_Init(switch_t* switchX);
+void Bsp_TIM5_Init(uint32_t psc);
 
-/**************************************LED***********************************/
+void Bsp_LED_Init(void);
 
-void Bsp_LED_Init(led_t* LEDX);
-
-void Bsp_LED_Update(led_t* LEDX);
+void Bsp_KEY_Init(void);
 
 /**************************************PROTOCAL***********************************/
 
