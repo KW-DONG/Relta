@@ -52,7 +52,7 @@
 #define n1 0.0f
 #define n2 3.14f
 #define n3 3.14f*3.0f*INV(2.0f)
-#define RESOLUTION 0.1f    //mm
+#define GRID_LEN 0.1f    //mm
 
 #define CARRIAGE_LOW    250.0f
 #define CARRIAGE_HIGH   300.0f

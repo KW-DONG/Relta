@@ -63,5 +63,7 @@ void Jacobian_Matrix(float* xyz_v, float* xyz,
              + (xyz[1]-y2)*INV(xyz[2]-abc[1])
              + (xyz[1]-y3)*INV(xyz[2]-abc[2]))*xyz_v[1];
 
-    abc_v[2] = 3.0f*xyz_v[2];
+    abc_v[2] = ((xyz[2]-y1)*INV(xyz[2]-abc[0])
+             + (xyz[2]-y2)*INV(xyz[2]-abc[1])
+             + (xyz[2]-y3)*INV(xyz[2]-abc[2]))*xyz_v[2];;
 }

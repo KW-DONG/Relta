@@ -25,14 +25,16 @@ void Line_Z_Planner(float dz)
 }
 
 
-void Line_XY_Planner(float* xyz_c, float* xyz_t, float feedrate)
+
+void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 {
     static float abc_l[3];
     static float abc[3];
     static float xyz_v[3];
     static float abc_v[3];
+    float x_new;
+    float d_x;
     uint8_t xy_single = 2;
-    uint8_t xy_double = 2;
 
     Velocity_Decouple(xyz_c,xyz_t,xyz_v,feedrate);
     Inverse_Kinematics(xyz_c,abc_l);
@@ -40,12 +42,14 @@ void Line_XY_Planner(float* xyz_c, float* xyz_t, float feedrate)
     if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f)         xy_single = 1;
     else if ((xyz_c[0]-xyz_t[0])!=0.f&&(xyz_c[1]-xyz_t[1])==0.f)    xy_single = 0;
     else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])==0.f)    return;
-    else if (fabsf(xyz_c[0]-xyz_t[0])>fabsf(xyz_c[1]-xyz_t[1]))     xy_double = 0;
-    else                                                            xy_double = 1;
-
+    else if (fabsf(xyz_c[1]-xyz_t[1])>fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[1]-xyz_t[1])>fabsf(xyz_c[2]-xyz_t[2]))
+            d_x = 0.1f*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[1]-xyz_t[1]));
+    else if (fabsf(xyz_c[2]-xyz_t[2])>fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[2]-xyz_t[2])>fabsf(xyz_c[1]-xyz_t[1]))
+            d_x = 0.1f*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[2]-xyz_t[2]));
+    
     if (xy_single!=2)
     {
-        for (;xyz_t[xy_single]!=xyz_c[xy_single];xyz_c[xy_single] = xyz_c[xy_single] + 0.1f*fabsf(xyz_c[xy_single]-xyz_t[xy_single])*INV(xyz_c[xy_single]-xyz_xy_singley0]))
+        for (;xyz_t[xy_single]!=xyz_c[xy_single];xyz_c[xy_single] = xyz_c[xy_single] + 0.1f*fabsf(xyz_c[xy_single]-xyz_t[xy_single])*INV(xyz_c[xy_single]-xyz_t[xy_single]))
         {
             Inverse_Kinematics(xyz_c,abc);
             Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
@@ -62,17 +66,20 @@ void Line_XY_Planner(float* xyz_c, float* xyz_t, float feedrate)
         }
     }else
     {
+        float m_y = (xyz_t[1] - xyz_c[1])*INV(xyz_t[0] - xyz_c[0]);
+        float m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[0] - xyz_c[0]);
         for (;xyz_t[0]!=xyz_c[0]&&xyz_t[1]!=xyz_c[1];)
         {
             Inverse_Kinematics(xyz_c,abc);
             Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
             block_t new_block;
-            xyz_c[xy_double] += 0.1f*fabsf(xyz_c[xy_double]-xyz_t[xy_double])*INV(xyz_c[xy_double]-xyz_t[xy_double]);
-            if (1)   xyz_c[!xy_double] += 0.1f*fabsf(xyz_c[!xy_double]-xyz_t[!xy_double])*INV(xyz_c[!xy_double]-xyz_t[!xy_double]);
+            
             ///B's method
-            
-            
-            
+            x_new = x_new + d_x;
+            if (fabsf(xyz_c[0] - x_new)>GRID_LEN)               xyz_c[0] += GRID_LEN*fabsf(xyz_t[0]-xyz_c[0])*INV(xyz_t[0]-xyz_c[0]);
+            if (fabsf(m_y*x_new - xyz_c[1])>(0.5f*GRID_LEN))    xyz_c[1] += GRID_LEN*fabsf(xyz_t[1]-xyz_c[1])*INV(xyz_t[1]-xyz_c[1]);
+            if (fabsf(m_y*x_new - xyz_c[1])>(0.5f*GRID_LEN))    xyz_c[2] += GRID_LEN*fabsf(xyz_t[2]-xyz_c[2])*INV(xyz_t[2]-xyz_c[2]);
+
             for (uint8_t i=0;i<3;i++)
             {
                 new_block.step[i] = (uint32_t)(fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT);
@@ -84,7 +91,6 @@ void Line_XY_Planner(float* xyz_c, float* xyz_t, float feedrate)
             Block_Buff_Write(&new_block, &block_buffer);
         }
     }
-
 }
 
 
@@ -140,7 +146,7 @@ void Get_Pivot(float* xyz_t, float* xyz_c, float radius, float* xy_p)
 
 void Velocity_Decouple(float* xyz_c, float* xyz_t, float* xyz_v, float v_n)
 {
-    float len = INV(sqrtf(SQ(xyz_t[0]-xyz_c[0])+SQ(xyz_t[1]-xyz_c[1])+SQ(xyz_t[2]-xyz_c[2])));
+    float len = sqrtf(SQ(xyz_t[0]-xyz_c[0])+SQ(xyz_t[1]-xyz_c[1])+SQ(xyz_t[2]-xyz_c[2]));
     for (uint8_t i=0;i<3;i++)   xyz_v[i] = fabsf(xyz_c[i]-xyz_t[i])*INV(len)*v_n;
 }
 
