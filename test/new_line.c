@@ -18,7 +18,7 @@
 #define n1 0.0f
 #define n2 3.14f
 #define n3 3.14f*3.0f*INV(2.0f)
-#define GRID_LEN 0.1f    //mm
+#define GRID_LEN 1.f    //mm
 
 #define CARRIAGE_LOW    250.0f
 #define CARRIAGE_HIGH   300.0f
@@ -50,7 +50,7 @@
 #define x3  (R-r)*cosf(n3)//0
 #define y3  (R-r)*sinf(n3)//-91.85
 
-#define BUFF_LEN    20
+#define BUFF_LEN    2000
 
 typedef struct 
 {
@@ -103,17 +103,11 @@ void Inverse_Kinematics(float* xyz, float* abc)
 
 void Jacobian_Matrix(float* xyz_v, float* xyz, float* abc, float* abc_v)
 {
-    abc_v[0] = ((xyz[0]-x1)*INV(-xyz[2]+abc[0])
-             + (xyz[0]-x2)*INV(-xyz[2]+abc[1])
-             + (xyz[0]-x3)*INV(-xyz[2]+abc[2]))*xyz_v[0];
+    abc_v[0] = (xyz[0]-x1)*INV(xyz[2]-abc[0])+(xyz[1]-y1)*INV(xyz[2]-abc[0])+xyz_v[2];
     
-    abc_v[1] = ((xyz[1]-y1)*INV(-xyz[2]+abc[0])
-             + (xyz[1]-y2)*INV(-xyz[2]+abc[1])
-             + (xyz[1]-y3)*INV(-xyz[2]+abc[2]))*xyz_v[1];
+    abc_v[1] = (xyz[0]-x2)*INV(xyz[2]-abc[1])+(xyz[1]-y2)*INV(xyz[2]-abc[1])+xyz_v[2];
 
-    abc_v[2] = ((xyz[2]-y1)*INV(-xyz[2]+abc[0])
-             + (xyz[2]-y2)*INV(-xyz[2]+abc[1])
-             + (xyz[2]-y3)*INV(-xyz[2]+abc[2]))*xyz_v[2];
+    abc_v[2] = (xyz[0]-x3)*INV(xyz[2]-abc[2])+(xyz[1]-y3)*INV(xyz[2]-abc[2])+xyz_v[2];
 }
 
 uint8_t Block_Buff_Write(block_t block, block_buff_t* ring_buff)
@@ -175,9 +169,9 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
         return;
     }
     else if (fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[2]-xyz_t[2]))
-            d_x = 0.1f*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[1]-xyz_t[1]));
+            d_x = GRID_LEN*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[1]-xyz_t[1]));
     else if (fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[1]-xyz_t[1]))
-            d_x = 0.1f*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[2]-xyz_t[2]));
+            d_x = GRID_LEN*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[2]-xyz_t[2]));
     
     if (xy_single!=2)
     {
@@ -201,7 +195,8 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
         float m_y = (xyz_t[1] - xyz_c[1])*INV(xyz_t[0] - xyz_c[0]);
         float m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[0] - xyz_c[0]);
         float x_new = xyz_c[0];
-        for (;fabsf(xyz_t[0]-xyz_c[0])>0.01;)//error
+        uint64_t step = (uint64_t)(fabsf(xyz_t[0]-xyz_c[0])*INV(d_x));
+        for (;step>0;)//error
         {
             Inverse_Kinematics(xyz_c,abc);
             Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
@@ -221,6 +216,7 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
             {
                 pulse = 1;
                 xyz_c[0] += GRID_LEN*fabsf(xyz_t[0]-xyz_c[0])*INV(xyz_t[0]-xyz_c[0]);
+                step--;
             }
             if (pulse == 1)
             {
@@ -245,7 +241,7 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 
 int main (void)
 {
-    float xyz_c[3] = {90.f,90.f,0.f};
+    float xyz_c[3] = {-90.f,-90.f,0.f};
     float xyz_t[3] = {90.f,90.f,30.f};
     block_buffer.head = 0;
     block_buffer.length = 0;

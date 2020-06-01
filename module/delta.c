@@ -62,18 +62,11 @@ void Inverse_Kinematics(float* xyz, float* abc)
     abc[2] = sqrtf(SQ(L)-SQ(xyz[0]-x3)-SQ(xyz[1]-y3))+xyz[2];
 }
 
-void Jacobian_Matrix(float* xyz_v, float* xyz, 
-                    float* abc, float* abc_v)
+void Jacobian_Matrix(float* xyz_v, float* xyz, float* abc, float* abc_v)
 {
-    abc_v[0] = ((xyz[0]-x1)*INV(-xyz[2]+abc[0])
-             + (xyz[0]-x2)*INV(-xyz[2]+abc[1])
-             + (xyz[0]-x3)*INV(-xyz[2]+abc[2]))*xyz_v[0];
+    abc_v[0] = (xyz[0]-x1)*INV(xyz[2]-abc[0])+(xyz[1]-y1)*INV(xyz[2]-abc[0])+xyz_v[2];
     
-    abc_v[1] = ((xyz[1]-y1)*INV(-xyz[2]+abc[0])
-             + (xyz[1]-y2)*INV(-xyz[2]+abc[1])
-             + (xyz[1]-y3)*INV(-xyz[2]+abc[2]))*xyz_v[1];
+    abc_v[1] = (xyz[0]-x2)*INV(xyz[2]-abc[1])+(xyz[1]-y2)*INV(xyz[2]-abc[1])+xyz_v[2];
 
-    abc_v[2] = ((xyz[2]-y1)*INV(-xyz[2]+abc[0])
-             + (xyz[2]-y2)*INV(-xyz[2]+abc[1])
-             + (xyz[2]-y3)*INV(-xyz[2]+abc[2]))*xyz_v[2];;
+    abc_v[2] = (xyz[0]-x3)*INV(xyz[2]-abc[2])+(xyz[1]-y3)*INV(xyz[2]-abc[2])+xyz_v[2];
 }

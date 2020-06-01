@@ -10,6 +10,7 @@ void Machine_Init(void)
     machine.abc[2] = CARRIAGE_C_RESET;
 
     Forward_Kinematics(machine.abc, machine.xyz);
+    for (uint8_t i=0;i<3;i++)   machine.xyz_c[i] = machine.xyz[i];
     machine.fk_flag = 0;
     machine.interpret_flag = 0;
     machine.traj_flag = 0;

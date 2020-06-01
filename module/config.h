@@ -159,4 +159,17 @@
 #define MS3_HIGH            GPIO_SetBits(GPIOF,GPIO_Pin_8)
 #define MS3_LOW             GPIO_ResetBits(GPIOF,GPIO_Pin_8)
 
+/*************************MANUAL_PATH**********************************/
+const float path[7][4] = {{0.f,0.f,10.f,10.f}
+                        ,{90.f,90.f,0.f,10.f}
+                        ,{-90.f,90.f,0.f,10.f}
+                        ,{-90.f,-90.f,0.f,10.f}
+                        ,{90.f,-90.f,0.f,10.f}
+                        ,{0.f,0.f,0.f,10.f}
+                        ,{100.f,100.f,100.f,10.f}};
+
+
+
+
+
 #endif

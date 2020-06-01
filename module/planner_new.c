@@ -7,7 +7,7 @@
 
 /*********************************WRITE_BUFFER*************************************/
 
-void Line_Z_Planner(float dz, float feedrate)
+uint8_t Line_Z_Planner(float dz, float feedrate)
 {
     uint32_t step = dz * STEPS_PER_UNIT;
     
@@ -23,10 +23,11 @@ void Line_Z_Planner(float dz, float feedrate)
         new_block.maximum_velocity[i] = feedrate;
         new_block.maximum_freq[i] = (uint32_t)(feedrate*(float)STEPS_PER_UNIT);
     }
-    while(Block_Buff_Write(new_block,&block_buffer));
+    if(Block_Buff_Write(new_block,&block_buffer))   return 1;
+    return 0;
 }
 
-void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
+uint8_t Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 {
     float abc_l[3];
     float abc[3];
@@ -42,11 +43,7 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 
     if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f)         xy_single = 1;
     else if ((xyz_c[0]-xyz_t[0])!=0.f&&(xyz_c[1]-xyz_t[1])==0.f)    xy_single = 0;
-    else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])==0.f)
-    {
-        Line_Z_Planner(xyz_t[2]-xyz_c[2],feedrate);
-        return;
-    }
+    else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])==0.f)    if (Line_Z_Planner(xyz_t[2]-xyz_c[2],feedrate)) return 1;
     else if (fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[2]-xyz_t[2]))
             d_x = 0.1f*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[1]-xyz_t[1]));
     else if (fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[1]-xyz_t[1]))
@@ -59,7 +56,7 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
             Inverse_Kinematics(xyz_c,abc);
             Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
             Block_Init(&new_block, abc, abc_l, abc_v);
-            while(Block_Buff_Write(new_block, &block_buffer));
+            if(Block_Buff_Write(new_block, &block_buffer))  return 1;
         }
     }else
     {
@@ -91,11 +88,12 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
             {
                 Block_Init(&new_block, abc, abc_l, abc_v);
                 if (new_block.step[0]!=0||new_block.step[1]!=0||new_block.step[2]!=0)
-                while(Block_Buff_Write(new_block, &block_buffer));
+                if(Block_Buff_Write(new_block, &block_buffer))  return 1;
             }
             pulse = 0;
         }
     }
+    return 0;
 }
 
 

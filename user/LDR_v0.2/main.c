@@ -8,6 +8,7 @@
 #include "bsp.h"
 #include "delta.h"
 #include "machine.h"
+#include "stm32f4xx.h"
 
 /******************************Hardware******************************/
 stepper_t   stepperA;
@@ -60,24 +61,16 @@ int main()
     a_block.maximum_freq[1] = 10;
     a_block.maximum_freq[2] = 10;
 
-    b_block.step[0] = 100;
-    b_block.step[1] = 100;
-    b_block.step[2] = 100;
-    b_block.dir[0] = 1;
-    b_block.dir[1] = 1;
-    b_block.dir[2] = 1;
-    b_block.maximum_freq[0] = 5;
-    b_block.maximum_freq[1] = 5;
-    b_block.maximum_freq[2] = 5;
-
+    uint8_t path_num = 0;
 
     while (1)
     {
-        //Test_Path();
-        //Test_Block();
-        //while (Block_Buff_Write(a_block,&block_buffer));
-        //while (Block_Buff_Write(b_block,&block_buffer));
-        //STEPPER_A_FREQ_UPDATE(7);
+        if (!Line_XYZ_Planner(machine.xyz_c, machine.xyz_t, machine.feedrate)&&path_num<7)
+        {
+            for (uint8_t i=0;i<3;i++)   machine.xyz_t[i] = path[path_num][i];
+            machine.feedrate = path[path_num][3];
+            path_num ++;
+        }
 
         Machine_Update();
     }
@@ -217,3 +210,5 @@ void EXTI4_IRQHandler(void)
     machine.state = machine_ON;
     EXTI_ClearITPendingBit(EXTI_Line4);
 }
+
+

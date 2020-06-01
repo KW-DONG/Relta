@@ -99,6 +99,12 @@ typedef struct
     float   abc[3];
     uint8_t state;
 
+    //commanding tempt
+    float   xyz_c[3];//current
+    float   xyz_t[3];//target
+    float   feedrate;
+    uint8_t command_flag;
+
     //flags
     uint8_t interpret_flag;
     uint8_t fk_flag;
