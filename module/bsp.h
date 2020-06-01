@@ -6,15 +6,15 @@ void Bsp_Stepper_Init(void);
 
 void Bsp_Switch_Init(void);
 
-void Bsp_EXTI0_Init();
+void Bsp_EXTI0_Init(void);
 
-void Bsp_EXTI1_Init();
+void Bsp_EXTI1_Init(void);
 
-void Bsp_EXTI2_Init();
+void Bsp_EXTI2_Init(void);
 
-void Bsp_EXTI3_Init();
+void Bsp_EXTI3_Init(void);
 
-void Bsp_EXTI4_Init();
+void Bsp_EXTI4_Init(void);
 
 void Bsp_TIM2_PWM_Init(uint32_t psc);
 

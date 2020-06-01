@@ -1,10 +1,32 @@
-#include "delta.h"
-#include "type.h"
+#include <stdio.h>
 #include <math.h>
-#include "config.h"
+#define DELTA_CHAIN_LEN 264.0f
+#define DELTA_TOWER_RADIUS 145.0f
+#define DELTA_EFFECTOR_RADIUS 37.15f
+#define DELTA_EFFECTOR_HEIGHT 20.0f
+#define DELTA_CARRIAGE_OFFSET 16.0f
+#define n1 0.0f
+#define n2 3.14f
+#define n3 3.14f*3.0f*INV(2.0f)
+#define R   (DELTA_TOWER_RADIUS - DELTA_CARRIAGE_OFFSET)
+#define r   DELTA_EFFECTOR_RADIUS
+#define L   DELTA_CHAIN_LEN
+#define x1  (R-r)*cosf(n1)
+#define y1  (R-r)*sinf(n1)
+#define x2  (R-r)*cosf(n2)
+#define y2  (R-r)*sinf(n2)
+#define x3  (R-r)*cosf(n3)
+#define y3  (R-r)*sinf(n3)
+#define SQ(x)   ((x)*(x))
+#define COS(x)  (cosf(x))
+#define SIN(x)  (sinf(x))
+#define INV(x)  (1.0f / (x))
+#define E(x)    (powf(10.0f,x))
+#define PI      3.14f
+#define RSQRT(x)    (1.0f / sqrtf(x))
+#define HYPOT2(x,y) (SQ(x)+SQ(y))
 
-void Forward_Kinematics(float* abc, float* xyz)
-{
+void forward_kinematics_DELTA(float* abc, float* xyz) {
   // Create a vector in old coordinates along x axis of new coordinate
   const float p12[3] = { x2 - x1, y2 - y1, abc[1] - abc[0] },
 
@@ -55,6 +77,8 @@ void Forward_Kinematics(float* abc, float* xyz)
   xyz[2] = abc[0] + ex[2] * Xnew + ey[2] * Ynew - ez[2] * Znew;
 }
 
+
+
 void Inverse_Kinematics(float* xyz, float* abc)
 {
     abc[0] = sqrtf(SQ(L)-SQ(xyz[0]-x1)-SQ(xyz[1]-y1))+xyz[2];
@@ -62,18 +86,32 @@ void Inverse_Kinematics(float* xyz, float* abc)
     abc[2] = sqrtf(SQ(L)-SQ(xyz[0]-x3)-SQ(xyz[1]-y3))+xyz[2];
 }
 
-void Jacobian_Matrix(float* xyz_v, float* xyz, 
-                    float* abc, float* abc_v)
+int main()
 {
-    abc_v[0] = ((xyz[0]-x1)*INV(-xyz[2]+abc[0])
-             + (xyz[0]-x2)*INV(-xyz[2]+abc[1])
-             + (xyz[0]-x3)*INV(-xyz[2]+abc[2]))*xyz_v[0];
-    
-    abc_v[1] = ((xyz[1]-y1)*INV(-xyz[2]+abc[0])
-             + (xyz[1]-y2)*INV(-xyz[2]+abc[1])
-             + (xyz[1]-y3)*INV(-xyz[2]+abc[2]))*xyz_v[1];
+    float xyz[3];
+    float abc[3] = {300.f,300.f,300.f};
+    float abc_t[3];
 
-    abc_v[2] = ((xyz[2]-y1)*INV(-xyz[2]+abc[0])
-             + (xyz[2]-y2)*INV(-xyz[2]+abc[1])
-             + (xyz[2]-y3)*INV(-xyz[2]+abc[2]))*xyz_v[2];;
+    while (abc[0]>250.f)
+    {
+        while (abc[1]>250.f)
+        {
+            while (abc[2]>250.f)
+            {
+                forward_kinematics_DELTA(abc,xyz);
+                printf("x:%f, y:%f, z:%f\n", xyz[0], xyz[1], xyz[2]);
+                Inverse_Kinematics(xyz,abc_t);
+                printf("da:%f, db:%f, dc:%f\n", (abc[0]-abc_t[0]),(abc[1]-abc_t[1]),(abc[2]-abc_t[2]));
+                abc[2] = abc[2] - 1.f;
+            }
+            abc[1] = abc[1] - 1.f;
+            abc[2] = 300.f;
+        }
+        abc[0] = abc[0] - 1.f;
+        abc[1] = 300.f;
+    }
+
+
+    return 0;
+
 }

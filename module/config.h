@@ -4,10 +4,10 @@
 
 /**
  * IO Table
- * 				Set 	Dir     Detect  TIM
- * Stepper_A: 	PB11	PA15    PD2     TIM2
- * Stepper_B:	PC6		PC7     PC11    TIM3
- * Stepper_C:	PB6		PA6     PC9     TIM4
+ * 				Set 	Dir     Detect  PWM
+ * Stepper_A: 	PB11	PA15    PD2     TIM2_CH4
+ * Stepper_B:	PC6		PC7     PC11    TIM3_CH1
+ * Stepper_C:	PB6		PA6     PC9     TIM4_CH1
  * 
  * MS1:         PF6
  * MS2:         PF7
@@ -140,7 +140,7 @@
 #define STEPPER_C_FREQ_UPDATE(f)   TIM_PrescalerConfig(TIM4,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Update)
 #define DIR_C_UP            GPIO_SetBits(GPIOA, GPIO_Pin_6)
 #define DIR_C_DOWN          GPIO_ResetBits(GPIOA, GPIO_Pin_6)
-#define STEPPER_C_SCAN      GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_10)
+#define STEPPER_C_SCAN      GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_9)
 #define STEPPER_C_FREQ      T_CLK/(TIM4->PSC*TIM4->ARR)
 #define STEPPER_C_CCR       TIM4->CCR1
 #define STEPPER_C_DIR       GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_6)
@@ -151,5 +151,12 @@
 #define LED_RED_ON          GPIO_ResetBits(GPIOF,GPIO_Pin_9)
 #define LED_GREEN_OFF       GPIO_SetBits(GPIOF,GPIO_Pin_10)
 #define LED_GREEN_ON        GPIO_ResetBits(GPIOF,GPIO_Pin_10)
+
+#define MS1_HIGH            GPIO_SetBits(GPIOF,GPIO_Pin_6)
+#define MS1_LOW             GPIO_ResetBits(GPIOF,GPIO_Pin_6)
+#define MS2_HIGH            GPIO_SetBits(GPIOF,GPIO_Pin_7)
+#define MS2_LOW             GPIO_ResetBits(GPIOF,GPIO_Pin_7)
+#define MS3_HIGH            GPIO_SetBits(GPIOF,GPIO_Pin_8)
+#define MS3_LOW             GPIO_ResetBits(GPIOF,GPIO_Pin_8)
 
 #endif

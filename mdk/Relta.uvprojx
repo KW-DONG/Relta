@@ -224,7 +224,7 @@
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <RoSelD>3</RoSelD>
@@ -347,7 +347,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -509,14 +509,19 @@
               <FilePath>..\module\gcode.c</FilePath>
             </File>
             <File>
-              <FileName>motion.c</FileName>
+              <FileName>machine.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\module\motion.c</FilePath>
+              <FilePath>..\module\machine.c</FilePath>
             </File>
             <File>
-              <FileName>planner.c</FileName>
+              <FileName>planner_new.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\module\planner.c</FilePath>
+              <FilePath>..\module\planner_new.c</FilePath>
+            </File>
+            <File>
+              <FileName>stepper.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\module\stepper.c</FilePath>
             </File>
           </Files>
         </Group>

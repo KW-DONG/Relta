@@ -3,16 +3,12 @@
 
 void Bsp_Stepper_Init(void)
 {
-    // NVIC_InitTypeDef NVIC_InitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseInitStructure;
-	TIM_OCInitTypeDef  TIM_OCInitStructure;
-
+	
 	//Enables or disables the AHB1 peripheral clock.
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOD|RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOF,ENABLE);
 
-    //Changes the mapping of the specified pin.
-	
+    //direction pin
 	GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_15|GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_100MHz;
@@ -23,9 +19,11 @@ void Bsp_Stepper_Init(void)
     GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_7;
     GPIO_Init(GPIOC,&GPIO_InitStructure);
 
+    //A4988 microstepping
     GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8;
     GPIO_Init(GPIOF,&GPIO_InitStructure);
 
+    //detect pin
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_11;
@@ -137,9 +135,9 @@ void Bsp_TIM4_PWM_Init(uint32_t psc)
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;
  	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
-	TIM_OC4Init(TIM4, &TIM_OCInitStructure);
+	TIM_OC1Init(TIM4, &TIM_OCInitStructure);
 
-	TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Enable);
+	TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);
  
     TIM_ARRPreloadConfig(TIM4,ENABLE); 
 
@@ -174,7 +172,7 @@ void Bsp_LED_Init(void)
 {    	 
     GPIO_InitTypeDef  GPIO_InitStructure;
 
-    RCC_AHB1PeriphClockCmd(GPIOF, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOF, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
@@ -366,9 +364,5 @@ void Bsp_EXTI3_Init(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }
-
-
-
-
 
 

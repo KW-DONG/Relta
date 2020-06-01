@@ -13,12 +13,13 @@
 ".\objects\buffer.o"
 ".\objects\delta.o"
 ".\objects\gcode.o"
-".\objects\motion.o"
-".\objects\planner.o"
+".\objects\machine.o"
+".\objects\planner_new.o"
+".\objects\stepper.o"
 ".\objects\main.o"
 ".\objects\stm32f4xx_it.o"
 ".\objects\system_stm32f4xx.o"
---strict --scatter ".\Objects\Relta.sct"
+--library_type=microlib --strict --scatter ".\Objects\Relta.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list ".\Listings\Relta.map" -o .\Objects\Relta.axf

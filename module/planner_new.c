@@ -11,7 +11,7 @@ void Line_Z_Planner(float dz, float feedrate)
 {
     uint32_t step = dz * STEPS_PER_UNIT;
     
-    static block_t new_block;
+    block_t new_block;
     uint8_t dir;
     if (dz>0)   dir = carriage_UP;
     else        dir = carriage_DOWN;
@@ -23,19 +23,19 @@ void Line_Z_Planner(float dz, float feedrate)
         new_block.maximum_velocity[i] = feedrate;
         new_block.maximum_freq[i] = (uint32_t)(feedrate*(float)STEPS_PER_UNIT);
     }
-    Block_Buff_Write(new_block,&block_buffer);
+    while(Block_Buff_Write(new_block,&block_buffer));
 }
 
 void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 {
-    static float abc_l[3];
-    static float abc[3];
-    static float xyz_v[3];
-    static float abc_v[3];
+    float abc_l[3];
+    float abc[3];
+    float xyz_v[3];
+    float abc_v[3];
     float d_x;
     uint8_t xy_single = 2;
     uint8_t pulse = 0;
-    static block_t new_block;
+    block_t new_block;
 
     Velocity_Decouple(xyz_c,xyz_t,xyz_v,feedrate);
     Inverse_Kinematics(xyz_c,abc_l);
@@ -59,14 +59,14 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
             Inverse_Kinematics(xyz_c,abc);
             Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
             Block_Init(&new_block, abc, abc_l, abc_v);
-            Block_Buff_Write(new_block, &block_buffer);
+            while(Block_Buff_Write(new_block, &block_buffer));
         }
     }else
     {
         float m_y = (xyz_t[1] - xyz_c[1])*INV(xyz_t[0] - xyz_c[0]);
         float m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[0] - xyz_c[0]);
         float x_new = xyz_c[0];
-        for (;fabsf(xyz_t[0]-xyz_c[0])>0.01;)//error
+        for (;fabsf(xyz_t[0]-xyz_c[0])>0.01f;)//error
         {
             Inverse_Kinematics(xyz_c,abc);
             Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
@@ -91,7 +91,7 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
             {
                 Block_Init(&new_block, abc, abc_l, abc_v);
                 if (new_block.step[0]!=0||new_block.step[1]!=0||new_block.step[2]!=0)
-                Block_Buff_Write(new_block, &block_buffer);
+                while(Block_Buff_Write(new_block, &block_buffer));
             }
             pulse = 0;
         }
@@ -159,7 +159,7 @@ void Block_Init(block_t* new_block, float* abc, float* abc_l, float* abc_v)
     {
         new_block->step[i] = (uint32_t)(fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT);
         new_block->maximum_velocity[i] = abc_v[i];
-        new_block->flag = block_init;
+        new_block->flag = block_ready;
         if (abc[i]>abc_l[i])    new_block->dir[i] = carriage_UP;
         else                    new_block->dir[i] = carriage_DOWN;
         new_block->entry_velocity[i] = block_buffer.content[block_buffer.tail].leave_velocity[i];

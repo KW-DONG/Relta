@@ -50,7 +50,7 @@
 #define x3  (R-r)*cosf(n3)//0
 #define y3  (R-r)*sinf(n3)//-91.85
 
-#define BUFF_LEN    2000
+#define BUFF_LEN    20
 
 typedef struct 
 {
@@ -118,12 +118,12 @@ void Jacobian_Matrix(float* xyz_v, float* xyz, float* abc, float* abc_v)
 
 uint8_t Block_Buff_Write(block_t block, block_buff_t* ring_buff)
 {
-    if(ring_buff->length >= BUFF_LEN) return 0;
+    if(ring_buff->length >= BUFF_LEN) return 1;
 
     ring_buff->content[ring_buff->tail] = block;
     ring_buff->tail = (ring_buff->tail+1)%BUFF_LEN;
     ring_buff->length ++;
-    return 1;
+    return 0;
 }
 
 void Block_Buff_Clear(block_buff_t* ring_buff)

@@ -7,12 +7,21 @@
 //the functions will be called in the interrupt
 //avoid using complex calulation and float calculation
 
+void Micro_Step_Init(uint8_t ms)
+{
+    if (ms==2||ms==8|ms==16)    MS1_HIGH;
+    else                        MS1_LOW;
+    if (ms==4||ms==8|ms==16)    MS2_HIGH;
+    else                        MS2_LOW;
+    if (ms==16)                 MS3_HIGH;
+    else                        MS3_LOW;
+}
 
 void Stepper_Init(stepper_t* stepperX)
 {
     stepperX->state = stepper_OFF;
     stepperX->dir = carriage_DOWN;
-    stepperX->freq = 1;
+    stepperX->freq = 10;
     stepperX->pin_state = 0;
     stepperX->pin_state_last = 0;
 }

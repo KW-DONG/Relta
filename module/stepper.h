@@ -7,7 +7,6 @@
 extern stepper_t stepperA;
 extern stepper_t stepperB;
 extern stepper_t stepperC;
-extern block_buff_t block_buff;
 extern machine_t machine;
 
 uint8_t Stepper_A_Pulse(void);
@@ -23,6 +22,8 @@ void Stepper_A_Update(void);
 void Stepper_B_Update(void);
 
 void Stepper_C_Update(void);
+
+void Micro_Step_Init(uint8_t ms);
 
 
 #endif

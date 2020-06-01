@@ -1,8 +1,9 @@
 #include "machine.h"
 #include "config.h"
 #include "delta.h"
+#include <math.h>
 
-void Machine_Init()
+void Machine_Init(void)
 {
     machine.abc[0] = CARRIAGE_A_RESET;
     machine.abc[1] = CARRIAGE_B_RESET;
@@ -15,7 +16,7 @@ void Machine_Init()
     machine.state = machine_OFF;
 }
 
-Machine_Update()
+void Machine_Update(void)
 {
     for (uint8_t i=0;i<3;i++)
     machine.abc[i] = machine.abc[i] + (float)(abs(machine.carriage_move[i])/(machine.carriage_move[i]))*INV((float)GRID_LEN);

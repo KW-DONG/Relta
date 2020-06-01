@@ -17,8 +17,10 @@
 #define INV(x)  (1.0f / (x))
 #define E(x)    (powf(10.0f,x))
 #define PI      3.14f
+#define RSQRT(x)    (1.0f / sqrtf(x))
+#define HYPOT2(x,y) (SQ(x)+SQ(y))
 
-#define RINGBUFF_LEN 2000
+#define RINGBUFF_LEN 5
 
 #define TRUE 1
 #define FALSE 0
@@ -76,7 +78,11 @@ typedef struct
     uint8_t     flag;
 }block_t;
 
-enum {block_ready, block_busy, block_init};
+enum {block_ready,  //ready to be executed
+    block_exe,      //is executing
+    block_free,     //has been executed and is ready to be planned
+    block_busy,     //planning
+    };
 
 typedef struct
 {
@@ -105,16 +111,17 @@ typedef struct
 
 enum machine_state
 {
-    machine_ON,
     machine_OFF,
+    machine_ON,
     machine_RESET,
     machine_ERROR
 };
 
 /**************************BSP_BUFF*************************/
 
-enum{stepper_ON, stepper_OFF, carriage_UP,carriage_DOWN};
+enum{stepper_OFF, stepper_ON};
 
+enum{carriage_DOWN, carriage_UP};
 
 typedef struct _stepper
 {
