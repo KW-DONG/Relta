@@ -154,15 +154,16 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
     static float abc[3];
     static float xyz_v[3];
     static float abc_v[3];
-    float d_x;
+    float d_x = 0.f;
+    float d_y = 0.f;
     uint8_t xy_single = 2;
     uint8_t pulse = 0;
 
     Velocity_Decouple(xyz_c,xyz_t,xyz_v,feedrate);
     Inverse_Kinematics(xyz_c,abc_l);
 
-    if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f)         xy_single = 1;
-    else if ((xyz_c[0]-xyz_t[0])!=0.f&&(xyz_c[1]-xyz_t[1])==0.f)    xy_single = 0;
+    if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f&&((xyz_c[1]-xyz_t[1])>=(xyz_c[2]-xyz_t[2])))     d_y = GRID_LEN*fabsf(xyz_c[1]-xyz_t[1]);
+    else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f&&((xyz_c[1]-xyz_t[1])<(xyz_c[2]-xyz_t[2]))) d_y = GRID_LEN*fabsf(xyz_c[1]-xyz_t[1])*INV(xyz_c[2]-xyz_t[2]);
     else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])==0.f)
     {
         Line_Z_Planner(xyz_t[2]-xyz_c[2],feedrate);
@@ -172,23 +173,44 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
             d_x = GRID_LEN*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[1]-xyz_t[1]));
     else if (fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[1]-xyz_t[1]))
             d_x = GRID_LEN*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[2]-xyz_t[2]));
+    else    d_x = GRID_LEN*fabsf(xyz_c[0]-xyz_t[0]);
     
-    if (xy_single!=2)
+    if (d_y!=0.f)
     {
-        for (;xyz_t[xy_single]!=xyz_c[xy_single];xyz_c[xy_single] = xyz_c[xy_single] + 0.1f*fabsf(xyz_c[xy_single]-xyz_t[xy_single])*INV(xyz_c[xy_single]-xyz_t[xy_single]))
+        uint64_t step = (uint64_t)(fabsf(xyz_t[1]-xyz_c[1])*INV(d_y));
+        float y_new = xyz_c[1];
+        uint8_t pulse;
+        float m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[1] - xyz_c[1]);
+        for (;step>0;)
         {
-            Inverse_Kinematics(xyz_c,abc);
-            Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
-            block_t new_block;
-            for (uint8_t i=0;i<3;i++)
+            y_new = y_new + d_y;
+            if ((fabsf(m_z*y_new - xyz_c[2])>=(0.5f*GRID_LEN))&&(xyz_c[2]!=xyz_t[2]))
             {
-                new_block.step[i] = (uint32_t)(fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT);
-                new_block.maximum_velocity[i] = abc_v[i];
-                if (abc[i]>abc_l[i])    new_block.dir[i] = 1;
-                else                    new_block.dir[i] = 0;
-                abc_l[i] = abc[i];
+                pulse = 1;
+                xyz_c[2] += GRID_LEN*fabsf(xyz_t[2]-xyz_c[2])*INV(xyz_t[2]-xyz_c[2]);
             }
-            Block_Buff_Write(new_block, &block_buffer);
+            if (fabsf(xyz_c[1] - y_new)>=GRID_LEN)
+            {
+                pulse = 1;
+                xyz_c[1] += GRID_LEN*fabsf(xyz_t[1]-xyz_c[1])*INV(xyz_t[1]-xyz_c[1]);
+                step--;
+            }
+            if (pulse !=0)
+            {
+                Inverse_Kinematics(xyz_c,abc);
+                Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
+                block_t new_block;
+                for (uint8_t i=0;i<3;i++)
+                {
+                    new_block.step[i] = (uint32_t)(fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT);
+                    new_block.maximum_velocity[i] = abc_v[i];
+                    if (abc[i]>abc_l[i])    new_block.dir[i] = 1;
+                    else                    new_block.dir[i] = 0;
+                    abc_l[i] = abc[i];
+                }
+                Block_Buff_Write(new_block, &block_buffer);
+                pulse = 0;
+            }
         }
     }else
     {
@@ -198,8 +220,7 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
         uint64_t step = (uint64_t)(fabsf(xyz_t[0]-xyz_c[0])*INV(d_x));
         for (;step>0;)//error
         {
-            Inverse_Kinematics(xyz_c,abc);
-            Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
+            
             ///B's method
             x_new = x_new + d_x;
             if ((fabsf(m_y*x_new - xyz_c[1])>=(0.5f*GRID_LEN))&&(xyz_c[1]!=xyz_t[1]))
@@ -220,6 +241,8 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
             }
             if (pulse == 1)
             {
+                Inverse_Kinematics(xyz_c,abc);
+                Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
                 block_t new_block;
                 
                  for (uint8_t i=0;i<3;i++)
@@ -241,8 +264,8 @@ void Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 
 int main (void)
 {
-    float xyz_c[3] = {-90.f,-90.f,0.f};
-    float xyz_t[3] = {90.f,90.f,30.f};
+    float xyz_c[3] = {90.f,0.f,90.f};
+    float xyz_t[3] = {90.f,90.f,90.f};
     block_buffer.head = 0;
     block_buffer.length = 0;
     block_buffer.tail = 0;
