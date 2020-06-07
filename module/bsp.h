@@ -2,6 +2,8 @@
 
 #include "type.h"
 
+void Bsp_Microstep_force(void);
+
 void Bsp_Stepper_Init(void);
 
 void Bsp_Switch_Init(void);

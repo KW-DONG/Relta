@@ -16,6 +16,7 @@
 ".\objects\machine.o"
 ".\objects\planner_new.o"
 ".\objects\stepper.o"
+".\objects\test.o"
 ".\objects\main.o"
 ".\objects\stm32f4xx_it.o"
 ".\objects\system_stm32f4xx.o"

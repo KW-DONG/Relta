@@ -43,8 +43,8 @@ void Forward_Kinematics(float* abc, float* xyz)
 
   // We now have the d, i and j values defined in Wikipedia.
   // Plug them into the equations defined in Wikipedia for Xnew, Ynew and Znew
-  Xnew = (d2) * inv_d * 0.5,
-  Ynew = ((SQ(i) + j2) * 0.5 - i * Xnew) * inv_j,
+  Xnew = (d2) * inv_d * 0.5f,
+  Ynew = ((SQ(i) + j2) * 0.5f - i * Xnew) * inv_j,
   Znew = sqrtf(SQ(L) - HYPOT2(Xnew, Ynew));//
 
   // Start from the origin of the old coordinates and add vectors in the
