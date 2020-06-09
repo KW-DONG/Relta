@@ -3,13 +3,13 @@
         {
             "name": "Win32",
             "includePath": [
-                "D:\\CodeStorage\\Relta\\core",
-                "D:\\CodeStorage\\Relta\\module",
-                "D:\\CodeStorage\\Relta\\library\\std\\inc",
-                "D:\\CodeStorage\\Relta\\user\\LDR_v0.2",
-                "D:\\CodeStorage\\Relta\\library\\atom\\delay",
-                "D:\\CodeStorage\\Relta\\library\\atom\\sys",
-                "D:\\CodeStorage\\Relta\\test",
+                "C:\\Users\\KW_DONG\\Documents\\GitHub\\Relta\\core",
+                "C:\\Users\\KW_DONG\\Documents\\GitHub\\Relta\\module",
+                "C:\\Users\\KW_DONG\\Documents\\GitHub\\Relta\\library\\std\\inc",
+                "C:\\Users\\KW_DONG\\Documents\\GitHub\\Relta\\user\\LDR_v0.2",
+                "C:\\Users\\KW_DONG\\Documents\\GitHub\\Relta\\library\\atom\\delay",
+                "C:\\Users\\KW_DONG\\Documents\\GitHub\\Relta\\library\\atom\\sys",
+                "C:\\Users\\KW_DONG\\Documents\\GitHub\\Relta\\test",
                 "${workspaceFolder}/core"
             ],
             "defines": [
