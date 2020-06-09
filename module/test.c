@@ -3,6 +3,8 @@
 #include "type.h"
 #include "buffer.h"
 
+//preloaded path
+
 const float path_0[7][4] = {{0.f,0.f,0.f,20.f}
                            ,{90.f,90.f,0.f,20.f}
                            ,{-90.f,90.f,0.f,20.f}
