@@ -30,22 +30,25 @@ uint8_t Line_Z_Planner(float dz, float feedrate)
 
 uint8_t Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 {
-    float abc_l[3];
-    float abc[3];
+    static float abc_l[3];
+    static float abc[3];
     float xyz_v[3];
     float abc_v[3];
-    float d_x = 0.f;
-    float d_y = 0.f;
+    float d_x = 0.f;//always positive
+    float d_y = 0.f;//always positive
     uint8_t pulse = 0;
 
+    //decouple the feedrate
     Velocity_Decouple(xyz_c,xyz_t,xyz_v,feedrate);
+
+    //apply inverse kinematics
     Inverse_Kinematics(xyz_c,abc_l);
 
-    //dx = 0, dy != 0 and dy > dz
-    if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])>GRID_LEN&&(fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[2]-xyz_t[2])))       d_y = GRID_LEN;
-    //dx = 0, dy != 0 and dy < dz
-    else if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])>GRID_LEN&&(fabsf(xyz_c[1]-xyz_t[1])<fabsf(xyz_c[2]-xyz_t[2])))   d_y = GRID_LEN*fabsf(xyz_c[1]-xyz_t[1])*INV(xyz_c[2]-xyz_t[2]);
-    //dx = 0, dy = 0 and dz != 0
+    //step_x = 0, step_y != 0 and step_y >= step_z
+    if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])>GRID_LEN&&(fabsf(fabsf(xyz_c[1]-xyz_t[1])-fabsf(xyz_c[2]-xyz_t[2]))>=GRID_LEN))      d_y = GRID_LEN;
+    //step_x = 0, step_y != 0 and step_y < step_z
+    else if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])>GRID_LEN&&(fabsf(fabsf(xyz_c[1]-xyz_t[1])-fabsf(xyz_c[2]-xyz_t[2]))<GRID_LEN))    d_y = GRID_LEN*fabsf(xyz_c[1]-xyz_t[1])*INV(fabsf(xyz_c[2]-xyz_t[2]));
+    //step_x = 0, step_y = 0 and step_z != 0
     else if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])<GRID_LEN)
     {
         if (block_buffer.length<RINGBUFF_LEN)
@@ -55,11 +58,11 @@ uint8_t Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
             return 0;
         }else   return 1;
     }
-    //dx != 0 and dy max
+    //step_x != 0 and step_y max
     else if (fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[2]-xyz_t[2]))    d_x = GRID_LEN*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[1]-xyz_t[1]));
-    //dx != 0 and dz max
+    //step_x != 0 and step_z max
     else if (fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[0]-xyz_t[0])&&fabsf(xyz_c[2]-xyz_t[2])>=fabsf(xyz_c[1]-xyz_t[1]))    d_x = GRID_LEN*fabsf(xyz_c[0]-xyz_t[0])*INV(fabsf(xyz_c[2]-xyz_t[2]));
-    //dx != 0 and dx max
+    //step_x != 0 and step_x max
     else    d_x = GRID_LEN;
     
     if (d_y!=0.f)
@@ -68,12 +71,13 @@ uint8_t Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
         float y_new = xyz_c[1];
         uint8_t pulse;
         //calculate gradient
-        float m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[1] - xyz_c[1]);
+        float m_z = 0.f;
+        if (fabsf(xyz_t[2]-xyz_c[2]>=GRID_LEN))  m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[1] - xyz_c[1]);
 
         for (;step>0&&block_buffer.length<RINGBUFF_LEN;)
         {
-            if ((xyz_t[1]-xyz_c[1])>0)          y_new = y_new + d_y;
-            else if ((xyz_t[1]-xyz_c[1])<0)     y_new = y_new - d_y;
+            if ((xyz_t[1]-xyz_c[1])>GRID_LEN)          y_new = y_new + d_y;
+            else if ((xyz_t[1]-xyz_c[1])<-GRID_LEN)     y_new = y_new - d_y;
             else                                return 0;
             if ((fabsf(m_z*y_new - xyz_c[2])>=(0.5f*GRID_LEN))&&(xyz_c[2]!=xyz_t[2]))
             {
@@ -102,17 +106,21 @@ uint8_t Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
         else        return 0;
     }else
     {
-        float m_y = (xyz_t[1] - xyz_c[1])*INV(xyz_t[0] - xyz_c[0]);
-        float m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[0] - xyz_c[0]);
+        float m_y = 0.f;
+        float m_z = 0.f;
+        
+        if (fabsf(xyz_t[1]-xyz_c[1]>=GRID_LEN)) m_y = (xyz_t[1] - xyz_c[1])*INV(xyz_t[0] - xyz_c[0]);
+        if (fabsf(xyz_t[2]-xyz_c[2]>=GRID_LEN)) m_z = (xyz_t[2] - xyz_c[2])*INV(xyz_t[0] - xyz_c[0]);
+
         float x_new = xyz_c[0];
         uint64_t step = (uint64_t)(fabsf(xyz_t[0]-xyz_c[0])*INV(d_x));
 
 
-        for (;step>0&&block_buffer.length<RINGBUFF_LEN;)//error
+        for (;step>0&&block_buffer.length<RINGBUFF_LEN;)
         {
             ///B's method
-            if ((xyz_t[0]-xyz_c[0])>0)          x_new = x_new + d_x;
-            else if ((xyz_t[0]-xyz_c[0])<0)     x_new = x_new - d_x;
+            if ((xyz_t[0]-xyz_c[0])>GRID_LEN)          x_new = x_new + d_x;
+            else if ((xyz_t[0]-xyz_c[0])<-GRID_LEN)     x_new = x_new - d_x;
             else                                return 0;
             if ((fabsf(m_y*x_new - xyz_c[1])>=(0.5f*GRID_LEN))&&(xyz_c[1]!=xyz_t[1]))
             {
@@ -196,14 +204,15 @@ void Block_Init(block_t* new_block, float* abc, float* abc_l, float* abc_v)
     new_block->flag = block_ready;
     for (uint8_t i=0;i<3;i++)
     {
-        new_block->step[i] = (uint32_t)(fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT);
+        
+        new_block->step[i] = (uint32_t)roundf((fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT));
         new_block->maximum_velocity[i] = abc_v[i];
         
         if (abc[i]>abc_l[i])    new_block->dir[i] = carriage_UP;
         else                    new_block->dir[i] = carriage_DOWN;
         new_block->entry_velocity[i] = block_buffer.content[block_buffer.tail].leave_velocity[i];
         new_block->leave_velocity[i] = 0.f;
-        new_block->maximum_freq[i] = (uint32_t)(fabs(abc_v[i])*(float)STEPS_PER_UNIT);
+        new_block->maximum_freq[i] = (uint32_t)roundf(fabs(abc_v[i])*(float)STEPS_PER_UNIT);
         abc_l[i] = abc[i];
     }
 }
