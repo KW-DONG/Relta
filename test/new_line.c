@@ -20,7 +20,7 @@
 #define n1 0.0f
 #define n2 3.14f
 #define n3 3.14f*3.0f*INV(2.0f)
-#define GRID_LEN 1.f    //mm
+#define GRID_LEN 0.1f    //mm
 
 #define CARRIAGE_A_RESET    326.25f
 #define CARRIAGE_B_RESET    326.25f
@@ -35,7 +35,7 @@
 
 //steps per mm
 //use (360/1.8*16)/(2*20)
-#define STEPS_PER_UNIT      20
+#define STEPS_PER_UNIT      80
 
 #define R   (DELTA_TOWER_RADIUS - DELTA_CARRIAGE_OFFSET)
 #define r   DELTA_EFFECTOR_RADIUS
@@ -205,6 +205,91 @@ uint8_t Line_Z_Planner(float dz, float feedrate)
     return 0;
 }
 
+uint8_t Line_XYZ_Planner_1(float* xyz_i, float* xyz_c, float* xyz_t, float feedrate)
+{
+    float abc_l[3];
+    float abc[3];
+    float xyz_v[3];
+    float abc_v[3];
+    float m_xy = 0.f;
+    float m_xz = 0.f;
+    float m_yx = 0.f;
+    float m_yz = 0.f;
+    float m_zx = 0.f;
+    float m_zy = 0.f;
+    uint64_t step = 0;
+
+    Inverse_Kinematics(xyz_c,abc_l);
+    Velocity_Decouple(xyz_i,xyz_t,xyz_v,feedrate);
+
+    //dx max and dx > 0
+    if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])<GRID_LEN)
+    {
+        if (block_buffer.length<BUFF_LEN)
+        {
+            Line_Z_Planner(xyz_t[2]-xyz_c[2],feedrate);
+            for (uint8_t i=0;i<3;i++)   xyz_c[i] = xyz_t[i];
+            return 0;
+        }else   return 1;
+    }else if (fabsf(xyz_t[0]-xyz_i[0])>=GRID_LEN&&fabsf(xyz_t[0]-xyz_i[0])>=fabsf(xyz_t[1]-xyz_i[1])&&fabsf(xyz_t[0]-xyz_i[0])>=fabsf(xyz_t[2]-xyz_i[2]))
+    {
+        m_xy = (xyz_t[1] - xyz_i[1])*INV(xyz_t[0] - xyz_i[0]);
+        m_xz = (xyz_t[2] - xyz_i[2])*INV(xyz_t[0] - xyz_i[0]);
+        step = (uint64_t)roundf(fabsf(xyz_t[0]-xyz_i[0])*(float)STEPS_PER_UNIT);
+    
+        //dy max and dy > 0
+    }else if (fabsf(xyz_t[1]-xyz_i[1])>=GRID_LEN&&fabsf(xyz_t[1]-xyz_i[1])>=fabsf(xyz_t[0]-xyz_i[0])&&fabsf(xyz_t[1]-xyz_i[1])>=fabsf(xyz_t[2]-xyz_i[2]))
+    {
+        m_yx = (xyz_t[0] - xyz_i[0])*INV(xyz_t[1] - xyz_i[1]);
+        m_yz = (xyz_t[2] - xyz_i[2])*INV(xyz_t[1] - xyz_i[1]);
+        step = (uint64_t)roundf(fabsf(xyz_t[1]-xyz_i[1])*(float)STEPS_PER_UNIT);
+
+        //dz max and dz > 0
+    }else if (fabsf(xyz_t[2]-xyz_i[2])>=GRID_LEN&&fabsf(xyz_t[2]-xyz_i[2])>=fabsf(xyz_t[0]-xyz_i[0])&&fabsf(xyz_t[2]-xyz_i[2])>=fabsf(xyz_t[1]-xyz_i[1]))
+    {
+        m_zx = (xyz_t[0] - xyz_i[0])*INV(xyz_t[2] - xyz_i[2]);
+        m_zy = (xyz_t[1] - xyz_i[1])*INV(xyz_t[2] - xyz_i[2]);
+        step = (uint64_t)roundf(fabsf(xyz_t[2]-xyz_i[2])*(float)STEPS_PER_UNIT);
+    }else   return 0;
+    
+
+    for (;step>0&&block_buffer.length<(BUFF_LEN);step--)
+    {
+        if (fabsf(xyz_t[0]-xyz_c[0])>=GRID_LEN&&fabsf(xyz_t[0]-xyz_c[0])>=fabsf(xyz_t[1]-xyz_c[1])&&fabsf(xyz_t[0]-xyz_c[0])>=fabsf(xyz_t[2]-xyz_c[2])
+            ||((fabsf(xyz_t[1]-xyz_c[1])>=GRID_LEN&&fabsf(xyz_t[1]-xyz_c[1])>=fabsf(xyz_t[0]-xyz_c[0])&&fabsf(xyz_t[1]-xyz_c[1])>=fabsf(xyz_t[2]-xyz_c[2]))
+                &&(fabsf(m_yx*xyz_c[1] + xyz_i[0] - xyz_c[0])>=(0.5f*GRID_LEN)))
+            ||((fabsf(xyz_t[2]-xyz_c[2])>=GRID_LEN&&fabsf(xyz_t[2]-xyz_c[2])>=fabsf(xyz_t[0]-xyz_c[0])&&fabsf(xyz_t[2]-xyz_c[2])>=fabsf(xyz_t[1]-xyz_c[1]))
+                &&(fabsf(m_zx*xyz_c[2] + xyz_i[0] - xyz_c[0])>=(0.5f*GRID_LEN))))
+        xyz_c[0] += GRID_LEN*fabsf(xyz_t[0]-xyz_c[0])*INV(xyz_t[0]-xyz_c[0]);
+
+        if (fabsf(xyz_t[1]-xyz_c[1])>=GRID_LEN&&fabsf(xyz_t[1]-xyz_c[1])>fabsf(xyz_t[0]-xyz_c[0])&&fabsf(xyz_t[1]-xyz_c[1])>=fabsf(xyz_t[2]-xyz_c[2])
+            ||((fabsf(xyz_t[0]-xyz_c[0])>=GRID_LEN&&fabsf(xyz_t[0]-xyz_c[0])>=fabsf(xyz_t[1]-xyz_c[1])&&fabsf(xyz_t[0]-xyz_c[0])>=fabsf(xyz_t[2]-xyz_c[2]))
+                &&(fabsf(m_xy*(xyz_c[0]) + xyz_i[1] - xyz_c[1])>=(0.5f*GRID_LEN)))
+            ||((fabsf(xyz_t[2]-xyz_c[2])>=GRID_LEN&&fabsf(xyz_t[2]-xyz_c[2])>fabsf(xyz_t[0]-xyz_c[0])&&fabsf(xyz_t[2]-xyz_c[2])>fabsf(xyz_t[1]-xyz_c[1]))
+                &&(fabsf(m_zy*xyz_c[2] + xyz_i[1] - xyz_c[1])>=(0.5f*GRID_LEN))))
+        xyz_c[1] += GRID_LEN*fabsf(xyz_t[1]-xyz_c[1])*INV(xyz_t[1]-xyz_c[1]);
+
+
+        if (fabsf(xyz_t[2]-xyz_c[2])>=GRID_LEN&&fabsf(xyz_t[2]-xyz_c[2])>fabsf(xyz_t[0]-xyz_c[0])&&fabsf(xyz_t[2]-xyz_c[2])>fabsf(xyz_t[1]-xyz_c[1])
+            ||((fabsf(xyz_t[0]-xyz_c[0])>=GRID_LEN&&fabsf(xyz_t[0]-xyz_c[0])>=fabsf(xyz_t[1]-xyz_c[1])&&fabsf(xyz_t[0]-xyz_c[0])>=fabsf(xyz_t[2]-xyz_c[2]))
+                &&(fabsf(m_xz*xyz_c[0] + xyz_i[2] - xyz_c[2])>=(0.5f*GRID_LEN)))
+            ||((fabsf(xyz_t[1]-xyz_c[1])>=GRID_LEN&&fabsf(xyz_t[1]-xyz_c[1])>fabsf(xyz_t[0]-xyz_c[0])&&fabsf(xyz_t[1]-xyz_c[1])>=fabsf(xyz_t[2]-xyz_c[2]))
+                &&(fabsf(m_yz*xyz_c[1] + xyz_i[2] - xyz_c[2])>=(0.5f*GRID_LEN))))
+        xyz_c[2] += GRID_LEN*fabsf(xyz_t[2]-xyz_c[2])*INV(xyz_t[2]-xyz_c[2]);
+
+        Inverse_Kinematics(xyz_c,abc);
+        Jacobian_Matrix(xyz_v,xyz_c,abc,abc_v);
+
+        block_t new_block;
+        Block_Init(&new_block, abc, abc_l, abc_v);
+        if (new_block.step[0]!=0||new_block.step[1]!=0||new_block.step[2]!=0)
+        Block_Buff_Write(new_block, &block_buffer);
+    }
+    if (step>0) return 1;
+    else        return 0;
+}
+
+
 uint8_t Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
 {
     float abc_l[3];
@@ -357,7 +442,7 @@ int main (void)
     while (path_num<7)
     {
         for (uint8_t i=0;i<3;i++)   xyz_t[i] = path_0[path_num][i];
-        Line_XYZ_Planner(xyz_c,xyz_t,5.0f);
+        Line_XYZ_Planner_1(xyz_c, xyz_c,xyz_t,5.0f);
         printf("x_c:%f, y_c:%f, z_c:%f\n", xyz_c[0], xyz_c[1], xyz_c[2]);
         path_num ++;
     }

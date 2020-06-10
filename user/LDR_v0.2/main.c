@@ -71,9 +71,14 @@ int main()
     //machine.xyz_t[1] = 90.f;
     //machine.xyz_t[2] = 0.f;
     uint32_t path_num = 0;
-    for (uint8_t i=0;i<3;i++) machine.xyz_t[i] = path_0[path_num][i];
+    for (uint8_t i=0;i<3;i++)
+    {
+        machine.xyz_i[i] = machine.xyz_c[i];
+        machine.xyz_t[i] = path_0[path_num][i];
+    }
+    
     machine.feedrate = path_0[path_num][3];
-    planner_result = Line_XYZ_Planner(machine.xyz_c,machine.xyz_t,machine.feedrate);
+    planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t,machine.feedrate);
 
     
     block_t new_block;
@@ -83,20 +88,20 @@ int main()
         
         if (planner_result&&block_buffer.length<(RINGBUFF_LEN-1))
         {
-            planner_result = Line_XYZ_Planner(machine.xyz_c,machine.xyz_t,machine.feedrate);
+            planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t,machine.feedrate);
         }
         else if ((!planner_result)&&block_buffer.length<(RINGBUFF_LEN-1)&&path_num<7)
         {
             path_num++;
-            for (uint8_t i=0;i<3;i++) machine.xyz_t[i] = path_0[path_num][i];
+            for (uint8_t i=0;i<3;i++)
+            {
+                machine.xyz_i[i] = machine.xyz_c[i];
+                machine.xyz_t[i] = path_0[path_num][i];
+            }
             machine.feedrate = path_0[path_num][3];
-            planner_result = Line_XYZ_Planner(machine.xyz_c,machine.xyz_t,machine.feedrate);
+            planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t,machine.feedrate);
         }
-
-        
-        
-        
-        
+      
         /* if (block_buffer.length<(RINGBUFF_LEN-1)&&block_num<564&&block_buffer.content[block_buffer.tail].flag==block_free)
         {
             new_block.maximum_freq[0] = block_path[block_num][0][0];

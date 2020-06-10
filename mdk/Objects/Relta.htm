@@ -3,11 +3,11 @@
 <title>Static Call Graph - [.\Objects\Relta.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\Relta.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Jun 10 19:12:09 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Jun 10 23:11:40 2020
 <BR><P>
-<H3>Maximum Stack Usage =        720 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        744 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-main &rArr; Line_XYZ_Planner &rArr; Line_Z_Planner &rArr; Block_Buff_Write
+main &rArr; Line_XYZ_Planner_1 &rArr; Line_Z_Planner &rArr; Block_Buff_Write
 <P>
 <H3>
 Mutually Recursive functions
@@ -383,13 +383,13 @@ Global Symbols
 
 <P><STRONG><a name="[96]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_Z_Planner
-<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 </UL>
 
 <P><STRONG><a name="[bf]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
 
 <P><STRONG><a name="[95]"></a>__aeabi_f2ulz</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, ffixul.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<BR><BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 </UL>
 
 <P><STRONG><a name="[c0]"></a>__aeabi_llsl</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, llshl.o(.text), UNUSED)
@@ -432,7 +432,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Block_Buff_Write
 </UL>
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_Z_Planner
-<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 </UL>
 
 <P><STRONG><a name="[64]"></a>Block_Init</STRONG> (Thumb, 204 bytes, Stack size 64 bytes, planner_new.o(i.Block_Init))
@@ -440,7 +440,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_roundf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 </UL>
 
 <P><STRONG><a name="[66]"></a>Bsp_EXTI0_Init</STRONG> (Thumb, 70 bytes, Stack size 24 bytes, bsp.o(i.Bsp_EXTI0_Init))
@@ -750,7 +750,7 @@ Global Symbols
 <LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 </UL>
 
 <P><STRONG><a name="[91]"></a>Jacobian_Matrix</STRONG> (Thumb, 344 bytes, Stack size 40 bytes, delta.o(i.Jacobian_Matrix))
@@ -759,13 +759,14 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sinf
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_cosf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 </UL>
 
-<P><STRONG><a name="[92]"></a>Line_XYZ_Planner</STRONG> (Thumb, 1346 bytes, Stack size 392 bytes, planner_new.o(i.Line_XYZ_Planner))
-<BR><BR>[Stack]<UL><LI>Max Depth = 720<LI>Call Chain = Line_XYZ_Planner &rArr; Line_Z_Planner &rArr; Block_Buff_Write
+<P><STRONG><a name="[92]"></a>Line_XYZ_Planner_1</STRONG> (Thumb, 1318 bytes, Stack size 416 bytes, planner_new.o(i.Line_XYZ_Planner_1))
+<BR><BR>[Stack]<UL><LI>Max Depth = 744<LI>Call Chain = Line_XYZ_Planner_1 &rArr; Line_Z_Planner &rArr; Block_Buff_Write
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_roundf
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2ulz
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Decouple
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_Z_Planner
@@ -783,7 +784,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Block_Buff_Write
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 </UL>
 
 <P><STRONG><a name="[98]"></a>Machine_Init</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, machine.o(i.Machine_Init))
@@ -1089,7 +1090,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_sqrtf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 </UL>
 
 <P><STRONG><a name="[b0]"></a>__ARM_fpclassifyf</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, fpclassifyf.o(i.__ARM_fpclassifyf))
@@ -1114,7 +1115,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frnd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Block_Init
+<BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Block_Init
 </UL>
 
 <P><STRONG><a name="[8e]"></a>__hardfp_sinf</STRONG> (Thumb, 344 bytes, Stack size 16 bytes, sinf.o(i.__hardfp_sinf))
@@ -1199,13 +1201,13 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 </UL>
 
-<P><STRONG><a name="[5c]"></a>main</STRONG> (Thumb, 336 bytes, Stack size 0 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 720<LI>Call Chain = main &rArr; Line_XYZ_Planner &rArr; Line_Z_Planner &rArr; Block_Buff_Write
+<P><STRONG><a name="[5c]"></a>main</STRONG> (Thumb, 360 bytes, Stack size 0 bytes, main.o(i.main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 744<LI>Call Chain = main &rArr; Line_XYZ_Planner_1 &rArr; Line_Z_Planner &rArr; Block_Buff_Write
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
 <LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_init
 <LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Stepper_Init
-<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner
+<LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Line_XYZ_Planner_1
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Machine_Update
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Machine_Init
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Block_Buff_Init

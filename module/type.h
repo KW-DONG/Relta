@@ -100,6 +100,7 @@ typedef struct
     uint8_t state;
 
     //commanding tempt
+    float   xyz_i[3];
     float   xyz_c[3];//current
     float   xyz_t[3];//target
     float   feedrate;
