@@ -176,7 +176,7 @@ uint8_t Block_Buff_Write(block_t block, block_buff_t* ring_buff)
     return 0;
 }
 
-void Block_Buff_Clear(block_buff_t* ring_buff)
+void Block_Buff_Clear(volatile block_buff_t* ring_buff)
 {
     if (ring_buff->length!=0)
     {

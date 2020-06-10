@@ -4,9 +4,9 @@
 #include "type.h"
 #include "config.h"
 
-extern stepper_t stepperA;
-extern stepper_t stepperB;
-extern stepper_t stepperC;
+extern volatile stepper_t stepperA;
+extern volatile stepper_t stepperB;
+extern volatile stepper_t stepperC;
 extern machine_t machine;
 
 uint8_t Stepper_A_Pulse(void);
@@ -15,7 +15,7 @@ uint8_t Stepper_B_Pulse(void);
 
 uint8_t Stepper_C_Pulse(void);
 
-void Stepper_Init(stepper_t* stepperX);
+void Stepper_Init( volatile stepper_t* stepperX);
 
 void Stepper_A_Update(void);
 

@@ -38,7 +38,7 @@ const float path_3[7][4] = {{0.f,90.f,0.f,10.f}
                            ,{0.f,90.f,0.f,10.f}};
 
 //frequency, direction, step
-const float block_path[564][3][3] = {{{200, 100, 200},{0, 0, 0},{1560, 780, 1560}},
+const float block_path[564][3][3] = {{{200, 200, 200},{0, 0, 0},{1560, 1560, 1560}},
 {{60, 150, 150},{0, 0, 0},{12, 27, 27}},
 {{61, 151, 151},{0, 0, 0},{12, 27, 27}},
 {{62, 152, 152},{0, 0, 0},{13, 27, 27}},
@@ -592,8 +592,8 @@ void Test_Block_0()
     for (uint8_t i=0;i<3;i++)
     {
         new_block.dir[i] = carriage_DOWN;
-        new_block.maximum_freq[i] = 50;
-        new_block.step[i] = 200;
+        new_block.maximum_freq[i] = 500;
+        new_block.step[i] = 20;
     }
 		//new_block.maximum_freq[1] = 100;
 		//new_block.step[0] = 400;
@@ -608,8 +608,8 @@ void Test_Block_1()
     for (uint8_t i=0;i<3;i++)
     {
         new_block.dir[i] = carriage_UP;
-        new_block.maximum_freq[i] = 50;
-        new_block.step[i] = 200;
+        new_block.maximum_freq[i] = 500;
+        new_block.step[i] = 2000;
     }
 		//new_block.maximum_freq[1] = 100;
 		//new_block.step[1] = 400;
@@ -636,11 +636,18 @@ void Test_Block_3()
     for (uint8_t i=0;i<3;i++)
     {
         new_block.dir[i] = carriage_DOWN;
-        new_block.maximum_freq[i] = 10;
-        new_block.step[i] = 103;
     }
+
+    new_block.step[0] = 1200;
+    new_block.step[1] = 2700;
+    new_block.step[2] = 2700;
+    new_block.maximum_freq[0] = 60;
+    new_block.maximum_freq[1] = 150;
+    new_block.maximum_freq[2] = 150;
+
     Block_Buff_Write(new_block, &block_buffer);
 }
+
 
 
 

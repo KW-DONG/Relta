@@ -4,11 +4,11 @@
 #include "type.h"
 
 
-void Block_Buff_Init(block_buff_t* block);
+void Block_Buff_Init(volatile block_buff_t* block);
 
-uint8_t Block_Buff_Write(block_t block, block_buff_t* ring_buff);
+uint8_t Block_Buff_Write(block_t block,volatile block_buff_t* ring_buff);
 
-void Block_Buff_Clear(block_buff_t* ring_buff);
+void Block_Buff_Clear(volatile block_buff_t* ring_buff);
 
 void Uart_Buff_Init(uart_buff_t* uart_buff);
 

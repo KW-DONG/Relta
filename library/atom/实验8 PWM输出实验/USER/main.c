@@ -41,6 +41,13 @@
 
 #define FREQ2PSC(x)			T_CLK/(x*TIM_ARR)
 
+#define MS1_HIGH                    GPIO_SetBits(GPIOF,GPIO_Pin_6)
+#define MS1_LOW                     GPIO_ResetBits(GPIOF,GPIO_Pin_6)
+#define MS2_HIGH                    GPIO_SetBits(GPIOF,GPIO_Pin_7)
+#define MS2_LOW                     GPIO_ResetBits(GPIOF,GPIO_Pin_7)
+#define MS3_HIGH                    GPIO_SetBits(GPIOF,GPIO_Pin_8)
+#define MS3_LOW                     GPIO_ResetBits(GPIOF,GPIO_Pin_8)
+
 volatile u8 stepper1_state;
 volatile u8 stepper1_state_last;
 volatile u8 stepper2_state;
@@ -62,13 +69,14 @@ int main(void)
 { 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
 	delay_init(168);  //初始化延时函数
- 	TIM2_PWM_Init(TIM_ARR-1,FREQ2PSC(10)-1);	//84M/84=1Mhz的计数频率,重装载值500，所以PWM频率为 1M/500=2Khz.
-	TIM3_PWM_Init(TIM_ARR-1,FREQ2PSC(10)-1);
-	TIM4_PWM_Init(TIM_ARR-1,FREQ2PSC(10)-1);
+ 	TIM2_PWM_Init(TIM_ARR-1,FREQ2PSC(1000)-1);	//84M/84=1Mhz的计数频率,重装载值500，所以PWM频率为 1M/500=2Khz.
+	TIM3_PWM_Init(TIM_ARR-1,FREQ2PSC(1000)-1);
+	TIM4_PWM_Init(TIM_ARR-1,FREQ2PSC(1000)-1);
 	TIM5_Init(TIM_ARR-1, FREQ2PSC(5000)-1);
 	TIM2_PWM_Detect();
 	TIM3_PWM_Detect();
 	TIM4_PWM_Detect();
+	//PWM4_Manual_Init();
 	LED_Init();
 	
 	stepper1_state = 0;
@@ -77,22 +85,31 @@ int main(void)
 	stepper2_state_last = 0;
 	stepper3_state = 0;
 	stepper3_state_last = 0;
-	TIM_SetCompare4(TIM2,2000);
-	TIM_SetCompare1(TIM3,2000);
-	TIM_SetCompare1(TIM4,2000);
+	TIM_SetCompare4(TIM2,1);
+	TIM_SetCompare1(TIM3,1);
+	TIM_SetCompare1(TIM4,1);
+	Bsp_Stepper_Init();
 	step_1 = 0;
 	step_2 = 0;
 	step_3 = 0;
+	MS1_HIGH;
+	MS2_HIGH;
+	MS3_HIGH;
+	DIR_A_UP;
+	DIR_B_UP;
+	DIR_C_UP;
 	
 
    while(1) //实现比较值从0-300递增，到300后从300-0递减，循环
 	{
 		GPIO_ResetBits(GPIOF,GPIO_Pin_9);  //LED0对应引脚GPIOF.9拉低，亮  等同LED0=0;
 		GPIO_SetBits(GPIOF,GPIO_Pin_10);   //LED1对应引脚GPIOF.10拉高，灭 等同LED1=1;
-		delay_ms(100);  		   //延时300ms
+		//GPIO_SetBits(GPIOB,GPIO_Pin_6);
+		delay_ms(1);  		   //延时300ms
 		GPIO_SetBits(GPIOF,GPIO_Pin_9);	   //LED0对应引脚GPIOF.0拉高，灭  等同LED0=1;
 		GPIO_ResetBits(GPIOF,GPIO_Pin_10); //LED1对应引脚GPIOF.10拉低，亮 等同LED1=0;
-		delay_ms(100);
+		//GPIO_ResetBits(GPIOB,GPIO_Pin_6);
+		delay_ms(1);
 		
  	}
 }
@@ -101,17 +118,18 @@ void TIM5_IRQHandler()
 {
 	if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
-		stepper1_freq = STEPPER_A_FREQ;
-		stepper2_freq = STEPPER_B_FREQ;
-		stepper3_freq = STEPPER_C_FREQ;
 		
-		if (step_1>10000)	step_1 = 0;
-		if (step_2>1000)	step_2 = 0;
-		if (step_3>100)		step_3 = 0;
+		//stepper1_freq = STEPPER_A_FREQ;
+		//stepper2_freq = STEPPER_B_FREQ;
+		//stepper3_freq = STEPPER_C_FREQ;
 		
-		if (stepper1_freq>1000)		stepper1_freq = 10;
-		if (stepper2_freq>1000)		stepper2_freq = 10;
-		if (stepper3_freq>1000)		stepper3_freq = 10;
+		//if (step_1>10000)	step_1 = 0;
+		//if (step_2>1000)	step_2 = 0;
+		//if (step_3>100)		step_3 = 0;
+		
+		//if (stepper1_freq>1000)		stepper1_freq = 10;
+		//if (stepper2_freq>1000)		stepper2_freq = 10;
+		//if (stepper3_freq>1000)		stepper3_freq = 10;
 		
 		
 		stepper1_state = STEPPER_A_SCAN;

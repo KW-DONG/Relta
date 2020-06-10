@@ -68,7 +68,7 @@
 
 //steps per mm
 //use (360/1.8*16)/(2*20)
-#define STEPS_PER_UNIT      20
+#define STEPS_PER_UNIT      80
 
 //carriage specification
 #define MAX_ACCELERATION    1000    //mm per sec per sec
@@ -118,7 +118,7 @@
 #define STEPPER_A_FREQ_UPDATE(f)    TIM_PrescalerConfig(TIM2,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Update)
 #define DIR_A_DOWN                  GPIO_SetBits(GPIOA, GPIO_Pin_15)
 #define DIR_A_UP                    GPIO_ResetBits(GPIOA, GPIO_Pin_15)
-#define STEPPER_A_SCAN              GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_2)
+#define STEPPER_A_SCAN              (TIM2->CNT)>(TIM2->CCR4)
 #define STEPPER_A_FREQ              T_CLK/(TIM2->PSC*TIM2->ARR)
 #define STEPPER_A_CCR               TIM2->CCR4
 #define STEPPER_A_DIR               GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_15)
@@ -128,7 +128,7 @@
 #define STEPPER_B_FREQ_UPDATE(f)    TIM_PrescalerConfig(TIM3,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Update)
 #define DIR_B_DOWN                  GPIO_SetBits(GPIOC, GPIO_Pin_7)
 #define DIR_B_UP                    GPIO_ResetBits(GPIOC, GPIO_Pin_7)
-#define STEPPER_B_SCAN              GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11)
+#define STEPPER_B_SCAN              (TIM3->CNT)>(TIM3->CCR1)
 #define STEPPER_B_FREQ              T_CLK/(TIM3->PSC*TIM3->ARR)
 #define STEPPER_B_CCR               TIM3->CCR1
 #define STEPPER_B_DIR               GPIO_ReadOutputDataBit(GPIOC, GPIO_Pin_7)
@@ -138,7 +138,7 @@
 #define STEPPER_C_FREQ_UPDATE(f)    TIM_PrescalerConfig(TIM4,T_CLK/(f*TIM_ARR),TIM_PSCReloadMode_Update)
 #define DIR_C_DOWN                  GPIO_SetBits(GPIOA, GPIO_Pin_6)
 #define DIR_C_UP                    GPIO_ResetBits(GPIOA, GPIO_Pin_6)
-#define STEPPER_C_SCAN              GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_9)
+#define STEPPER_C_SCAN              (TIM4->CNT)>(TIM4->CCR1)
 #define STEPPER_C_FREQ              T_CLK/(TIM4->PSC*TIM4->ARR)
 #define STEPPER_C_CCR               TIM4->CCR1
 #define STEPPER_C_DIR               GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_6)

@@ -86,10 +86,10 @@ enum {block_ready,  //ready to be executed
 
 typedef struct
 {
-    uint16_t head;
-    uint16_t tail;
-    uint16_t length;
-    block_t content[RINGBUFF_LEN];
+    volatile uint16_t head;
+    volatile uint16_t tail;
+    volatile uint16_t length;
+    volatile block_t content[RINGBUFF_LEN];
 }block_buff_t;
 
 typedef struct 
@@ -132,13 +132,13 @@ enum{carriage_DOWN, carriage_UP};
 typedef struct _stepper
 {
     //update in timer interrupt routine
-    uint8_t         pin_state;
-    uint8_t         pin_state_last;
+    volatile uint8_t    pin_state;
+    volatile uint8_t    pin_state_last;
 
     //only used as feedback or initialization
-    uint8_t         state;//compare
-    uint8_t         dir;
-    int32_t         freq;//steps per second
+    volatile uint8_t    state;//compare
+    volatile uint8_t    dir;
+    volatile int32_t    freq;//steps per second
 
 }stepper_t;
 

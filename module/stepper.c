@@ -17,7 +17,7 @@ void Micro_Step_Init(uint8_t ms)
     else                        MS3_LOW;
 }
 
-void Stepper_Init(stepper_t* stepperX)
+void Stepper_Init(volatile stepper_t* stepperX)
 {
     stepperX->state = stepper_OFF;
     stepperX->dir = carriage_DOWN;
@@ -28,24 +28,18 @@ void Stepper_Init(stepper_t* stepperX)
 
 void Stepper_A_Update(void)
 {
-    if (STEPPER_A_CCR!=0)   stepperA.state = stepper_ON;
-    else                    stepperA.state = stepper_OFF;
     stepperA.freq    = STEPPER_A_FREQ;
     stepperA.dir     = STEPPER_A_DIR;
 }
 
 void Stepper_B_Update(void)
 {
-    if (STEPPER_B_CCR!=0)   stepperB.state = stepper_ON;
-    else                    stepperB.state = stepper_OFF;
     stepperB.freq    = STEPPER_B_FREQ;
     stepperB.dir     = STEPPER_B_DIR;
 }
 
 void Stepper_C_Update(void)
 {
-    if (STEPPER_C_CCR!=0)   stepperC.state = stepper_ON;
-    else                    stepperC.state = stepper_OFF;
     stepperC.freq    = STEPPER_C_FREQ;
     stepperC.dir     = STEPPER_C_DIR;
 }

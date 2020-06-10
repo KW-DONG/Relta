@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "gcode.h"
 
-void Block_Buff_Init(block_buff_t* buff)
+void Block_Buff_Init(volatile block_buff_t* buff)
 {
     buff->head = 0;
     buff->tail = 0;
@@ -10,7 +10,7 @@ void Block_Buff_Init(block_buff_t* buff)
     for (uint8_t i=0;i<RINGBUFF_LEN;i++)   buff->content[i].flag = block_free;
 }
 
-uint8_t Block_Buff_Write(block_t block, block_buff_t* ring_buff)
+uint8_t Block_Buff_Write(block_t block,volatile block_buff_t* ring_buff)
 {
     if(ring_buff->length >= RINGBUFF_LEN||ring_buff->content[ring_buff->tail].flag!=block_free) return 1;
 
@@ -20,7 +20,7 @@ uint8_t Block_Buff_Write(block_t block, block_buff_t* ring_buff)
     return 0;
 }
 
-void Block_Buff_Clear(block_buff_t* ring_buff)
+void Block_Buff_Clear(volatile block_buff_t* ring_buff)
 {
     if (ring_buff->length!=0)
     {

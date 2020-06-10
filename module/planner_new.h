@@ -2,7 +2,7 @@
 #define PLANNER_NEW_H
 #include "type.h"
 
-extern block_buff_t block_buffer;
+extern volatile block_buff_t block_buffer;
 extern machine_t machine;
 
 uint8_t Line_Z_Planner(float dz, float feedrate);

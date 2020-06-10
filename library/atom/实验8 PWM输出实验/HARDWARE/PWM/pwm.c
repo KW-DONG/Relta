@@ -187,6 +187,23 @@ void TIM4_PWM_Init(u32 arr,u32 psc)
  									  
 }  
 
+void PWM4_Manual_Init(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE); 	//使能PORTF时钟	
+	
+	GPIO_PinAFConfig(GPIOB,GPIO_PinSource6,GPIO_AF_TIM4); //GPIOF9复用为定时器14
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;           //GPIOF9
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;        //复用功能
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;	//速度100MHz
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;      //推挽复用输出
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;        //上拉
+	GPIO_Init(GPIOB,&GPIO_InitStructure);              //初始化PF9
+}
+
+
+
 void TIM5_Init(u32 arr,u32 psc)
 {		 					 
 	//此部分需手动修改IO口设置
@@ -213,5 +230,38 @@ void TIM5_Init(u32 arr,u32 psc)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority=2;
 	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&NVIC_InitStructure);								  
-}  
+}
+
+void Bsp_Stepper_Init(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	
+	//Enables or disables the AHB1 peripheral clock.
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOD|RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOF,ENABLE);
+
+    //direction pin
+	GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_15|GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType 	= GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd 	= GPIO_PuPd_UP;
+	GPIO_Init(GPIOA,&GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_7;
+    GPIO_Init(GPIOC,&GPIO_InitStructure);
+
+    //A4988 microstepping
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8;
+    GPIO_Init(GPIOF,&GPIO_InitStructure);
+
+    /* //detect pin
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_11;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_Init(GPIOD, &GPIO_InitStructure); */
+
+}
 

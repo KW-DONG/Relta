@@ -23,6 +23,7 @@ uint8_t Line_Z_Planner(float dz, float feedrate)
         new_block.maximum_velocity[i] = feedrate;
         new_block.maximum_freq[i] = (uint32_t)(feedrate*(float)STEPS_PER_UNIT);
     }
+    new_block.flag = block_ready;
     if(Block_Buff_Write(new_block,&block_buffer))   return 1;
     return 0;
 }
@@ -41,15 +42,16 @@ uint8_t Line_XYZ_Planner(float* xyz_c, float* xyz_t, float feedrate)
     Inverse_Kinematics(xyz_c,abc_l);
 
     //dx = 0, dy != 0 and dy > dz
-    if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f&&(fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[2]-xyz_t[2])))       d_y = GRID_LEN;
+    if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])>GRID_LEN&&(fabsf(xyz_c[1]-xyz_t[1])>=fabsf(xyz_c[2]-xyz_t[2])))       d_y = GRID_LEN;
     //dx = 0, dy != 0 and dy < dz
-    else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])!=0.f&&(fabsf(xyz_c[1]-xyz_t[1])<fabsf(xyz_c[2]-xyz_t[2])))   d_y = GRID_LEN*fabsf(xyz_c[1]-xyz_t[1])*INV(xyz_c[2]-xyz_t[2]);
+    else if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])>GRID_LEN&&(fabsf(xyz_c[1]-xyz_t[1])<fabsf(xyz_c[2]-xyz_t[2])))   d_y = GRID_LEN*fabsf(xyz_c[1]-xyz_t[1])*INV(xyz_c[2]-xyz_t[2]);
     //dx = 0, dy = 0 and dz != 0
-    else if ((xyz_c[0]-xyz_t[0])==0.f&&(xyz_c[1]-xyz_t[1])==0.f)
+    else if (fabsf(xyz_c[0]-xyz_t[0])<GRID_LEN&&fabsf(xyz_c[1]-xyz_t[1])<GRID_LEN)
     {
         if (block_buffer.length<RINGBUFF_LEN)
         {
             Line_Z_Planner(xyz_t[2]-xyz_c[2],feedrate);
+            for (uint8_t i=0;i<3;i++)   xyz_c[i] = xyz_t[i];
             return 0;
         }else   return 1;
     }
@@ -191,13 +193,14 @@ void Velocity_Decouple(float* xyz_c, float* xyz_t, float* xyz_v, float v_n)
 
 void Block_Init(block_t* new_block, float* abc, float* abc_l, float* abc_v)
 {
+    new_block->flag = block_ready;
     for (uint8_t i=0;i<3;i++)
     {
         new_block->step[i] = (uint32_t)(fabsf(abc[i] - abc_l[i])*(float)STEPS_PER_UNIT);
         new_block->maximum_velocity[i] = abc_v[i];
-        new_block->flag = block_ready;
-        if (abc[i]>abc_l[i])    new_block->dir[i] = 1;
-        else                    new_block->dir[i] = 0;
+        
+        if (abc[i]>abc_l[i])    new_block->dir[i] = carriage_UP;
+        else                    new_block->dir[i] = carriage_DOWN;
         new_block->entry_velocity[i] = block_buffer.content[block_buffer.tail].leave_velocity[i];
         new_block->leave_velocity[i] = 0.f;
         new_block->maximum_freq[i] = (uint32_t)(fabs(abc_v[i])*(float)STEPS_PER_UNIT);

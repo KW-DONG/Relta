@@ -13,16 +13,14 @@
 #include "test.h"
 
 /******************************Hardware******************************/
-stepper_t   stepperA;
-stepper_t   stepperB;
-stepper_t   stepperC;
+volatile stepper_t   stepperA;
+volatile stepper_t   stepperB;
+volatile stepper_t   stepperC;
 machine_t   machine;
-uint8_t     planner_result;
-float xyz_c[3] = {90.f,90.f,112.f};
-float xyz_t[3] = {90.f,90.f,0.f};
+volatile uint8_t     planner_result;
 
 //buffer
-block_buff_t block_buffer;
+volatile block_buff_t block_buffer;
 
 int main()
 {
@@ -39,9 +37,9 @@ int main()
     Bsp_Stepper_Init();
     Bsp_Switch_Init();
     Bsp_KEY_Init();
-    Bsp_TIM2_PWM_Init(FREQ2PSC(2));//Stepper_A
-    Bsp_TIM3_PWM_Init(FREQ2PSC(2));//Stepper_B
-    Bsp_TIM4_PWM_Init(FREQ2PSC(2));//Stepper_C
+    Bsp_TIM2_PWM_Init(FREQ2PSC(500));//Stepper_A
+    Bsp_TIM3_PWM_Init(FREQ2PSC(500));//Stepper_B
+    Bsp_TIM4_PWM_Init(FREQ2PSC(500));//Stepper_C
     STEPPER_A_OFF;
     STEPPER_B_OFF;
     STEPPER_C_OFF;
@@ -52,30 +50,54 @@ int main()
     Stepper_Init(&stepperA);
     Stepper_Init(&stepperB);
     Stepper_Init(&stepperC);
-    Micro_Step_Init(4);
-    Bsp_Microstep_force();
+    TIM2_PWM_Detect();
+    TIM3_PWM_Detect();
+    TIM4_PWM_Detect();
+
+    //Micro_Step_Init(16);
+    MS1_HIGH;
+    MS2_HIGH;
+    MS3_HIGH;
 
 /*************************CUSTOM_PATH******************************/
     //uint8_t path_num = 0;
 
-    Test_Block_0();
-    Test_Block_1();
+    //Test_Block_0();
+    //Test_Block_1();
     //Test_Block_2();
     //Test_Block_3();
 
     //machine.xyz_t[0] = 90.f;
     //machine.xyz_t[1] = 90.f;
     //machine.xyz_t[2] = 0.f;
-	
-    //planner_result = Line_XYZ_Planner(xyz_c,xyz_t,50.f);
+    uint32_t path_num = 0;
+    for (uint8_t i=0;i<3;i++) machine.xyz_t[i] = path_0[path_num][i];
+    machine.feedrate = path_0[path_num][3];
+    planner_result = Line_XYZ_Planner(machine.xyz_c,machine.xyz_t,machine.feedrate);
 
-    uint32_t block_num = 0;
+    
     block_t new_block;
 
     while (1)
     {
         
-        /* if (block_buffer.length<RINGBUFF_LEN&&block_num<564)
+        if (planner_result&&block_buffer.length<(RINGBUFF_LEN-1))
+        {
+            planner_result = Line_XYZ_Planner(machine.xyz_c,machine.xyz_t,machine.feedrate);
+        }
+        else if ((!planner_result)&&block_buffer.length<(RINGBUFF_LEN-1)&&path_num<7)
+        {
+            path_num++;
+            for (uint8_t i=0;i<3;i++) machine.xyz_t[i] = path_0[path_num][i];
+            machine.feedrate = path_0[path_num][3];
+            planner_result = Line_XYZ_Planner(machine.xyz_c,machine.xyz_t,machine.feedrate);
+        }
+
+        
+        
+        
+        
+        /* if (block_buffer.length<(RINGBUFF_LEN-1)&&block_num<564&&block_buffer.content[block_buffer.tail].flag==block_free)
         {
             new_block.maximum_freq[0] = block_path[block_num][0][0];
             new_block.maximum_freq[1] = block_path[block_num][0][1];
@@ -91,6 +113,10 @@ int main()
 			block_num++;
         } */
 
+        /* if (block_buffer.length<(RINGBUFF_LEN-1)&&block_buffer.content[block_buffer.tail].flag==block_free)
+        {
+            Test_Block_3();
+        } */
 
 
 
@@ -101,7 +127,7 @@ int main()
         //Test_Block_2();
         //Test_Block_3();
         Machine_Update();
-        delay_ms(100);
+        //delay_ms(100);
         //block_buffer.content[block_buffer.head].flag = block_free;
         //Block_Buff_Clear(&block_buffer);
         	
@@ -124,87 +150,105 @@ void TIM5_IRQHandler()
 {
     if(TIM_GetITStatus(TIM5,TIM_IT_Update)==SET)
 	{
-        if (machine.state==machine_ON)
+        //LED
+        if ((machine.state==machine_ON)&&
+            (block_buffer.content[block_buffer.head].step[0]>0||block_buffer.content[block_buffer.head].step[1]>0||block_buffer.content[block_buffer.head].step[2]>0)&&
+            (block_buffer.content[block_buffer.head].flag==block_exe))
         {
-            LED_RED_OFF;
             LED_GREEN_ON;
-
-            if (block_buffer.content[block_buffer.head].step[0]==0)    STEPPER_A_OFF;
-            if (block_buffer.content[block_buffer.head].step[1]==0)    STEPPER_B_OFF;
-            if (block_buffer.content[block_buffer.head].step[2]==0)    STEPPER_C_OFF;
-
-            if (block_buffer.content[block_buffer.head].flag==block_exe)
-            {
-                if (block_buffer.content[block_buffer.head].step[0]==0)    STEPPER_A_OFF;
-                else                                                       STEPPER_A_ON;
-                if (block_buffer.content[block_buffer.head].step[1]==0)    STEPPER_B_OFF;
-                else                                                       STEPPER_B_ON;
-                if (block_buffer.content[block_buffer.head].step[2]==0)    STEPPER_C_OFF;
-                else                                                       STEPPER_C_ON;
-
-                if (Stepper_A_Pulse()&&block_buffer.content[block_buffer.head].step[0]>0)
-                {
-                    block_buffer.content[block_buffer.head].step[0]--;
-                    if (STEPPER_A_DIR)  machine.carriage_move[0] ++;
-                    else                machine.carriage_move[0] --;
-                }
-                if (Stepper_B_Pulse()&&block_buffer.content[block_buffer.head].step[1]>0)
-                {
-                    block_buffer.content[block_buffer.head].step[1]--;
-                    if (STEPPER_B_DIR)  machine.carriage_move[1] ++;
-                    else                machine.carriage_move[1] --;
-                }
-                if (Stepper_C_Pulse()&&block_buffer.content[block_buffer.head].step[2]>0)
-                {
-                    block_buffer.content[block_buffer.head].step[2]--;
-                    if (STEPPER_C_DIR)  machine.carriage_move[2] ++;
-                    else                machine.carriage_move[2] --;
-                }
-
-                STEPPER_A_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[0]);
-                STEPPER_B_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[1]);
-                STEPPER_C_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[2]);
-
-                if (block_buffer.content[block_buffer.head].step[0]==0&&block_buffer.content[block_buffer.head].step[1]==0
-                &&block_buffer.content[block_buffer.head].step[2]==0&&block_buffer.length>0&&block_buffer.content[block_buffer.head].flag==block_exe)
-                {
-                    block_buffer.content[block_buffer.head].flag = block_free;
-                    Block_Buff_Clear(&block_buffer);
-                }
-            }
-            else if (block_buffer.content[block_buffer.head].flag==block_ready)
-            {
-                block_buffer.content[block_buffer.head].flag=block_exe;
-                STEPPER_A_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[0]);
-                STEPPER_B_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[1]);
-                STEPPER_C_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[2]);
-
-                if (block_buffer.content[block_buffer.head].dir[0]==carriage_UP)    DIR_A_UP;
-                else                                                                DIR_A_DOWN;
-                if (block_buffer.content[block_buffer.head].dir[1]==carriage_UP)    DIR_B_UP;
-                else                                                                DIR_B_DOWN;
-                if (block_buffer.content[block_buffer.head].dir[2]==carriage_UP)    DIR_C_UP;
-                else                                                                DIR_C_DOWN;
-
-                if (block_buffer.content[block_buffer.head].step[0]==0)    STEPPER_A_OFF;
-                else                                                       STEPPER_A_ON;
-                if (block_buffer.content[block_buffer.head].step[1]==0)    STEPPER_B_OFF;
-                else                                                       STEPPER_B_ON;
-                if (block_buffer.content[block_buffer.head].step[2]==0)    STEPPER_C_OFF;
-                else                                                       STEPPER_C_ON;
-            }else
-            {
-                STEPPER_A_OFF;
-                STEPPER_B_OFF;
-                STEPPER_C_OFF;
-            }
-        }else
+            LED_RED_OFF;         
+        }
+        else
         {
-            LED_RED_ON;
             LED_GREEN_OFF;
+            LED_RED_ON;
+        }
+
+        //STEPPER_A
+        if ((machine.state==machine_ON)&&
+            (block_buffer.content[block_buffer.head].step[0]>0&&
+            (block_buffer.content[block_buffer.head].flag==block_exe)))
+        {
+            STEPPER_A_ON;
+            stepperA.state = stepper_ON;
+            if (Stepper_A_Pulse())
+            {
+                block_buffer.content[block_buffer.head].step[0]--;
+                if (STEPPER_A_DIR)  machine.carriage_move[0] --;
+                else                machine.carriage_move[0] ++;
+            }
+        }
+        else
+        {
             STEPPER_A_OFF;
+            stepperA.state = stepper_OFF;
+        }
+
+        //STEPPER_B
+        if ((machine.state==machine_ON)&&
+            (block_buffer.content[block_buffer.head].step[1]>0&&
+            (block_buffer.content[block_buffer.head].flag==block_exe)))
+        {
+            STEPPER_B_ON;
+            stepperB.state = stepper_ON;
+            if (Stepper_B_Pulse())
+            {
+                block_buffer.content[block_buffer.head].step[1]--;
+                if (STEPPER_B_DIR)  machine.carriage_move[1] --;
+                else                machine.carriage_move[1] ++;
+            }
+        }
+        else
+        {
             STEPPER_B_OFF;
+            stepperB.state = stepper_OFF;
+        }
+
+        //STEPPER_C
+        if ((machine.state==machine_ON)&&
+            (block_buffer.content[block_buffer.head].step[2]>0&&
+            (block_buffer.content[block_buffer.head].flag==block_exe)))
+        {
+            STEPPER_C_ON;
+            stepperC.state = stepper_ON;
+            if (Stepper_C_Pulse())
+            {
+                block_buffer.content[block_buffer.head].step[2]--;
+                if (STEPPER_C_DIR)  machine.carriage_move[2] --;
+                else                machine.carriage_move[2] ++;
+            }
+        }
+        else
+        {
             STEPPER_C_OFF;
+            stepperC.state = stepper_OFF;
+        }
+        
+        //BLOCK_UPDATE
+        if ((machine.state==machine_ON)&&
+            block_buffer.content[block_buffer.head].step[0]==0&&block_buffer.content[block_buffer.head].step[1]==0&&block_buffer.content[block_buffer.head].step[1]==0&&
+            block_buffer.content[block_buffer.head].flag==block_exe)
+        {
+            block_buffer.content[block_buffer.head].flag = block_free;
+            Block_Buff_Clear(&block_buffer);
+        }
+
+        //BLOCK_INIT
+        if ((machine.state==machine_ON)&&
+            block_buffer.content[block_buffer.head].flag==block_ready)
+        {
+            STEPPER_A_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[0]);
+            STEPPER_B_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[1]);
+            STEPPER_C_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[2]);
+
+            if (block_buffer.content[block_buffer.head].dir[0]==carriage_UP)    DIR_A_UP;
+            else                                                                DIR_A_DOWN;
+            if (block_buffer.content[block_buffer.head].dir[1]==carriage_UP)    DIR_B_UP;
+            else                                                                DIR_B_DOWN;
+            if (block_buffer.content[block_buffer.head].dir[2]==carriage_UP)    DIR_C_UP;
+            else                                                                DIR_C_DOWN;
+
+            block_buffer.content[block_buffer.head].flag = block_exe;
         }
     }
     Stepper_A_Update();

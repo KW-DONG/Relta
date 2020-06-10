@@ -27,4 +27,8 @@ void TIM3_PWM_Detect(void);
 void TIM4_PWM_Detect(void);
 
 void TIM5_Init(u32 arr,u32 psc);
+
+void Bsp_Stepper_Init(void);
+
+void PWM4_Manual_Init(void);
 #endif

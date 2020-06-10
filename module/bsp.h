@@ -24,6 +24,12 @@ void Bsp_TIM3_PWM_Init(uint32_t psc);
 
 void Bsp_TIM4_PWM_Init(uint32_t psc);
 
+void TIM2_PWM_Detect(void);
+
+void TIM3_PWM_Detect(void);
+
+void TIM4_PWM_Detect(void);
+
 void Bsp_TIM5_Init(uint32_t psc);
 
 void Bsp_LED_Init(void);
