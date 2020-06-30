@@ -117,7 +117,6 @@ uint8_t Line_XYZ_Planner(float* xyz_i, float* xyz_c, float* xyz_t, float* abc_l,
     else        return 0;
 }
 
-
 void Get_Pivot(float* xyz_t, float* xyz_c, float radius, float* xy_p)
 {
     //find pivot with radius and Pythagoras theorem
@@ -185,10 +184,7 @@ void Block_Init(block_t* new_block, float* abc, float* abc_l, float* abc_v)
     }
 }
 
-/**********************************READ_BUFFER*************************************/
 
-//update block_buffer
-void Trapzoidal_Planner(block_t* block);
 
 
 

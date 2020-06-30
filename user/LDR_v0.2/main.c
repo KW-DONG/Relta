@@ -120,17 +120,18 @@ int main()
         Machine_Update();	
     }
 }
-//void USART1_IRQHandler(void)
-//{
-//    uint8_t res;
-//    if (USART_GetITStatus(USART1, USART_IT_RXNE)!=RESET)
-//    {
-//        USART_ClearITPendingBit(USART1, USART_IT_RXNE);
-//        res = USART_ReceiveData(USART1);
-//        Uart_Buff_Write(&uart_buff,res);
-//        if (res==13)    machine.interpret_flag = SET;
-//    }
-//}
+
+void USART1_IRQHandler(void)
+{
+    uint8_t res;
+    if (USART_GetITStatus(USART1, USART_IT_RXNE)!=RESET)
+    {
+        USART_ClearITPendingBit(USART1, USART_IT_RXNE);
+        res = USART_ReceiveData(USART1);
+        Uart_Buff_Write(&uart_buff,res);
+        if (res==13)    machine.interpret_flag = SET;
+    }
+}
 
 //the machine will only execute the first block
 void TIM5_IRQHandler()
