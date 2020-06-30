@@ -11,6 +11,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_tim.h"
 #include "test.h"
+#include "gcode.h"
 
 /******************************Hardware******************************/
 stepper_t   stepperA;
@@ -21,13 +22,15 @@ uint8_t     planner_result;
 
 //buffer
 block_buff_t block_buffer;
+uart_buff_t uart_buffer;
+command_t command_c;
 
 int main()
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	
     delay_init(168);
 
-		//Bsp_UART_Init(115200);
+	//Bsp_UART_Init(115200);
     Bsp_EXTI0_Init();
     Bsp_EXTI1_Init();
     Bsp_EXTI2_Init();
@@ -63,7 +66,7 @@ int main()
     }
     
     machine.feedrate = path_0[path_num][3];
-    planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t, machine.abc_l ,machine.feedrate);
+    planner_result = Line_XYZ_Planner(machine.xyz_i,machine.xyz_c,machine.xyz_t, machine.abc_l ,machine.feedrate);
 
     
     block_t new_block;
@@ -128,7 +131,7 @@ void USART1_IRQHandler(void)
     {
         USART_ClearITPendingBit(USART1, USART_IT_RXNE);
         res = USART_ReceiveData(USART1);
-        Uart_Buff_Write(&uart_buff,res);
+        Uart_Buff_Write(&uart_buffer,res);
         if (res==13)    machine.interpret_flag = SET;
     }
 }
@@ -223,9 +226,13 @@ void TIM5_IRQHandler()
 void EXTI2_IRQHandler(void)
 {
 	delay_ms(10);
-    STEPPER_A_OFF;
-    machine.abc[0] = CARRIAGE_A_RESET;
-    block_buffer.content[block_buffer.head].step[0] = 0;
+
+    if (EXTI2_SCAN == 0)
+    {
+        STEPPER_A_OFF;
+        machine.abc[0] = CARRIAGE_A_RESET;
+        block_buffer.content[block_buffer.head].step[0] = 0;
+    }
     EXTI_ClearITPendingBit(EXTI_Line2);
 }
 
@@ -233,9 +240,13 @@ void EXTI2_IRQHandler(void)
 void EXTI3_IRQHandler(void)
 {
     delay_ms(10);
-    STEPPER_B_OFF;
-    machine.abc[1] = CARRIAGE_B_RESET;
-    block_buffer.content[block_buffer.head].step[1] = 0;
+
+    if (EXTI3_SCAN == 0)
+    {
+        STEPPER_B_OFF;
+        machine.abc[1] = CARRIAGE_B_RESET;
+        block_buffer.content[block_buffer.head].step[1] = 0;
+    }
     EXTI_ClearITPendingBit(EXTI_Line3);
 }
 
@@ -243,9 +254,12 @@ void EXTI3_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
     delay_ms(10);
-    STEPPER_C_OFF;
-    machine.abc[0] = CARRIAGE_C_RESET;
-    block_buffer.content[block_buffer.head].step[2] = 0;
+    if (EXTI1_SCAN == 0)
+    {
+        STEPPER_C_OFF;
+        machine.abc[0] = CARRIAGE_C_RESET;
+        block_buffer.content[block_buffer.head].step[2] = 0;
+    }
 	EXTI_ClearITPendingBit(EXTI_Line1);
 }
 
@@ -253,14 +267,14 @@ void EXTI1_IRQHandler(void)
 void EXTI0_IRQHandler(void)
 {
     delay_ms(10);
-    machine.state = machine_OFF;	 
+    if (EXTI0_SCAN == 0)    machine.state = machine_OFF;	 
 	EXTI_ClearITPendingBit(EXTI_Line0);
 }
 
 void EXTI4_IRQHandler(void)
 {
     delay_ms(10);
-    machine.state = machine_ON;
+    if (EXTI4_SCAN == 0)    machine.state = machine_ON;
     EXTI_ClearITPendingBit(EXTI_Line4);
 }
 

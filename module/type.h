@@ -19,7 +19,6 @@
 #define PI      3.14f
 #define RSQRT(x)    (1.0f / sqrtf(x))
 #define HYPOT2(x,y) (SQ(x)+SQ(y))
-
 #define RINGBUFF_LEN 10
 
 #define TRUE 1

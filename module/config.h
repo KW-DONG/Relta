@@ -158,6 +158,12 @@
 #define MS3_HIGH                    GPIO_SetBits(GPIOF,GPIO_Pin_8)
 #define MS3_LOW                     GPIO_ResetBits(GPIOF,GPIO_Pin_8)
 
+#define EXTI0_SCAN                  GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0)
+#define EXTI1_SCAN                  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_1)
+#define EXTI2_SCAN                  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_2)
+#define EXTI3_SCAN                  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_3)
+#define EXTI4_SCAN                  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_1)
+
 /*************************MANUAL_PATH**********************************/
 
 
