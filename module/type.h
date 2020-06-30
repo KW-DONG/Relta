@@ -20,7 +20,7 @@
 #define RSQRT(x)    (1.0f / sqrtf(x))
 #define HYPOT2(x,y) (SQ(x)+SQ(y))
 
-#define RINGBUFF_LEN 5
+#define RINGBUFF_LEN 10
 
 #define TRUE 1
 #define FALSE 0
@@ -86,10 +86,10 @@ enum {block_ready,  //ready to be executed
 
 typedef struct
 {
-    volatile uint16_t head;
-    volatile uint16_t tail;
-    volatile uint16_t length;
-    volatile block_t content[RINGBUFF_LEN];
+    uint16_t head;
+    uint16_t tail;
+    uint16_t length;
+    block_t content[RINGBUFF_LEN];
 }block_buff_t;
 
 typedef struct 
@@ -103,6 +103,7 @@ typedef struct
     float   xyz_i[3];
     float   xyz_c[3];//current
     float   xyz_t[3];//target
+    float   abc_l[3];
     float   feedrate;
     uint8_t command_flag;
 
@@ -133,13 +134,13 @@ enum{carriage_DOWN, carriage_UP};
 typedef struct _stepper
 {
     //update in timer interrupt routine
-    volatile uint8_t    pin_state;
-    volatile uint8_t    pin_state_last;
+    uint8_t    pin_state;
+    uint8_t    pin_state_last;
 
     //only used as feedback or initialization
-    volatile uint8_t    state;//compare
-    volatile uint8_t    dir;
-    volatile int32_t    freq;//steps per second
+    uint8_t    state;//compare
+    uint8_t    dir;
+    int32_t    freq;//steps per second
 
 }stepper_t;
 

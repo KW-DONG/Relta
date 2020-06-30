@@ -4,7 +4,7 @@
 #include "stepper.h"
 #include "type.h"
 #include "buffer.h"
-#include "planner_new.h"
+#include "planner.h"
 #include "bsp.h"
 #include "delta.h"
 #include "machine.h"
@@ -13,21 +13,21 @@
 #include "test.h"
 
 /******************************Hardware******************************/
-volatile stepper_t   stepperA;
-volatile stepper_t   stepperB;
-volatile stepper_t   stepperC;
+stepper_t   stepperA;
+stepper_t   stepperB;
+stepper_t   stepperC;
 machine_t   machine;
-volatile uint8_t     planner_result;
+uint8_t     planner_result;
 
 //buffer
-volatile block_buff_t block_buffer;
+block_buff_t block_buffer;
 
 int main()
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	
     delay_init(168);
 
-	Bsp_UART_Init(115200);
+		//Bsp_UART_Init(115200);
     Bsp_EXTI0_Init();
     Bsp_EXTI1_Init();
     Bsp_EXTI2_Init();
@@ -50,35 +50,20 @@ int main()
     Stepper_Init(&stepperA);
     Stepper_Init(&stepperB);
     Stepper_Init(&stepperC);
-    TIM2_PWM_Detect();
-    TIM3_PWM_Detect();
-    TIM4_PWM_Detect();
 
-    //Micro_Step_Init(16);
-    MS1_HIGH;
-    MS2_HIGH;
-    MS3_HIGH;
+    Micro_Step_Init(16);
 
 /*************************CUSTOM_PATH******************************/
-    //uint8_t path_num = 0;
 
-    //Test_Block_0();
-    //Test_Block_1();
-    //Test_Block_2();
-    //Test_Block_3();
-
-    //machine.xyz_t[0] = 90.f;
-    //machine.xyz_t[1] = 90.f;
-    //machine.xyz_t[2] = 0.f;
     uint32_t path_num = 0;
+    uint32_t block_num = 0;
     for (uint8_t i=0;i<3;i++)
     {
-        machine.xyz_i[i] = machine.xyz_c[i];
         machine.xyz_t[i] = path_0[path_num][i];
     }
     
     machine.feedrate = path_0[path_num][3];
-    planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t,machine.feedrate);
+    planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t, machine.abc_l ,machine.feedrate);
 
     
     block_t new_block;
@@ -86,56 +71,53 @@ int main()
     while (1)
     {
         
-        if (planner_result&&block_buffer.length<(RINGBUFF_LEN-1))
+        if (planner_result&&block_buffer.length<(RINGBUFF_LEN))
         {
-            planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t,machine.feedrate);
+            planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t,machine.abc_l, machine.feedrate);
+            //if (planner_result==0)  machine.state = machine_OFF;
         }
-        else if ((!planner_result)&&block_buffer.length<(RINGBUFF_LEN-1)&&path_num<7)
+        else if ((!planner_result)&&block_buffer.length==0&&path_num<10&&machine.state==machine_ON)
         {
             path_num++;
+            //while (block_buffer.length>0);
+            Machine_Update();
             for (uint8_t i=0;i<3;i++)
             {
-                machine.xyz_i[i] = machine.xyz_c[i];
+                machine.xyz_i[i] = machine.xyz[i];
+                machine.xyz_c[i] = machine.xyz[i];
                 machine.xyz_t[i] = path_0[path_num][i];
+                machine.abc_l[i] = machine.abc[i];
             }
             machine.feedrate = path_0[path_num][3];
-            planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t,machine.feedrate);
+            planner_result = Line_XYZ_Planner_1(machine.xyz_i,machine.xyz_c,machine.xyz_t,machine.abc_l,machine.feedrate);
         }
       
-        /* if (block_buffer.length<(RINGBUFF_LEN-1)&&block_num<564&&block_buffer.content[block_buffer.tail].flag==block_free)
+        //BLOCK_UPDATE
+        if ((machine.state==machine_ON)&&
+            block_buffer.content[block_buffer.head].step[0]==0&&block_buffer.content[block_buffer.head].step[1]==0&&block_buffer.content[block_buffer.head].step[1]==0&&
+            block_buffer.content[block_buffer.head].flag==block_exe)
         {
-            new_block.maximum_freq[0] = block_path[block_num][0][0];
-            new_block.maximum_freq[1] = block_path[block_num][0][1];
-            new_block.maximum_freq[2] = block_path[block_num][0][2];
-            new_block.dir[0] = block_path[block_num][1][0];
-            new_block.dir[1] = block_path[block_num][1][1];
-            new_block.dir[2] = block_path[block_num][1][2];
-            new_block.step[0] = block_path[block_num][2][0];
-            new_block.step[1] = block_path[block_num][2][1];
-            new_block.step[2] = block_path[block_num][2][2];
-            new_block.flag = block_ready;
-            Block_Buff_Write(new_block,&block_buffer);
-			block_num++;
-        } */
-
-        /* if (block_buffer.length<(RINGBUFF_LEN-1)&&block_buffer.content[block_buffer.tail].flag==block_free)
+            block_buffer.content[block_buffer.head].flag = block_free;
+            Block_Buff_Clear(&block_buffer);
+        }
+        //BLOCK_INIT
+        if ((machine.state==machine_ON)&&
+            block_buffer.content[block_buffer.head].flag==block_ready)
         {
-            Test_Block_3();
-        } */
+            STEPPER_A_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[0]);
+            STEPPER_B_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[1]);
+            STEPPER_C_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[2]);
 
+            if (block_buffer.content[block_buffer.head].dir[0]==carriage_UP)    DIR_A_UP;
+            else                                                                DIR_A_DOWN;
+            if (block_buffer.content[block_buffer.head].dir[1]==carriage_UP)    DIR_B_UP;
+            else                                                                DIR_B_DOWN;
+            if (block_buffer.content[block_buffer.head].dir[2]==carriage_UP)    DIR_C_UP;
+            else                                                                DIR_C_DOWN;
 
-
-        //if (planner_result&&block_buffer.length<RINGBUFF_LEN)
-        //{
-        //    planner_result = Line_XYZ_Planner(xyz_c, xyz_t,50.f);
-        //}
-        //Test_Block_2();
-        //Test_Block_3();
-        Machine_Update();
-        //delay_ms(100);
-        //block_buffer.content[block_buffer.head].flag = block_free;
-        //Block_Buff_Clear(&block_buffer);
-        	
+            block_buffer.content[block_buffer.head].flag = block_exe;
+        }    
+        Machine_Update();	
     }
 }
 //void USART1_IRQHandler(void)
@@ -228,33 +210,7 @@ void TIM5_IRQHandler()
             STEPPER_C_OFF;
             stepperC.state = stepper_OFF;
         }
-        
-        //BLOCK_UPDATE
-        if ((machine.state==machine_ON)&&
-            block_buffer.content[block_buffer.head].step[0]==0&&block_buffer.content[block_buffer.head].step[1]==0&&block_buffer.content[block_buffer.head].step[1]==0&&
-            block_buffer.content[block_buffer.head].flag==block_exe)
-        {
-            block_buffer.content[block_buffer.head].flag = block_free;
-            Block_Buff_Clear(&block_buffer);
-        }
 
-        //BLOCK_INIT
-        if ((machine.state==machine_ON)&&
-            block_buffer.content[block_buffer.head].flag==block_ready)
-        {
-            STEPPER_A_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[0]);
-            STEPPER_B_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[1]);
-            STEPPER_C_FREQ_UPDATE(block_buffer.content[block_buffer.head].maximum_freq[2]);
-
-            if (block_buffer.content[block_buffer.head].dir[0]==carriage_UP)    DIR_A_UP;
-            else                                                                DIR_A_DOWN;
-            if (block_buffer.content[block_buffer.head].dir[1]==carriage_UP)    DIR_B_UP;
-            else                                                                DIR_B_DOWN;
-            if (block_buffer.content[block_buffer.head].dir[2]==carriage_UP)    DIR_C_UP;
-            else                                                                DIR_C_DOWN;
-
-            block_buffer.content[block_buffer.head].flag = block_exe;
-        }
     }
     Stepper_A_Update();
     Stepper_B_Update();

@@ -26,19 +26,6 @@ Project File Date:  06/03/2020
 
 <h2>Output:</h2>
 Build target 'RELTA'
-compiling bsp.c...
-compiling buffer.c...
-..\module\buffer.c(79): warning:  #174-D: expression has no effect
-      for (value;value>='0'&&value<='9';value = Uart_Buff_Read(uart_buff))
-..\module\buffer.c: 1 warning, 0 errors
-compiling delta.c...
-compiling gcode.c...
-..\module\gcode.c(30): warning:  #174-D: expression has no effect
-      for(key;key!=0x0d&&uart_buff->length>0;key=Uart_Buff_Read(uart_buff))
-..\module\gcode.c: 1 warning, 0 errors
-compiling machine.c...
-compiling planner_new.c...
-compiling stepper.c...
 compiling test.c...
 ..\module\test.h(23): warning:  #1-D: last line of file ends without a newline
                                                 
@@ -46,12 +33,14 @@ compiling test.c...
 compiling main.c...
 ..\module\test.h(23): warning:  #1-D: last line of file ends without a newline
                                                 
-..\user\LDR_v0.2\main.c(84): warning:  #177-D: variable "new_block" was declared but never referenced
+..\user\LDR_v0.2\main.c(71): warning:  #177-D: variable "block_num" was declared but never referenced
+      uint32_t block_num = 0;
+..\user\LDR_v0.2\main.c(81): warning:  #177-D: variable "new_block" was declared but never referenced
       block_t new_block;
-..\user\LDR_v0.2\main.c: 2 warnings, 0 errors
+..\user\LDR_v0.2\main.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=10720 RO-data=568 RW-data=52 ZI-data=1900  
-".\Objects\Relta.axf" - 0 Error(s), 5 Warning(s).
+Program Size: Code=9964 RO-data=616 RW-data=44 ZI-data=3028  
+".\Objects\Relta.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   C:\Users\KW_DONG\Documents\GitHub\Relta\mdk\RTE
